@@ -1,0 +1,79 @@
+@(posts: List[Post with sorm.Persisted])
+
+@import eu.henkelmann.actuarius.ActuariusTransformer
+
+@transformer = @{ new ActuariusTransformer() }
+
+@mainPost(post: Post with sorm.Persisted) = {
+    <div class="post-container pure-u-24-24">
+        <div class="post main-post">
+            <h2 class="title">
+                <a href="@routes.Posts.view(post.id)" class="story-link">
+                    @post.title
+                </a>
+            </h2>
+            <div class="post-content">
+                @Html(transformer.apply(post.content))
+            </div>
+        </div>
+    </div>
+}
+
+@secondRowPost(post: Post with sorm.Persisted) = {
+    <div class="post-container pure-u-24-24 pure-u-lg-12-24">
+        <a href="@routes.Posts.view(post.id)" class="story-link">
+            <div class="post">
+                <h3 class="title">
+                    @post.title
+                </h3>
+                <div class="post-content">
+                    @Html(transformer.apply(post.content))
+                </div>
+            </div>
+        </a>
+    </div>
+}
+
+@thirdRowPost(post: Post with sorm.Persisted) = {
+    <div class="post-container pure-u-24-24 pure-u-lg-8-24">
+        <a href="@routes.Posts.view(post.id)" class="story-link">
+            <div class="post">
+                <h3 class="title">
+                    @post.title
+                </h3>
+                <div class="post-content">
+                    @Html(transformer.apply(post.content))
+                </div>
+            </div>
+        </a>
+    </div>
+}
+
+@main("Blog") {
+    <div class="pure-g">
+        @if(posts.size == 0) {
+            <div class="box center pure-u-24-24">
+                Na razie nie ma żadnych postów. Wróć za jakiś czas!
+            </div>
+        }
+
+        @posts.lift(0).map @{ mainPost }
+
+        @posts.lift(1).map @{ secondRowPost }
+        @posts.lift(2).map @{ secondRowPost }
+
+        @posts.lift(3).map @{ thirdRowPost }
+        @posts.lift(4).map @{ thirdRowPost }
+        @posts.lift(5).map @{ thirdRowPost }
+
+        @if(posts.size >= 5) {
+            <div class="post-container pure-u-24-24">
+                <div class="post center">
+                    <a href="#">
+                        Pokaż więcej postów...
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}

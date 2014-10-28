@@ -1,0 +1,17 @@
+@(post: Post, path: List[elements.Breadcrumb])
+
+@import eu.henkelmann.actuarius.ActuariusTransformer
+
+@defining(new ActuariusTransformer()) { transformer =>
+    @main("Blog") {
+
+        @parts.breadcrumbs(path)
+
+        <div class="box">
+            <h1>@post.title</h1>
+            <div class="post-content">
+                @Html(transformer.apply(post.content))
+            </div>
+        </div>
+    }
+}
