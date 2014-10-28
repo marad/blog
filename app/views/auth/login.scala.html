@@ -1,0 +1,17 @@
+@(loginForm: Form[Account])(implicit request: RequestHeader)
+
+@main("Logowanie") {
+    <div class="box">
+        <div class="error">
+            @loginForm.globalErrors.map { error =>
+                <div class="message">@error.message</div>
+            }
+        </div>
+        @helper.form(action = routes.Login.login(), 'class -> "pure-form pure-form-stacked") {
+            @helper.inputText(loginForm("name"), '_label -> "Login")
+            @helper.inputPassword(loginForm("password"), '_label -> "Hasło")
+
+            <input type="submit" class="pure-button" value="Zaloguj"/>
+        }
+    </div>
+}

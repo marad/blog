@@ -1,22 +1,53 @@
 package controllers
 
-import play.api.mvc.{Cookie, Action, Controller}
+import models.{Db, Account}
+import play.api.data._
+import play.api.data.Forms._
+import play.api.mvc._
 
 object Login extends Controller {
 
-  def viewLoginForm = Action {
-    Ok("")
+  val loginForm: Form[Account] = Form {
+    mapping(
+      "name" -> nonEmptyText,
+      "password" -> nonEmptyText,
+      "email" -> ignored("")
+    )(Account.apply)(Account.unapply)
   }
 
-  def login = Action {
-    Ok("").withCookies(
-      Cookie("user", "morti")
-    )
+  def viewLoginForm = Action { implicit request =>
+    Ok(views.html.auth.login(loginForm))
+  }
+
+  def login = Action { implicit request =>
+    loginForm bindFromRequest() fold ({ errors =>
+      BadRequest(views.html.auth.login(errors))
+    }, { creds =>
+      if (creds.name == "morti" && creds.password == "ewqdsacxz") {
+        Redirect(routes.Application.index()).withSession(
+          Security.username -> creds.name
+        )
+      } else {
+        Ok(views.html.auth.login(loginForm.withGlobalError("Błąd logowania")))
+      }
+      // TODO fetch from database
+//      Db.query[Account]
+//        .whereEqual("name", creds.name)
+//        .whereEqual("password", creds.password)
+//        .fetchOne() match {
+//        case acc: Account =>
+//          Redirect(routes.Application.index()).withCookies(
+//            Cookie("user", "morti")
+//          )
+//        case _ =>
+//          loginForm.globalErrors.map { _.message}
+//          Ok(views.html.auth.login(loginForm.withGlobalError("Błąd logowania")))
+//      }
+    })
   }
 
   def logout = Action { implicit request =>
-    println(request)
-    Ok("")
+    Redirect(routes.Application.index()).withNewSession
   }
 
 }

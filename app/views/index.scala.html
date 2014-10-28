@@ -1,5 +1,6 @@
-@(posts: List[Post with sorm.Persisted])
+@(posts: List[Post with sorm.Persisted])(implicit request: RequestHeader)
 
+@import views.Extensions._
 @import eu.henkelmann.actuarius.ActuariusTransformer
 
 @transformer = @{ new ActuariusTransformer() }
@@ -50,6 +51,7 @@
 }
 
 @main("Blog") {
+
     <div class="pure-g">
         @if(posts.size == 0) {
             <div class="box center pure-u-24-24">
@@ -66,7 +68,7 @@
         @posts.lift(4).map @{ thirdRowPost }
         @posts.lift(5).map @{ thirdRowPost }
 
-        @if(posts.size >= 5) {
+        @if(posts.size >= 6) {
             <div class="post-container pure-u-24-24">
                 <div class="post center">
                     <a href="#">

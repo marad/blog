@@ -2,13 +2,13 @@ package controllers
 
 import elements.Breadcrumb
 import org.joda.time.DateTime
-import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 import models._
+import security.Secured
 
-object Posts extends Controller {
+object Posts extends Controller with Secured {
 
   val tagForm: Form[Tag] = Form {
     mapping(
@@ -30,7 +30,7 @@ object Posts extends Controller {
     )(Post.apply)(Post.unapply)
   }
 
-  def view(id: Long) = Action {
+  def view(id: Long) = Action { implicit request =>
 
     val breadcrumbs = List(
       new Breadcrumb("Strona Główna", "/"),
@@ -43,7 +43,7 @@ object Posts extends Controller {
     }
   }
 
-  def insert = Action { implicit request =>
+  def insert = loggedIn { implicit request =>
     postForm bindFromRequest() fold ({ errors =>
       println(errors)
       BadRequest(views.html.editor(errors))
@@ -56,11 +56,11 @@ object Posts extends Controller {
       })
   }
 
-  def create = Action {
+  def create = loggedIn { implicit request =>
     Ok(views.html.editor(postForm))
   }
 
-  def edit(id: Long) = Action {
+  def edit(id: Long) = loggedIn { implicit request =>
     Db.query[Post].whereEqual("id", id).fetchOne match {
       case Some(post) => Ok(views.html.editor(postForm.fill(post)))
       case _ => NotFound(views.html.error("Nie odnaleziono posta"))

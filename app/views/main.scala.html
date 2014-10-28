@@ -1,4 +1,6 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit request: RequestHeader)
+
+@import views.Extensions._
 
 <!DOCTYPE html>
 
@@ -35,9 +37,24 @@
             <ul>
                 <li><a href="@routes.Pages.programs()">Programy</a></li>
                 <li><a href="@routes.Pages.about()">O mnie</a></li>
-                <li><a href="@routes.Posts.create()">Dodaj wpis</a></li>
+                @loggedIn {
+                    <li><a href="@routes.Login.logout()">Wyloguj</a></li>
+                }
+                @notLoggedIn {
+                    <li><a href="@routes.Login.login()">Zaloguj</a></li>
+                }
             </ul>
         </div>
+
+        @loggedIn {
+            <div class="box">
+                <div class="pure-menu pure-menu-open pure-menu-horizontal">
+                    <ul>
+                        <li><a href="@routes.Posts.create()">Dodaj wpis</a></li>
+                    </ul>
+                </div>
+            </div>
+        }
 
         <div class="main-container">
             @content

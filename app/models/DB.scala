@@ -6,7 +6,8 @@ object Db extends Instance(
   entities = Set(
     Entity[Post](),
     Entity[Tag](unique = Set() + Seq("name")),
-    Entity[TagUsage]()
+    Entity[TagUsage](),
+    Entity[Account](unique = Set() + Seq("name", "email"))
   ),
 //  url = "jdbc:postgresql://localhost/blog",
 //  user = "blog",
