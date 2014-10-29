@@ -2,6 +2,7 @@ package views
 
 import org.joda.time.{ReadableInstant, DateTime}
 import org.joda.time.format.DateTimeFormat
+import play.api.Play
 import play.api.mvc.{RequestHeader, Security, Request}
 import play.twirl.api.Html
 
@@ -10,6 +11,15 @@ object Extensions {
     def format(pattern: String): String = {
       val fmt = DateTimeFormat.forPattern(pattern)
       fmt.print(t)
+    }
+
+    def formatDateTime(): String = {
+      Play.current.configuration.getString("datetime.format") match {
+        case Some(pattern) =>
+          val fmt = DateTimeFormat.forPattern (pattern)
+          fmt.print (t)
+        case None => "Brak datetime.format w application.conf"
+      }
     }
   }
   implicit def convertToJodaTimeWrapper[T <: ReadableInstant](t:T) = new JodaTimeWrapper(t)

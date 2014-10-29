@@ -4,6 +4,7 @@ import models.{Db, Account}
 import play.api.data._
 import play.api.data.Forms._
 import play.api.mvc._
+import sorm.persisted.Persisted
 
 object Login extends Controller {
 

@@ -1,5 +1,6 @@
-@(post: Post, path: List[elements.Breadcrumb])(implicit request: RequestHeader)
+@(post: Post with sorm.Persisted, path: List[elements.Breadcrumb])(implicit request: RequestHeader)
 
+@import views.Extensions._
 @import eu.henkelmann.actuarius.ActuariusTransformer
 
 @defining(new ActuariusTransformer()) { transformer =>
@@ -8,7 +9,12 @@
         @parts.breadcrumbs(path)
 
         <div class="box">
-            <h1>@post.title</h1>
+            <h1>@post.title @post.date.formatDateTime</h1>
+            <div class="post-actons">
+                <ul>
+                    <li><a href="@routes.Posts.edit(post.id)">Edytuj</a></li>
+                </ul>
+            </div>
             <div class="post-content">
                 @Html(transformer.apply(post.content))
             </div>

@@ -14,15 +14,15 @@
     </style>
 
     <div class="box">
-        @helper.form(action = routes.Posts.insert(), 'class -> "pure-form pure-form-stacked") {
+        <form method="post" class="pure-form pure-form-stacked">
             @helper.inputText(postForm("title"), '_label -> "Tytuł", 'class -> "wide")
             @helper.inputText(postForm("tags"), '_label -> "Tagi", 'class -> "wide")
             @helper.textarea(postForm("short"), '_label -> "Skrót", 'class -> "wide")
             @helper.textarea(postForm("content"), '_label -> "Treść", 'class -> "wide content")
 
             <div class="right">
-                <input type="submit" value="Dodaj wpis" class="pure-button"/>
+                <input type="submit" value="Zapisz" class="pure-button"/>
             </div>
-        }
+        </form>
     </div>
 }

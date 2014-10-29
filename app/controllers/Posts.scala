@@ -7,6 +7,8 @@ import play.api.data._
 import play.api.data.Forms._
 import models._
 import security.Secured
+import sorm.Persisted
+import sorm.persisted.Persisted
 
 object Posts extends Controller with Secured {
 
@@ -45,15 +47,29 @@ object Posts extends Controller with Secured {
 
   def insert = loggedIn { implicit request =>
     postForm bindFromRequest() fold ({ errors =>
-      println(errors)
       BadRequest(views.html.editor(errors))
     },
       { post =>
         Db.transaction {
+          println(post)
           val savedPost = Db.save(post.copy(tags = post.tags.map(Db.saveByUniqueKeys(_))))
           Redirect(routes.Posts.view(savedPost.id))
         }
       })
+  }
+
+  def save(id: Long) = loggedIn { implicit request =>
+    postForm bindFromRequest() fold ({ errors =>
+      BadRequest(views.html.editor(errors))
+    }, { post =>
+      Db.transaction {
+        val originalPost = Db.fetchById[Post](id)
+        val updatedPost = originalPost.copyPost(post)
+        val tags = updatedPost.tags.map(Db.saveByUniqueKeys(_))
+        Db.save(updatedPost.copy(tags = tags, date = originalPost.date))
+        Redirect(routes.Posts.view(id))
+      }
+    })
   }
 
   def create = loggedIn { implicit request =>
