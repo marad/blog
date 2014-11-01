@@ -1,18 +1,18 @@
 package security
 
 import controllers.routes
-import models.Account
 import play.api.mvc._
 
 trait Secured {
 
   import Role._
+  import utils.MessageType._
 
   def username(request: RequestHeader) = request.session.get(Security.username)
 
   def onUnauthorized(request: RequestHeader) =
     Results.Redirect(routes.Application.index())
-      .flashing( "message" -> "Brak uprawnień do zasobu")
+      .flashing( ErrorMessage -> "Brak uprawnień do zasobu")
 
   def loggedIn(f : => Result) = {
     Security.Authenticated(username, onUnauthorized) { user =>
@@ -33,7 +33,6 @@ trait Secured {
   }
 
   def withPermission(test: String)(f: Request[AnyContent] => Result) = withUser { user => implicit request =>
-    println("TESTING: " + test)
     f(request)
   }
 

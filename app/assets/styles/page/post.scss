@@ -1,0 +1,31 @@
+@import '../variables';
+
+.date {
+    color: hsl(0, 0%, 50%);
+    font-size: 13px;
+    text-align: right;
+}
+
+.actions {
+    ul {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+        display: inline-block;
+
+        li {
+            display: inline-block;
+            margin-right: 5px;
+        }
+    }
+}
+
+.content {
+    text-align: justify;
+}
+
+.box {
+    margin-top: 0;
+    border-top: 0;
+    border-radius: 0 0 $borderRadius $borderRadius;
+}

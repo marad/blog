@@ -2,7 +2,10 @@ name := """blog2"""
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, net.litola.SassPlugin)
+  .settings(
+    sassOptions := Seq("--compass")
+  )
 
 scalaVersion := "2.10.4"
 

@@ -9,6 +9,8 @@ GET     /tags                       controllers.Application.listTags
 GET     /usage                      controllers.Application.tagsUsage
 GET     /error                      controllers.Application.error
 
+GET     /post/list                  controllers.Posts.listIndex
+GET     /post/list/:page            controllers.Posts.list(page: Int)
 GET     /post/create                controllers.Posts.create
 POST    /post/create                controllers.Posts.insert
 GET     /post/edit/:id              controllers.Posts.edit(id: Long)
@@ -24,6 +26,12 @@ GET     /auth/logout                controllers.Login.logout
 # Static Pages
 GET     /programs                   controllers.Pages.programs
 GET     /about                      controllers.Pages.about
+GET     /music                      controllers.Pages.music
+GET     /games                      controllers.Pages.games
+
+# Atom/Rss routes
+# GET     /rss                        controllers.Feed.getRss
+GET     /atom                       controllers.Feed.getAtom
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

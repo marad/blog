@@ -1,0 +1,7 @@
+@import '../variables';
+
+.box {
+    margin-top: 0;
+    border-top: 0;
+    border-radius: 0 0 $borderRadius $borderRadius;
+}

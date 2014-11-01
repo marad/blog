@@ -24,6 +24,7 @@ object Posts extends Controller with Secured {
       "short" -> nonEmptyText,
       "content" -> nonEmptyText,
       "date" -> ignored(new DateTime()),
+      "updated" -> ignored(new DateTime()),
       "tags" -> text.transform( { tags: String =>
         (tags split """\s*,\s*""" map { new Tag(_) }).toSeq
       }, { tags: Seq[Tag] =>
@@ -51,7 +52,6 @@ object Posts extends Controller with Secured {
     },
       { post =>
         Db.transaction {
-          println(post)
           val savedPost = Db.save(post.copy(tags = post.tags.map(Db.saveByUniqueKeys(_))))
           Redirect(routes.Posts.view(savedPost.id))
         }
@@ -66,7 +66,7 @@ object Posts extends Controller with Secured {
         val originalPost = Db.fetchById[Post](id)
         val updatedPost = originalPost.copyPost(post)
         val tags = updatedPost.tags.map(Db.saveByUniqueKeys(_))
-        Db.save(updatedPost.copy(tags = tags, date = originalPost.date))
+        Db.save(updatedPost.copy(tags = tags, date = originalPost.date, updated = new DateTime()))
         Redirect(routes.Posts.view(id))
       }
     })
@@ -82,5 +82,23 @@ object Posts extends Controller with Secured {
       case _ => NotFound(views.html.error("Nie odnaleziono posta"))
     }
   }
+
+  def list(page: Int) = Action { implicit request =>
+    val postsPerPage = 10
+    val maxPages = Math.ceil(Db.query[Post].count().toDouble / postsPerPage.toDouble).toInt - 1
+
+    if (page < 0 || page > maxPages) {
+      Redirect(routes.Posts.listIndex())
+    } else {
+      val posts = Db.query[Post]
+        .order("date", true)
+        .offset(postsPerPage * page)
+        .limit(postsPerPage)
+        .fetch
+      Ok(views.html.list(page, maxPages, posts))
+    }
+  }
+
+  def listIndex = list(0)
 
 }

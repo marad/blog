@@ -1,0 +1,37 @@
+@(page: Int, maxPages: Int, posts: Seq[Post with sorm.Persisted])(implicit request: RequestHeader, flash: Flash)
+
+@main("Wpisy", "list") {
+    <div class="strap">
+        <div>
+            <h1>Lista wpisów</h1>
+        </div>
+    </div>
+    @posts.map { post =>
+        <div class="box">
+            <div class="post-container">
+                <div class="post-title">
+                    <a href="@routes.Posts.view(post.id)">
+                        <h2>@post.title</h2>
+                    </a>
+                </div>
+                <div class="post-short">@post.short</div>
+            </div>
+        </div>
+    }
+
+    <div class="pure-g">
+        <div class="pure-u-5-24 left">
+            @if(page > 0) {
+                <a href="@routes.Posts.list(page-1)" class="pure-button">Nowsze wpisy</a>
+            }
+        </div>
+        <div class="pure-u-14-24 page-info center">
+            Strona @{page+1} z @{maxPages+1}
+        </div>
+        <div class="pure-u-5-24 right">
+            @if(page < maxPages) {
+                <a href="@routes.Posts.list(page+1)" class="pure-button">Starsze wpisy</a>
+            }
+        </div>
+    </div>
+}

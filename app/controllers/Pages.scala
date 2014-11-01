@@ -12,4 +12,11 @@ object Pages extends Controller {
     Ok(views.html.pages.about())
   }
 
+  def music = Action { implicit request =>
+    Ok(views.html.pages.music())
+  }
+
+  def games = Action { implicit request =>
+    Ok(views.html.pages.games())
+  }
 }

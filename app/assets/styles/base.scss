@@ -1,0 +1,122 @@
+@import 'mixins';
+@import 'compass';
+@import 'variables';
+
+* {
+    font-family: 'Open Sans', sans-serif;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    text-rendering: optimizeLegibility;
+}
+
+$pageMargin: 10px;
+.page-container > div, .strap > div  {
+    margin-left: $pageMargin;
+    margin-right: $pageMargin;
+    
+}
+
+.strap {
+    background-image: url("/assets/images/step1.jpg");
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+@media screen and (min-width: 768px) {
+    .page-container > div, .strap > div  {
+        margin-left: $pageMargin;
+        margin-right: $pageMargin;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    $pageMargin: 200px;
+    .page-container > div, .strap > div  {
+        margin-left: $pageMargin;
+        margin-right: $pageMargin;
+    }
+}
+
+@media screen and (min-width: 1600px) {
+    $pageMargin: 400px;
+    .page-container > div, .strap > div  {
+        margin-left: $pageMargin;
+        margin-right: $pageMargin;
+    }
+
+}
+
+.page-container > .strap {
+    margin-left: 0;
+    margin-right: 0;
+    color: white;
+}
+
+$successColor: hsl(130, 60%, 80%);
+$warningColor: hsl(60, 85%, 80%);
+$errorColor: hsl(0, 60%, 80%);
+
+@import 'theme';
+
+.message {
+    @include border-radius($smallBorderRadius);
+    padding: 10px;
+    border: 1px solid black;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+@mixin message-colors($baseColor) {
+    background-color: $baseColor;
+    border-color: darken($baseColor, 30%);
+    color: darken($baseColor, 50%);
+}
+
+.success-message {
+    @extend .message;
+    @include message-colors($successColor);
+}
+
+.warning-message {
+    @extend .message;
+    @include message-colors($warningColor);
+}
+
+.error-message {
+    @extend .message;
+    @include message-colors($errorColor);
+}
+
+.box {
+    @include border-radius($borderRadius);
+    @include background-image(linear-gradient(hsl(0, 0%, 95%), hsl(0, 0%, 100%)));
+
+    border: 1px solid hsl(0, 0%, 80%);
+    padding: 15px;
+    margin: 5px 5px 0px 5px;
+
+    h1 {
+        margin-top: 0;
+    }
+}
+
+.footer {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+    font-size: 12px;
+    color: hsl(0, 0%, 60%);
+}
+
+.center {
+    text-align: center;
+}
+
+.left {
+    text-align: left;
+}
+
+.right {
+    text-align: right;
+}

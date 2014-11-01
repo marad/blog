@@ -1,0 +1,43 @@
+.strap {
+    background-image: url("/assets/images/step1.jpg");
+}
+
+.main-post {
+    $mainPostHeight: 400px;
+    min-height: $mainPostHeight;
+    color: white;
+    padding-top: 30px;
+    padding-bottom: 30px;
+
+    .wrapper {
+        min-height: $mainPostHeight;
+        vertical-align: middle;
+        display: table-cell;
+    }
+
+    h2.title {
+        margin-top: 0;
+
+        font-size: 50px;
+
+        a {
+            color: white;
+        }
+    }
+
+    .content {
+        font-size: 20px;
+        text-align: justify;
+
+        a {
+            color: hsl(0, 70%, 80%);
+        }
+    }
+}
+
+.secondary-post {
+    h3.title {
+        font-size: 20px;
+        margin-top: 0px;
+    }
+}

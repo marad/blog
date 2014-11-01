@@ -1,5 +1,44 @@
-@()(implicit request: RequestHeader)
+@()(implicit request: RequestHeader, flash: Flash)
 
 @page("O mnie") {
-    To jest strona o mnie :)
+    <div>
+        <h3>Kontakt do mnie</h3>
+        <div>
+            moriturius(małpka)gmail.com
+        </div>
+
+        <h3>Zainteresowania</h3>
+        <div>
+            Można by długo wymieniać co wzbudza we mnie jakikolwiek 'dreszczyk' emocji, ale wymienię tylko
+            te 2 rzeczy, które w zdecydowanej większości pochłaniają mój wolny czas.
+            <ul>
+                <li>
+                    <em>programowanie</em> - Zajmuję się programowaniem od 2. klasy gimnazujm. Zacząłem swoją
+                    przygodę od programowania w języku C++ więc do niego mam największy sentyment.
+                </li>
+                <li>
+                    <em>gra na gitarze</em> - Gitarą interesuję się jeszcze dłużej niż programowaniem. Od
+                    moich najmłodszych lat podziwiałem gitarzystów w TV. Prawdziwym graniem (czyt. kiedy
+                    zacząłem pobierać lekcje gry) zacząłem zajmować się dopiero około roku 2000. Dzięki
+                    temu poznałem masę fajnych ludzi, a kilku udało mi się zwebrować do świata muzyki.
+                    Jeden z nich został nawet profesjonalnym basistą - można to uznać za pewne osiągnięcie :)
+                </li>
+            </ul>
+        </div>
+
+        <h3>Języki programowania/skryptowe/itp., które znam</h3>
+        <div>
+           <ul>
+               <li>Java</li>
+               <li>C/C++</li>
+               <li>SQL</li>
+               <li>HTML</li>
+               <li>CSS</li>
+               <li>JavaScript</li>
+               <li>Scala - ten blog napisany jest w Scali :)</li>
+               <li>Assembler</li>
+               <li>PHP i Pascal - brzydkie kaczątka, ale też je znam</li>
+           </ul>
+        </div>
+    </div>
 }

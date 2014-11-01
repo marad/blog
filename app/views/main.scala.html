@@ -1,4 +1,4 @@
-@(title: String)(content: Html)(implicit request: RequestHeader)
+@(title: String, pageCssToLoad: String = "")(content: Html)(implicit request: RequestHeader, flash: Flash)
 
 @import views.Extensions._
 
@@ -7,6 +7,10 @@
 <html class="">
     <head>
         <title>@title - Moriturius Devlog</title>
+
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
 
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,300,600' rel='stylesheet' type='text/css'>
 
@@ -23,41 +27,71 @@
         <link rel="stylesheet" href="@routes.Assets.at("pure-0.5.0/menus.css")">
 
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/my-pure-scheme.css")">
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("styles/base.css")">
+
+        @if(!pageCssToLoad.isEmpty()) {
+            <link rel="stylesheet" media="screen" href="@routes.Assets.at("styles/page/" + pageCssToLoad + ".css")">
+        }
 
         <script src="@routes.Assets.at("javascripts/jquery-1.11.1.min.js")" type="text/javascript"></script>
         <!--<script src="@routes.Assets.at("html-kickstart/js/kickstart.js")" type="text/javascript"></script>-->
         <script src="@routes.Assets.at("javascripts/hello.js")" type="text/javascript"></script>
     </head>
     <body>
-        <div class="pure-menu pure-menu-open pure-menu-horizontal">
-            <a href="/" class="pure-menu-heading">
-                <img src="@routes.Assets.at("images/logo.png")" />
-            </a>
-            <ul>
-                <li><a href="@routes.Pages.programs()">Programy</a></li>
-                <li><a href="@routes.Pages.about()">O mnie</a></li>
-                @loggedIn {
-                    <li><a href="@routes.Login.logout()">Wyloguj</a></li>
-                }
-                @notLoggedIn {
-                    <li><a href="@routes.Login.login()">Zaloguj</a></li>
-                }
-            </ul>
-        </div>
+        <div class="page-container">
+            <div>
+                <div class="pure-menu pure-menu-open pure-menu-horizontal">
+                    <a href="/" class="pure-menu-heading">
+                        <img src="@routes.Assets.at("images/logo.png")" />
+                    </a>
+                    <ul>
+                        <li><a href="@routes.Pages.about()">O mnie</a></li>
+                        <li><a href="@routes.Pages.music()">Muzyka</a></li>
+                        <li><a href="@routes.Pages.programs()">Programy</a></li>
+                        <li><a href="@routes.Pages.games()">Gry</a></li>
+                        @loggedIn {
+                            <li><a href="@routes.Login.logout()">Wyloguj</a></li>
+                        }
+                        @notLoggedIn {
+                            <li><a href="@routes.Login.login()">Zaloguj</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
 
-        @loggedIn {
-            <div class="box">
+            @loggedIn {
                 <div class="pure-menu pure-menu-open pure-menu-horizontal">
                     <ul>
                         <li><a href="@routes.Posts.create()">Dodaj wpis</a></li>
                     </ul>
                 </div>
-            </div>
-        }
+            }
 
-        <div class="main-container">
+            @flash.get("success-message").map { message =>
+                <div class="success-message">
+                    @message
+                </div>
+            }
+
+            @flash.get("warning-message").map { message =>
+                <div class="warning-message">
+                    @message
+                </div>
+            }
+
+            @flash.get("error-message").map { message =>
+                <div class="error-message">
+                    @message
+                </div>
+            }
+
             @content
-        </div>
+
+            <div class="footer">
+                Designed and developed by Marcin Radoszewski.
+                Powered by <a href="https://www.playframework.com/" target="about:blank">Play Framework</a>.
+            </div>
+      </div>
+
     </body>
 </html>

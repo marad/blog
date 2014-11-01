@@ -1,0 +1,14 @@
+
+a {
+    //color: #d40000;
+    color: hsl(200, 40%, 40%);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.pure-menu a:hover {
+    text-decoration: none;
+}

@@ -1,78 +1,73 @@
-@(posts: List[Post with sorm.Persisted])(implicit request: RequestHeader)
+@(posts: List[Post with sorm.Persisted])(implicit request: RequestHeader, flash: Flash)
 
 @import views.Extensions._
-@import eu.henkelmann.actuarius.ActuariusTransformer
-
-@transformer = @{ new ActuariusTransformer() }
 
 @mainPost(post: Post with sorm.Persisted) = {
-    <div class="post-container pure-u-24-24">
-        <div class="post main-post">
+    <div class="main-post">
+        <div class="wrapper">
             <h2 class="title">
-                <a href="@routes.Posts.view(post.id)" class="story-link">
+                <a href="@routes.Posts.view(post.id)">
                     @post.title
                 </a>
             </h2>
-            <div class="post-content">
-                @Html(transformer.apply(post.content))
+            <div class="content">
+                @post.short.markupToHtml
+                <span style="display: inline-block">
+                    <a href="@routes.Posts.view(post.id)">
+                        Czytaj dalej &raquo;
+                    </a>
+                </span>
             </div>
         </div>
     </div>
 }
 
 @secondRowPost(post: Post with sorm.Persisted) = {
-    <div class="post-container pure-u-24-24 pure-u-lg-12-24">
-        <a href="@routes.Posts.view(post.id)" class="story-link">
-            <div class="post">
+    <div class="pure-u-24-24 pure-u-lg-12-24">
+        <div class="box secondary-post">
+            <div class="wrapper">
                 <h3 class="title">
-                    @post.title
+                    <a href="@routes.Posts.view(post.id)" class="story-link">
+                        @post.title
+                    </a>
                 </h3>
-                <div class="post-content">
-                    @Html(transformer.apply(post.content))
+                <div class="content">
+                    @post.short.markupToHtml
+
+                    <a href="@routes.Posts.view(post.id)">
+                        Czytaj dalej &raquo;
+                    </a>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
 }
 
-@thirdRowPost(post: Post with sorm.Persisted) = {
-    <div class="post-container pure-u-24-24 pure-u-lg-8-24">
-        <a href="@routes.Posts.view(post.id)" class="story-link">
-            <div class="post">
-                <h3 class="title">
-                    @post.title
-                </h3>
-                <div class="post-content">
-                    @Html(transformer.apply(post.content))
-                </div>
-            </div>
-        </a>
-    </div>
-}
+@main("Blog", "index") {
 
-@main("Blog") {
+    @if(posts.size == 0) {
+        <div class="box center">
+            Na razie nie ma żadnych postów. Wróć za jakiś czas!
+        </div>
+    } else {
+      <div class="strap">
+          @posts.lift(0).map @{ mainPost }
+      </div>
+    }
 
     <div class="pure-g">
-        @if(posts.size == 0) {
-            <div class="box center pure-u-24-24">
-                Na razie nie ma żadnych postów. Wróć za jakiś czas!
-            </div>
-        }
-
-        @posts.lift(0).map @{ mainPost }
 
         @posts.lift(1).map @{ secondRowPost }
         @posts.lift(2).map @{ secondRowPost }
 
-        @posts.lift(3).map @{ thirdRowPost }
-        @posts.lift(4).map @{ thirdRowPost }
-        @posts.lift(5).map @{ thirdRowPost }
+        @posts.lift(3).map @{ secondRowPost }
+        @posts.lift(4).map @{ secondRowPost }
 
-        @if(posts.size >= 6) {
+        @if(posts.size >= 5) {
             <div class="post-container pure-u-24-24">
                 <div class="post center">
-                    <a href="#">
-                        Pokaż więcej postów...
+                    <a href="@routes.Posts.listIndex()">
+                        Pokaż więcej wpisów &raquo;
                     </a>
                 </div>
             </div>
