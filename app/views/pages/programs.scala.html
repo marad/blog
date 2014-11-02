@@ -1,7 +1,15 @@
 @()(implicit request: RequestHeader, flash: Flash)
 
 @page("Programy") {
-    <div>
+    <style>
+      .programs-content img {
+        max-width: 200px;
+        max-height: 100px;
+        float: left;
+        margin: 5px;
+      }
+    </style>
+    <div class="programs-content">
         <p>
             Przez długie lata kodowania udało mi się stworzyć wiele programów. Niestety większość
             albo nie została skończona, albo nie została dopracowana na tyle, żeby pokazać je światu.
@@ -10,24 +18,32 @@
         </p>
 
         <h3>Windows Manifest Utility</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/wmu.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/wmu.png" data-lightbox="image-2" data-title="Windows Manifest Utility">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/wmu.png" />
+        </a>
         <div>
             Niewielki program do tworzenia manifestów i wrzucania do plików wykonywalnych w Windows.
             Programy z Borland C++ Builder niestety miały wygląd znany z Windows 98 i to narzędzie
             potrafi to naprawić.
         </div>
+        <div class="clear"></div>
 
         <h3>Sprite Editor</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/spriteeditor.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/spriteeditor.png" data-lightbox="image-2" data-title="Sprite Editor">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/spriteeditor.png"/>
+        </a>
         <div>
             Program, do tworzenia sprajtów (grafik 2D do wykorzystywania w grach). Potrafi obsługiwać
             warstwy, przezroczystość oraz duże powiększenie. W zasadzie jest to nieco ulepszony Paint :)
             Niestety w związku z moim brakiem doświadczenia w pracy z grafiką rastrową na tamten czas
             wydajność pozostawia wiele do życzenia.
         </div>
+        <div class="clear"></div>
 
         <h3>UO Macro</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/uomacro.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/uomacro.png" data-lightbox="image-2" data-title="UO Macro">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/uomacro.png"/>
+        </a>
         <div>
             <p>
                 To jest przykład mojej radosnej twórczości umotywowanej lenistwem. Dawno temu spędziłem wiele
@@ -48,9 +64,12 @@
                 troszeczkę fuzję Assemblera z PHP :)
             </p>
         </div>
+        <div class="clear"></div>
 
         <h3>Planner 8LO</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/planer.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/planer.png" data-lightbox="image-2" data-title="Planner 8LO">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/planer.png"/>
+        </a>
         <div>
             <p>
                 Link do pobrania: <a href="http://www.mediafire.com/?5p1au4k9jmr">Planer 8LO</a>
@@ -62,9 +81,12 @@
                 który potrafił pobrać listę klas z serwera oraz wyświetlić plan zajęć dla jednej wybranej.
             </p>
         </div>
+        <div class="clear"></div>
 
         <h3>OGame Transporter</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/ogtransport.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/ogtransport.png" data-lightbox="image-2" data-title="OGame Transporter">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/ogtransport.png"/>
+        </a>
         <div>
             <p>
                 Link do pobrania: <a href="http://www.mediafire.com/?9ojow1yma3f">OGame Transporter</a>
@@ -92,16 +114,21 @@
         </div>
 
         <h3>Dir Lister</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/dirlister.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/dirlister.png" data-lightbox="image-2" data-title="Dir Lister">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/dirlister.png"/>
+        </a>
         <div>
             <p>
                 Wyświetla listę plików oraz katalogów. Istnieje możliwość zdefiniowania rozszerzeń
                 plików jakie mają być wyświetlane. Po prostu kiedyś czegoś takiego potrzebowałem :)
             </p>
         </div>
+        <div class="clear"></div>
 
         <h3>Coff2Omf</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/coff2omf.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/coff2omf.png" data-lightbox="image-2" data-title="Coff2Omf">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/coff2omf.png"/>
+        </a>
         <div>
             <p>
                 Kolejne dziecko mojego lenistwa - słuzy do masowego konwertowania plików COFF do OMF
@@ -115,7 +142,9 @@
         </div>
 
         <h3>Numerologia</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/numerologia.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/numerologia.png" data-lightbox="image-2" data-title="Numerologia">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/numerologia.png"/>
+        </a>
         <div>
             <p>
                 Link do pobrania: <a href="http://www.mediafire.com/?81jglsbxs2t">Numerologia</a>
@@ -133,7 +162,9 @@
         </div>
 
         <h3>Color Palette</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/colorpalette.png"/>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/colorpalette.png" data-lightbox="image-2" data-title="">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/colorpalette.png"/>
+        </a>
         <div>
             <p>
                 Link do pobrania: <a href="http://www.mediafire.com/?7gzmmfjz8sg">Color Palette</a>
@@ -143,5 +174,6 @@
                 ze Sprite Editorem widocznym gdzieś powyżej :)
             </p>
         </div>
+        <div class="clear"></div>
     </div>
 }

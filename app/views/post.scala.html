@@ -21,8 +21,14 @@
                 }
             </div>
             <div class="pure-u-8-24 date">
-                Opublikowano @post.date.format("dd.MM.yyyy")
-                o godzinie @post.date.format("HH:mm")
+                <div>
+                    Opublikowano @post.date.format("dd.MM.yyyy")
+                    o godzinie @post.date.format("HH:mm")
+                </div>
+                <div>
+                    Ostatnia aktualizacja @post.updated.format("dd.MM.yyyy")
+                    o godzinie @post.updated.format("HH:mm")
+                </div>
             </div>
         </div>
         <div class="content">

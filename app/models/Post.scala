@@ -5,8 +5,6 @@ import play.api.libs.json.Json
 import sorm.Persisted
 
 case class Post(title: String, short: String, content: String, date: DateTime, updated: DateTime, tags: Seq[Tag]) {
-  def tagsJoined = tags.map({ _.name }).fold(""){ (l: String, r: String) => r + ", " + l }
-
   def copyPost(p: Post): Post =
     this.copy(
       title = p.title,

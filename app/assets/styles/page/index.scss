@@ -3,17 +3,9 @@
 }
 
 .main-post {
-    $mainPostHeight: 400px;
-    min-height: $mainPostHeight;
     color: white;
     padding-top: 30px;
     padding-bottom: 30px;
-
-    .wrapper {
-        min-height: $mainPostHeight;
-        vertical-align: middle;
-        display: table-cell;
-    }
 
     h2.title {
         margin-top: 0;

@@ -28,7 +28,7 @@ object Posts extends Controller with Secured {
       "tags" -> text.transform( { tags: String =>
         (tags split """\s*,\s*""" map { new Tag(_) }).toSeq
       }, { tags: Seq[Tag] =>
-        tags map { _.name } reduce { (a:String, b:String) => a + b }
+        tags.map({ _.name }).reduce{ (l: String, r:String) => l + ", " + r }
       })
     )(Post.apply)(Post.unapply)
   }

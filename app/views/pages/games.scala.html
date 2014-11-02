@@ -1,14 +1,24 @@
 @()(implicit request: RequestHeader, flash: Flash)
 
 @page("Gry") {
-    <div>
+    <style>
+      .games-content img {
+        max-width: 200px;
+        max-height: 100px;
+        float: left;
+        margin: 5px;
+      }
+    </style>
+    <div class="games-content">
         <p>
             Gier w życiu zacząłem bardzo wiele, do stanu grywalności doprowadziłem garstkę, a te które
             skończyłem można policzyć na palcach jednej ręki cieśli.
         </p>
 
-        <h3>Monney Soccer</h3>
-        <img src="http://i11.photobucket.com/albums/a192/doszes/money.png"/>
+        <h3>Money Soccer</h3>
+        <a href="http://i11.photobucket.com/albums/a192/doszes/money.png" data-lightbox="image-2" data-title="Money Soccer">
+          <img src="http://i11.photobucket.com/albums/a192/doszes/money.png"/>
+        </a>
         <div>
             <p>
                 Zainspirowany grą, w którą graliśmy na ławkach na języku angielskim z kolegami stworzyłem
@@ -23,6 +33,7 @@
                 w Borland C++ Builder (jak prawie wszystkie moje projekty z czasów licealnych :) )
             </p>
         </div>
+        <div class="clear"></div>
 
         <h3>Pong</h3>
         <div>
@@ -35,6 +46,8 @@
                 ale niestety nie mam już raczej dostępu ani do gry ani do jej kodu :c
             </p>
         </div>
+        <div class="clear"></div>
+
     </div>
 }
 
