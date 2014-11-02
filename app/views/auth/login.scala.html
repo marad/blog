@@ -7,7 +7,7 @@
                 <div class="message">@error.message</div>
             }
         </div>
-        @helper.form(action = routes.Login.login(), 'class -> "pure-form pure-form-stacked") {
+        @helper.form(action = routes.Auth.login(), 'class -> "pure-form pure-form-stacked") {
             @helper.inputText(loginForm("name"), '_label -> "Login")
             @helper.inputPassword(loginForm("password"), '_label -> "Hasło")
 

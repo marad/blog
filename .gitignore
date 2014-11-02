@@ -16,3 +16,6 @@ dist
 *.log
 test.db*
 .sass-cache/
+*.swp
+.sw*
+

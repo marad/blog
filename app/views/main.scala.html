@@ -50,10 +50,10 @@
                         <li><a href="@routes.Pages.programs()">Programy</a></li>
                         <li><a href="@routes.Pages.games()">Gry</a></li>
                         @loggedIn {
-                            <li><a href="@routes.Login.logout()">Wyloguj</a></li>
+                            <li><a href="@routes.Auth.logout()">Wyloguj</a></li>
                         }
                         @notLoggedIn {
-                            <li><a href="@routes.Login.login()">Zaloguj</a></li>
+                            <li><a href="@routes.Auth.login()">Zaloguj</a></li>
                         }
                     </ul>
                 </div>

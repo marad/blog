@@ -6,7 +6,7 @@ import play.api.data.Forms._
 import play.api.mvc._
 import sorm.persisted.Persisted
 
-object Login extends Controller {
+object Auth extends Controller {
 
   val loginForm: Form[Account] = Form {
     mapping(

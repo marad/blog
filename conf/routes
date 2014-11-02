@@ -19,9 +19,9 @@ GET     /post/view/:id              controllers.Posts.view(id: Long)
 
 
 # Authentication
-GET     /auth/login                 controllers.Login.viewLoginForm
-POST    /auth/login                 controllers.Login.login
-GET     /auth/logout                controllers.Login.logout
+GET     /auth/login                 controllers.Auth.viewLoginForm
+POST    /auth/login                 controllers.Auth.login
+GET     /auth/logout                controllers.Auth.logout
 
 # Static Pages
 GET     /programs                   controllers.Pages.programs
