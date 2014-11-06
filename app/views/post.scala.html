@@ -17,6 +17,7 @@
                 @loggedIn {
                     <ul>
                         <li><a href="@routes.Posts.edit(post.id)">Edytuj</a></li>
+                        <li><a href="@routes.Posts.delete(post.id)" onclick="return confirm('Na pewno chcesz usunąć ten post?')">Usuń</a></li>
                     </ul>
                 }
             </div>
@@ -25,10 +26,12 @@
                     Opublikowano @post.date.format("dd.MM.yyyy")
                     o godzinie @post.date.format("HH:mm")
                 </div>
-                <div>
-                    Ostatnia aktualizacja @post.updated.format("dd.MM.yyyy")
-                    o godzinie @post.updated.format("HH:mm")
-                </div>
+                @if(post.date != post.updated) {
+                    <div>
+                        Ostatnia aktualizacja @post.updated.format("dd.MM.yyyy")
+                        o godzinie @post.updated.format("HH:mm")
+                    </div>
+                }
             </div>
         </div>
         <div class="content">

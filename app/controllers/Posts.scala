@@ -12,6 +12,8 @@ import sorm.persisted.Persisted
 
 object Posts extends Controller with Secured {
 
+  import utils.MessageType._
+
   val tagForm: Form[Tag] = Form {
     mapping(
       "name" -> nonEmptyText
@@ -79,6 +81,16 @@ object Posts extends Controller with Secured {
   def edit(id: Long) = loggedIn { implicit request =>
     Db.query[Post].whereEqual("id", id).fetchOne match {
       case Some(post) => Ok(views.html.editor(postForm.fill(post)))
+      case _ => NotFound(views.html.error("Nie odnaleziono posta"))
+    }
+  }
+
+  def delete(id: Long) = loggedIn { implicit request =>
+    Db.query[Post].whereEqual("id", id).fetchOne match {
+      case Some(post) => 
+        Db.delete[Post](post)
+        Redirect(routes.Application.index())
+          .flashing( SuccessMessage -> s"Usunięto post $id")
       case _ => NotFound(views.html.error("Nie odnaleziono posta"))
     }
   }

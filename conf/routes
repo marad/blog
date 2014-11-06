@@ -16,6 +16,7 @@ POST    /post/create                controllers.Posts.insert
 GET     /post/edit/:id              controllers.Posts.edit(id: Long)
 POST    /post/edit/:id              controllers.Posts.save(id: Long)
 GET     /post/view/:id              controllers.Posts.view(id: Long)
+GET     /post/delete/:id            controllers.Posts.delete(id: Long)
 
 
 # Authentication

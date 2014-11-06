@@ -12,3 +12,32 @@ a:hover {
 .pure-menu a:hover {
     text-decoration: none;
 }
+
+input[type=text], input[type=password], input[type=number], textarea {
+  -webkit-transition: all 0.30s ease-in-out;
+  -moz-transition: all 0.30s ease-in-out;
+  -ms-transition: all 0.30s ease-in-out;
+  -o-transition: all 0.30s ease-in-out;
+  outline: none;
+  border: 1px solid #DDDDDD;
+}
+
+input[type=text]:focus, input[type=password], input[type=number], textarea:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+
+#searchbox {
+  width: 100px;
+}
+
+#searchbox:focus {
+  width: 180px;
+}
+
+#searchbox, #searchbox:focus {
+  border-radius: 14px/50%;
+  padding: 8px 14px;
+  float: right;
+  margin-top: 30px;
+}
