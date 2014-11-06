@@ -1,6 +1,5 @@
-@import 'mixins';
-@import 'compass';
-@import 'variables';
+@import 'mixins.less';
+@import 'variables.less';
 
 * {
     font-family: 'Open Sans', sans-serif;
@@ -10,10 +9,10 @@
     text-rendering: optimizeLegibility;
 }
 
-$pageMargin: 10px;
+@pageMargin: 10px;
 .page-container > div, .strap > div  {
-    margin-left: $pageMargin;
-    margin-right: $pageMargin;
+    margin-left: @pageMargin;
+    margin-right: @pageMargin;
     
 }
 
@@ -25,24 +24,24 @@ $pageMargin: 10px;
 
 @media screen and (min-width: 768px) {
     .page-container > div, .strap > div  {
-        margin-left: $pageMargin;
-        margin-right: $pageMargin;
+        margin-left: @pageMargin;
+        margin-right: @pageMargin;
     }
 }
 
 @media screen and (min-width: 1280px) {
-    $pageMargin: 200px;
+    @pageMargin: 200px;
     .page-container > div, .strap > div  {
-        margin-left: $pageMargin;
-        margin-right: $pageMargin;
+        margin-left: @pageMargin;
+        margin-right: @pageMargin;
     }
 }
 
 @media screen and (min-width: 1600px) {
-    $pageMargin: 400px;
+    @pageMargin: 400px;
     .page-container > div, .strap > div  {
-        margin-left: $pageMargin;
-        margin-right: $pageMargin;
+        margin-left: @pageMargin;
+        margin-right: @pageMargin;
     }
 
 }
@@ -53,44 +52,44 @@ $pageMargin: 10px;
     color: white;
 }
 
-$successColor: hsl(130, 60%, 80%);
-$warningColor: hsl(60, 85%, 80%);
-$errorColor: hsl(0, 60%, 80%);
+@successColor: hsl(130, 60%, 80%);
+@warningColor: hsl(60, 85%, 80%);
+@errorColor: hsl(0, 60%, 80%);
 
-@import 'theme';
+@import 'theme.less';
 
 .message {
-    @include border-radius($smallBorderRadius);
+    .border-radius(@smallBorderRadius);
     padding: 10px;
     border: 1px solid black;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-@mixin message-colors($baseColor) {
-    background-color: $baseColor;
-    border-color: darken($baseColor, 30%);
-    color: darken($baseColor, 50%);
+.message-colors(@baseColor) {
+    background-color: @baseColor;
+    border-color: darken(@baseColor, 30%);
+    color: darken(@baseColor, 50%);
 }
 
 .success-message {
-    @extend .message;
-    @include message-colors($successColor);
+    .message;
+    .message-colors(@successColor);
 }
 
 .warning-message {
-    @extend .message;
-    @include message-colors($warningColor);
+    .message;
+    .message-colors(@warningColor);
 }
 
 .error-message {
-    @extend .message;
-    @include message-colors($errorColor);
+    .message;
+    .message-colors(@errorColor);
 }
 
 .box {
-    @include border-radius($borderRadius);
-    @include background-image(linear-gradient(hsl(0, 0%, 95%), hsl(0, 0%, 100%)));
+    .border-radius(@borderRadius);
+    .gradient(top, hsl(0, 0%, 95%), hsl(0, 0%, 100%));
 
     border: 1px solid hsl(0, 0%, 80%);
     padding: 15px;
