@@ -7,7 +7,6 @@ object Db extends Instance(
   entities = Set(
     Entity[Post](),
     Entity[Tag](unique = Set() + Seq("name")),
-    Entity[TagUsage](),
     Entity[Account](unique = Set() + Seq("name", "email"))
   ),
   url = 
