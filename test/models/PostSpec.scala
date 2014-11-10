@@ -15,14 +15,10 @@ import model.Tag
 @RunWith(classOf[JUnitRunner])
 class PostSpec extends Specification {
   "Post" should {
-    "properly format tags" in {
-      val tags = List(
-          Tag("tag1"),
-          Tag("tag2")
-        )
+    "copy post object" in {
       val p = Post("some title", "short", "content", new DateTime(), new DateTime(), tags)
-
-      p.tagsJoined must equalTo("tag1, tag2")
+      val copy = p.copyPost(p)
+      copy must equalTo(p)
     }
   }
 }

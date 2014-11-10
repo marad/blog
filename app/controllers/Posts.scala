@@ -1,14 +1,24 @@
 package controllers
 
+import models._
+import config.Config
+import security.Secured
 import elements.Breadcrumb
+import viewmodel.CalendarEvent
+
 import org.joda.time.DateTime
+import org.joda.time.LocalDate
+import org.joda.time.format.DateTimeFormat
+
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
-import models._
-import security.Secured
+import play.api.libs.json.Json
+
 import sorm.Persisted
 import sorm.persisted.Persisted
+import sorm.Querier
+
 
 object Posts extends Controller with Secured {
 
@@ -66,7 +76,7 @@ object Posts extends Controller with Secured {
     }, { post =>
       Db.transaction {
         val originalPost = Db.fetchById[Post](id)
-        val updatedPost = originalPost.copyPost(post)
+        val updatedPost = Persisted(post, id)
         val tags = updatedPost.tags.map(Db.saveByUniqueKeys(_))
         Db.save(updatedPost.copy(tags = tags, date = originalPost.date, updated = new DateTime()))
         Redirect(routes.Posts.view(id))
@@ -95,12 +105,18 @@ object Posts extends Controller with Secured {
     }
   }
 
+  def countMaxPages(query: Querier[Post]) = 
+    Math.ceil(query.count().toDouble / Config.postsPerPage.toDouble).toInt - 1
+
+  def listIndex = list(0)
   def list(page: Int) = Action { implicit request =>
-    val postsPerPage = 10
-    val maxPages = Math.ceil(Db.query[Post].count().toDouble / postsPerPage.toDouble).toInt - 1
+    val postsPerPage = Config.postsPerPage
+    //val maxPages = Math.ceil(Db.query[Post].count().toDouble / postsPerPage.toDouble).toInt - 1
+    val maxPages = countMaxPages(Db.query[Post])
 
     if (page < 0 || page > maxPages) {
       Redirect(routes.Posts.listIndex())
+        .flashing( ErrorMessage -> "Niepoprawna strona")
     } else {
       val posts = Db.query[Post]
         .order("date", true)
@@ -111,6 +127,55 @@ object Posts extends Controller with Secured {
     }
   }
 
-  def listIndex = list(0)
+
+  def search(page: Int = 0, phrase: String) = Action { implicit request =>
+
+    import sorm.Dsl._
+
+    val criteria = phrase.split("\\s+")
+    val query: Querier[Post] = criteria.foldLeft(Db.query[Post]) { (qr: Querier[Post], s: String) =>
+      qr.where(
+        ( ("title"   like s"%$s%" ) or
+          ("short"   like s"%$s%" ) or
+          ("content" like s"%$s%" ) )
+      )
+
+    }
+
+    val maxPages = countMaxPages(query)
+
+    val posts = query
+      .order("date", true)
+      .offset(Config.postsPerPage * page)
+      .limit(Config.postsPerPage)
+      .fetch
+    Ok(views.html.list(page, maxPages, posts))
+  }
+
+  def listForTag(tag: String) = Action { implicit request =>
+
+  }
+
+  def calendar = Action { implicit request => 
+    Ok(views.html.calendar())
+  }
+
+  def calendarData(startOpt: Option[String], endOpt: Option[String]) = Action { implicit request =>
+    (startOpt, endOpt) match {
+      case (Some(start), Some(end)) =>
+        val format = DateTimeFormat.forPattern("yyyy-MM-dd")
+        val startDate = LocalDate.parse(start, format)
+        val endDate = LocalDate.parse(end, format)
+        val posts = Db.query[Post]
+          .whereLargerOrEqual("date", startDate)
+          .whereSmallerOrEqual("date", endDate)
+          .fetch
+        val events = posts.map(CalendarEvent.fromPost)
+
+        Ok(Json.toJson(events))
+      case _ => Ok(Json.parse("[]"))
+    }
+  }
 
 }
+

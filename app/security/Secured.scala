@@ -37,7 +37,6 @@ trait Secured {
   }
 
   def withRole(r: Role)(f: Request[AnyContent] => Result) = withUser { user => implicit request =>
-    println("USER: " + user)
     if (r == Role.Admin) {
       f(request)
     } else {
