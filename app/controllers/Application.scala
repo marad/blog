@@ -12,7 +12,7 @@ import security.Secured
 import scala.concurrent.Future
 
 
-object Application extends Controller with Secured {
+class Application extends Controller with Secured {
 
   def index = Action { implicit request =>
     Ok(views.html.index(Db.query[Post].limit(5).order("date", true).fetch.toList))

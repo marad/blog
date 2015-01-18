@@ -1,5 +1,6 @@
 package controllers
 
+import database.slick.Db
 import models._
 import config.Config
 import security.Secured
@@ -20,18 +21,21 @@ import sorm.persisted.Persisted
 import sorm.Querier
 
 
-object Posts extends Controller with Secured {
+
+class Posts(val db: Db) extends Controller with Secured {
 
   import utils.MessageType._
 
   val tagForm: Form[Tag] = Form {
     mapping(
+//      "id" -> ignored(None:Option[Long]),
       "name" -> nonEmptyText
     )(Tag.apply)(Tag.unapply)
   }
 
   val postForm: Form[Post] = Form {
     mapping(
+//      "id" -> ignored(None:Option[Long]),
       "title" -> nonEmptyText,
       "short" -> nonEmptyText,
       "content" -> nonEmptyText,
@@ -105,13 +109,12 @@ object Posts extends Controller with Secured {
     }
   }
 
-  def countMaxPages(query: Querier[Post]) = 
+  def countMaxPages(query: Querier[Post]) =
     Math.ceil(query.count().toDouble / Config.postsPerPage.toDouble).toInt - 1
 
   def listIndex = list(0)
   def list(page: Int) = Action { implicit request =>
     val postsPerPage = Config.postsPerPage
-    //val maxPages = Math.ceil(Db.query[Post].count().toDouble / postsPerPage.toDouble).toInt - 1
     val maxPages = countMaxPages(Db.query[Post])
 
     if (page < 0 || page > maxPages) {
@@ -152,11 +155,7 @@ object Posts extends Controller with Secured {
     Ok(views.html.list(page, maxPages, posts))
   }
 
-  def listForTag(tag: String) = Action { implicit request =>
-
-  }
-
-  def calendar = Action { implicit request => 
+  def calendar = Action { implicit request =>
     Ok(views.html.calendar())
   }
 

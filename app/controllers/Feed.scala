@@ -6,7 +6,7 @@ import org.joda.time.format.DateTimeFormat
 import play.api.mvc.{Action, Controller}
 import sorm.Persisted
 
-object Feed extends Controller {
+class Feed extends Controller {
 
   import views.Extensions._
 
