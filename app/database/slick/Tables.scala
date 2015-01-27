@@ -1,12 +1,13 @@
 package database.slick
 
+import config.Config.dbDriver._
+import database.slick.JodaSupport._
 import org.joda.time.DateTime
 
-import scala.slick.driver.H2Driver.simple._
-import database.slick.JodaSupport._
+import scala.slick.lifted.ProvenShape
 
 class PostTable(tag: Tag)
-  extends Table[(Option[Long], String, String, String, DateTime, DateTime)](tag, "POSTS") {
+  extends Table[DbPost](tag, "POSTS") {
 
   def id = column[Option[Long]]("ID", O.PrimaryKey, O.AutoInc)
   def title = column[String]("TITLE")
@@ -15,28 +16,30 @@ class PostTable(tag: Tag)
   def created = column[DateTime]("CREATED")
   def updated = column[DateTime]("UPDATED")
 
-  override def * = (id, title, extract, content, created, updated)
+  override def * = (id, title, extract, content, created, updated) <> ( DbPost.tupled, DbPost.unapply)
 }
 
 class TagTable(tag: Tag)
-  extends Table[(Option[Long], String)](tag, "TAGS") {
+  extends Table[DbTag](tag, "TAGS") {
 
   def id = column[Option[Long]]("ID", O.PrimaryKey, O.AutoInc)
   def name = column[String]("NAME")
 
-  override def * = (id, name)
+  def uniqueName = index("NAME_IS_UNIQUE", name, unique = true)
+
+  override def * = (id, name) <> ( DbTag.tupled, DbTag.unapply)
 }
 
 class PostTagsTable(t: Tag)
-  extends Table[(Option[Long], Option[Long])](t, "POST_TAGS") {
+  extends Table[DbPostTag](t, "POST_TAGS") {
 
-  def postId = column[Option[Long]]("POST_ID")
-  def tagId = column[Option[Long]]("TAG_ID")
+  def postId = column[Long]("POST_ID")
+  def tagId = column[Long]("TAG_ID")
 
-  def post = foreignKey("POST_FK", postId, TableQuery[PostTable])(_.id, onDelete=ForeignKeyAction.Cascade)
-  def tag = foreignKey("TAG_FK", tagId, TableQuery[TagTable])(_.id, onDelete=ForeignKeyAction.Cascade)
+  def post = foreignKey("POST_FK", postId.?, TableQuery[PostTable])(_.id, onDelete=ForeignKeyAction.Cascade)
+  def tag = foreignKey("TAG_FK", tagId.?, TableQuery[TagTable])(_.id, onDelete=ForeignKeyAction.Cascade)
 
   def idx = index("INDEX", (postId, tagId), unique = true)
 
-  override def * = (postId, tagId)
+  override def * : ProvenShape[DbPostTag] = (postId, tagId) <> (DbPostTag.tupled, DbPostTag.unapply)
 }

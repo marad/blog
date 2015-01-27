@@ -2,8 +2,6 @@ package config
 
 import database.slick.Db
 import controllers.Posts
-import play.api.Play
-import scala.slick.jdbc.JdbcBackend.Database
 
 
 object Config extends play.api.GlobalSettings {
@@ -21,7 +19,7 @@ object Config extends play.api.GlobalSettings {
     else super.getControllerInstance(controllerClass)
   }
 
-  def postsPerPage : Int =
+  val postsPerPage : Int =
     configuration.getInt("pages.list.postsPerPage") match {
       case Some(value) => value
       case None => 10

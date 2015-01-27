@@ -12,6 +12,11 @@ LessKeys.compress in Assets := true
 
 scalaVersion := "2.10.4"
 
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("releases"),
+  Resolver.sonatypeRepo("snapshots")
+)
+
 libraryDependencies ++= Seq(
   jdbc,
   cache,
@@ -23,6 +28,8 @@ libraryDependencies ++= Seq(
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.2.0",
   "org.slf4j" % "slf4j-simple" % "1.7.2",
   "eu.henkelmann" % "actuarius_2.10.0" % "0.2.6",
-  "org.webjars" % "bootstrap" % "3.0.2"
+  "org.webjars" % "bootstrap" % "3.0.2",
+  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test"
 )
 

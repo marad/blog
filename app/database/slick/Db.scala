@@ -1,11 +1,8 @@
 package database.slick
 
 import config.Config
-import org.joda.time.DateTime
 
-import Config.dbDriver._
 import scala.slick.jdbc.JdbcBackend.Database
-
 import scala.slick.lifted.TableQuery
 
 class Db {

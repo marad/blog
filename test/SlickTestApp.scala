@@ -1,10 +1,6 @@
-import database.slick.{PostTable, TagTable, PostTagsTable}
-import org.joda.time.DateTime
-
 import config.Config.dbDriver._
-import database.slick.JodaSupport._
-
-import database.slick.{PostTable, TagTable, PostTagsTable}
+import database.slick._
+import org.joda.time.DateTime
 
 
 object SlickTestApp {
@@ -19,37 +15,40 @@ object SlickTestApp {
       (posts.ddl ++ tags.ddl ++ postTags.ddl).create
 
       posts ++= Seq(
-        (Some(1l), "Title 1", "Extract 1", "Content 1", new DateTime(), new DateTime()),
-        (Some(2l), "Title 2", "Extract 2", "Content 2", new DateTime(), new DateTime()),
-        (Some(3l), "Title 3", "Extract 3", "Content 3", new DateTime(), new DateTime()),
-        (Some(4l), "Title 4", "Extract 4", "Content 4", new DateTime(), new DateTime()),
-        (Some(5l), "Title 5", "Extract 5", "Content 5", new DateTime(), new DateTime())
+        DbPost(Some(1l), "Title 1", "Extract 1", "Content 1", new DateTime(), new DateTime()),
+        DbPost(Some(2l), "Title 2", "Extract 2", "Content 2", new DateTime(), new DateTime()),
+        DbPost(Some(3l), "Title 3", "Extract 3", "Content 3", new DateTime(), new DateTime()),
+        DbPost(Some(4l), "Title 4", "Extract 4", "Content 4", new DateTime(), new DateTime()),
+        DbPost(Some(5l), "Title 5", "Extract 5", "Content 5", new DateTime(), new DateTime())
       )
 
       tags ++= Seq(
-        (Some(1l), "Tag 1"),
-        (Some(2l), "Tag 2"),
-        (Some(3l), "Tag 3")
+        DbTag(None, "Tag 1"),
+        DbTag(None, "Tag 2"),
+        DbTag(None, "Tag 3")
       )
 
       postTags ++= Seq(
-        (Some(1l), Some(1l)),
-        (Some(1l), Some(2l)),
-        (Some(1l), Some(3l)),
-        (Some(2l), Some(1l)),
-        (Some(2l), Some(2l)),
-        (Some(3l), Some(3l))
+        DbPostTag(1l, 1l),
+        DbPostTag(1l, 2l),
+        DbPostTag(1l, 3l),
+        DbPostTag(2l, 1l),
+        DbPostTag(2l, 2l),
+        DbPostTag(3l, 3l)
       )
 
-//      val tagsForPost = postTags.filter(_.postId === 1l).leftJoin(tags).list
+//      val tagsForPost = postTags
+//        .filter(_.postId === 1l)
+//        .leftJoin(tags)
+//        .map(_._2)
+
       val tagsForPost = for {
         tp <- postTags.filter(_.postId === 1l)
         t <- tags if tp.tagId === t.id
-      } yield t.*
+      } yield t
 
-      case class Tag(id: Option[Long], name: String)
-
-      println(tagsForPost.list.map(Tag.tupled))
+      println(tagsForPost.list)
+//      println(tagsForPost.list.map(Tag.tupled))
     }
   }
 
