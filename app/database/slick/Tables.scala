@@ -9,25 +9,25 @@ import scala.slick.lifted.ProvenShape
 class PostTable(tag: Tag)
   extends Table[DbPost](tag, "POSTS") {
 
-  def id = column[Option[Long]]("ID", O.PrimaryKey, O.AutoInc)
+  def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
   def title = column[String]("TITLE")
   def extract = column[String]("EXTRACT")
   def content = column[String]("CONTENT")
   def created = column[DateTime]("CREATED")
   def updated = column[DateTime]("UPDATED")
 
-  override def * = (id, title, extract, content, created, updated) <> ( DbPost.tupled, DbPost.unapply)
+  override def * = (id.?, title, extract, content, created, updated) <> ( DbPost.tupled, DbPost.unapply)
 }
 
 class TagTable(tag: Tag)
   extends Table[DbTag](tag, "TAGS") {
 
-  def id = column[Option[Long]]("ID", O.PrimaryKey, O.AutoInc)
+  def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
   def name = column[String]("NAME")
 
   def uniqueName = index("NAME_IS_UNIQUE", name, unique = true)
 
-  override def * = (id, name) <> ( DbTag.tupled, DbTag.unapply)
+  override def * = (id.?, name) <> ( DbTag.tupled, DbTag.unapply)
 }
 
 class PostTagsTable(t: Tag)

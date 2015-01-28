@@ -6,9 +6,10 @@ import controllers.Posts
 
 object Config extends play.api.GlobalSettings {
 
-  val dbUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
-  val dbDriverClass = "org.h2.Driver"
-  val dbDriver = scala.slick.driver.H2Driver.simple
+  lazy val dbUrl = "jdbc:h2:mem:test"
+//  lazy val dbUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
+  lazy val dbDriverClass = "org.h2.Driver"
+  lazy val dbDriver = scala.slick.driver.H2Driver.simple
 
   val database = new Db
 
@@ -24,9 +25,4 @@ object Config extends play.api.GlobalSettings {
       case Some(value) => value
       case None => 10
     }
-
-//    Play.current.configuration.getString("pages.list.postsPerPage") match {
-//      case Some(value) => value.toInt
-//      case None => 10
-//    }
 }

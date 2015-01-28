@@ -2,6 +2,8 @@ import config.Config.dbDriver._
 import database.slick._
 import org.joda.time.DateTime
 
+import slickmodels.Tag
+
 
 object SlickTestApp {
 
@@ -47,7 +49,21 @@ object SlickTestApp {
         t <- tags if tp.tagId === t.id
       } yield t
 
-      println(tagsForPost.list)
+      val tagSeq = Seq(new Tag(None, "Hello"), new Tag(None, "Tag 1"))
+      val tagNames = tagSeq.map(_.name)
+
+      // THIS IS WHAT I WANT
+      val tagsQuery = tags.filter(_.name inSet tagNames)
+
+
+//      val tagsQuery = for {
+//        tag <- tags.filter(_.name inSet tagNames)
+//      } yield tag
+
+      val testTags = tags.leftJoin(tags)
+
+//      println(tagsForPost.list)
+      println(tagsQuery.list)
 //      println(tagsForPost.list.map(Tag.tupled))
     }
   }

@@ -1,25 +1,84 @@
 package database.slick
 
-import config.Config.dbDriver._
+import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
+import slickmodels.{Post, Tag}
+import utils.TupleOps._
 
-class SlickDaoTest extends FlatSpec with Matchers with MockFactory {
+class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAndAfterEach {
 
-  val dbMock = mock[Database]
-//  val postsTableMock = mock[TableQuery[PostTable]]
+  def withDatabase(testCode: Dao => Any) {
+    val db = new Db with DbTestData
+    val daoUnderTest = new Dao(db)
 
-  "DAO" should "read single post by id" in {
-//    val db = new Db with DbTestData
-//    val daoUnderTest = new Dao(db)
-
-//    val first = daoUnderTest.readPost(1l)
-//    val fourth = daoUnderTest.readPost(4l)
-
-//      first should be equalTo Some(firstPost)
-//      fourth should be equalTo Some(fourthPost)
+    try {
+      testCode(daoUnderTest)
+    }
+    finally db.connection.close()
   }
 
-//  private val firstPost = Post.tupled(DbTestData.firstPostData)
-//  private val fourthPost = Post.tupled(DbTestData.fourthPostData)
+  "DAO" should "read single post by id" in withDatabase { daoUnderTest =>
+    val first = daoUnderTest.readPost(1l)
+    val fourth = daoUnderTest.readPost(4l)
+
+    first shouldBe Some(SlickDaoTest.firstPost)
+    fourth shouldBe Some(SlickDaoTest.fourthPost)
+  }
+
+  it should "write single post and return its id" in withDatabase { daoUnderTest =>
+    val id: Long = daoUnderTest.writePost(SlickDaoTest.examplePost)
+    val post = daoUnderTest.readPost(id).get
+    post shouldBe SlickDaoTest.examplePost.copy(id = Some(id))
+  }
+
+  it should "delete post from database" in withDatabase { daoUnderTest =>
+    val id = DbTestData.fifthPostData.id.get
+    daoUnderTest.deletePost(id)
+    val post = daoUnderTest.readPost(id)
+    val postTags = daoUnderTest.listTagsForPost(id)
+    post shouldBe None
+    postTags shouldBe empty
+  }
+
+  it should "list posts from database and sort by creation date" in withDatabase { daoUnderTest =>
+    val posts = daoUnderTest.listPosts()
+    posts shouldBe SlickDaoTest.allPosts.sortWith { (a, b) => a.created.isAfter(b.created) }
+  }
+
+  it should "should paginate listing sorted by creation date" in withDatabase { daoUnderTest =>
+    val posts = daoUnderTest.listPosts(2, 2)
+    val expectedPosts = SlickDaoTest.allPosts
+      .sortWith { (a, b) => a.created.isAfter(b.created) }
+      .drop(2).take(2)
+
+    posts shouldBe expectedPosts
+  }
+}
+
+object SlickDaoTest {
+  val firstPost = Post.tupled(
+    DbTestData.firstPostData.toTuple :+ Seq(
+      Tag.fromDbTag(DbTestData.firstTagData),
+      Tag.fromDbTag(DbTestData.secondTagData),
+      Tag.fromDbTag(DbTestData.thirdTagData)
+    )
+  )
+  val fourthPost = Post.tupled(DbTestData.fourthPostData.toTuple :+ Seq())
+
+  val firstTag = Tag.fromDbTag(DbTestData.firstTagData)
+  val secondTag = Tag.fromDbTag(DbTestData.secondTagData)
+  val thirdTag = Tag.fromDbTag(DbTestData.thirdTagData)
+  val anotherTag = Tag(Some(4), "another tag")
+  val postTags = Seq(firstTag, secondTag, anotherTag)
+  val examplePost = new Post(None, "some title", "some extract", "content",
+    new DateTime, new DateTime, postTags)
+
+  val allPosts = Seq(
+    Post.tupled(DbTestData.firstPostData.toTuple :+ Seq(firstTag, secondTag, thirdTag)),
+    Post.tupled(DbTestData.secondPostData.toTuple :+ Seq(firstTag, secondTag)),
+    Post.tupled(DbTestData.thirdPostData.toTuple :+ Seq(thirdTag)),
+    Post.tupled(DbTestData.fourthPostData.toTuple :+ Seq()),
+    Post.tupled(DbTestData.fifthPostData.toTuple :+ Seq())
+  )
 }
