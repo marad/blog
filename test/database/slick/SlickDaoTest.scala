@@ -1,10 +1,9 @@
 package database.slick
 
+import models.{Post, Tag}
 import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
-import models.{Post, Tag}
-import utils.TupleOps._
 
 class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAndAfterEach {
   // TODO: usuwanie posta ktorego nie ma
@@ -60,14 +59,14 @@ class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAn
 }
 
 object SlickDaoTest {
-  val firstPost = Post.tupled(
-    DbTestData.firstPostData.toTuple :+ Seq(
+  val firstPost = Post.fromDbPostAndTags(
+    DbTestData.firstPostData, Seq(
       Tag.fromDbTag(DbTestData.firstTagData),
       Tag.fromDbTag(DbTestData.secondTagData),
       Tag.fromDbTag(DbTestData.thirdTagData)
     )
   )
-  val fourthPost = Post.tupled(DbTestData.fourthPostData.toTuple :+ Seq())
+  val fourthPost = Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq())
 
   val firstTag = Tag.fromDbTag(DbTestData.firstTagData)
   val secondTag = Tag.fromDbTag(DbTestData.secondTagData)
@@ -78,10 +77,10 @@ object SlickDaoTest {
     new DateTime, new DateTime, postTags)
 
   val allPosts = Seq(
-    Post.tupled(DbTestData.firstPostData.toTuple :+ Seq(firstTag, secondTag, thirdTag)),
-    Post.tupled(DbTestData.secondPostData.toTuple :+ Seq(firstTag, secondTag)),
-    Post.tupled(DbTestData.thirdPostData.toTuple :+ Seq(thirdTag)),
-    Post.tupled(DbTestData.fourthPostData.toTuple :+ Seq()),
-    Post.tupled(DbTestData.fifthPostData.toTuple :+ Seq())
+    Post.fromDbPostAndTags(DbTestData.firstPostData, Seq(firstTag, secondTag, thirdTag)),
+    Post.fromDbPostAndTags(DbTestData.secondPostData, Seq(firstTag, secondTag)),
+    Post.fromDbPostAndTags(DbTestData.thirdPostData, Seq(thirdTag)),
+    Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq()),
+    Post.fromDbPostAndTags(DbTestData.fifthPostData, Seq())
   )
 }
