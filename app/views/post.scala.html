@@ -1,4 +1,4 @@
-@(post: Post with sorm.Persisted, path: List[elements.Breadcrumb])(implicit request: RequestHeader, flash: Flash)
+@(post: slickmodels.Post, path: List[elements.Breadcrumb])(implicit request: RequestHeader, flash: Flash)
 
 @import views.Extensions._
 
@@ -16,17 +16,17 @@
             <div class="pure-u-16-24 actions">
                 @loggedIn {
                     <ul>
-                        <li><a href="@routes.Posts.edit(post.id)">Edytuj</a></li>
-                        <li><a href="@routes.Posts.delete(post.id)" onclick="return confirm('Na pewno chcesz usunąć ten post?')">Usuń</a></li>
+                        <li><a href="@routes.Posts.edit(post.id.getOrElse(0))">Edytuj</a></li>
+                        <li><a href="@routes.Posts.delete(post.id.getOrElse(0))" onclick="return confirm('Na pewno chcesz usunąć ten post?')">Usuń</a></li>
                     </ul>
                 }
             </div>
             <div class="pure-u-8-24 date">
                 <div>
-                    Opublikowano @post.date.format("dd.MM.yyyy")
-                    o godzinie @post.date.format("HH:mm")
+                    Opublikowano @post.created.format("dd.MM.yyyy")
+                    o godzinie @post.created.format("HH:mm")
                 </div>
-                @if(post.date != post.updated) {
+                @if(post.created != post.updated) {
                     <div>
                         Ostatnia aktualizacja @post.updated.format("dd.MM.yyyy")
                         o godzinie @post.updated.format("HH:mm")
@@ -35,7 +35,7 @@
             </div>
         </div>
         <div class="content">
-            @post.short.markupToHtml
+            @post.extract.markupToHtml
             @post.content.markupToHtml
         </div>
     </div>

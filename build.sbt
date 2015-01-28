@@ -22,7 +22,6 @@ libraryDependencies ++= Seq(
   cache,
   ws,
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
-  "org.sorm-framework" % "sorm" % "0.3.15",
   "com.typesafe.slick" % "slick_2.10" % "2.1.0",
   "org.joda" % "joda-convert" % "1.6",
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.2.0",

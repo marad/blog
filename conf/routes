@@ -5,8 +5,6 @@
 # Home page
 GET     /                           @controllers.Application.index
 GET     /list                       @controllers.Application.listItems
-GET     /tags                       @controllers.Application.listTags
-GET     /usage                      @controllers.Application.tagsUsage
 GET     /error                      @controllers.Application.error
 
 GET     /post/list                  @controllers.Posts.listIndex

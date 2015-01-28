@@ -2,8 +2,8 @@ package database.slick
 
 import config.Config
 import config.Config.dbDriver._
+import org.joda.time.LocalDate
 import slickmodels.{Post, Tag}
-import utils.TupleOps._
 
 class Dao(db: Db) {
 
@@ -14,7 +14,7 @@ class Dao(db: Db) {
       result match {
         case dbPost :: _ =>
           val tags = readAllTagsForPost(dbPost.id.get)
-          Some(Post.tupled(dbPost.toTuple :+ tags))
+          Some(Post.fromDbPostAndTags(dbPost, tags))
         case _ =>
           None
       }
@@ -37,19 +37,23 @@ class Dao(db: Db) {
         returnedPostId
       }
 
-  def deletePost(id:Long) = db.instance.withTransaction { implicit session =>
+  def deletePost(id:Long): Int = db.instance.withTransaction { implicit session =>
     removeTagsFromPost(id)
     db.posts.filter(_.id === id).delete
   }
+
+  def postCount(): Int = ???
 
   def listPosts(): Seq[Post] = listPosts(0, Config.postsPerPage)
   def listPosts(offset:Int, size: Int): Seq[Post] = db.instance.withSession { implicit session =>
     val dbPosts: Seq[DbPost] = db.posts.sortBy(_.created.desc).drop(offset).take(size).list
     dbPosts.map { dbPost =>
       val tags = readAllTagsForPost(dbPost.id.get)
-      Post.tupled(dbPost.toTuple :+ tags)
+      Post.fromDbPostAndTags(dbPost, tags)
     }
   }
+
+  def listsPostsForPeriod(from:LocalDate, to:LocalDate): Seq[Post] = ???
 
   def listTagsForPost(id: Long): Seq[Tag] = db.instance.withTransaction { implicit session =>
     readAllTagsForPost(id)

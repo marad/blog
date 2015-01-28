@@ -1,7 +1,7 @@
 package config
 
-import database.slick.Db
-import controllers.Posts
+import database.slick.{Dao, Db}
+import controllers.{Feed, Application, Posts}
 
 
 object Config extends play.api.GlobalSettings {
@@ -12,11 +12,16 @@ object Config extends play.api.GlobalSettings {
   lazy val dbDriver = scala.slick.driver.H2Driver.simple
 
   val database = new Db
+  val dao = new Dao(database)
 
-  val postsController = new Posts(database)
+  val postsController = new Posts(dao)
+  val applicationController = new Application(dao)
+  val feedController = new Feed(dao)
 
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     if (controllerClass == classOf[Posts]) postsController.asInstanceOf[A]
+    else if (controllerClass == classOf[Application]) applicationController.asInstanceOf[A]
+    else if (controllerClass == classOf[Feed]) feedController.asInstanceOf[A]
     else super.getControllerInstance(controllerClass)
   }
 

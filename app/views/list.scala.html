@@ -1,4 +1,4 @@
-@(page: Int, maxPages: Int, posts: Seq[Post with sorm.Persisted])(implicit request: RequestHeader, flash: Flash)
+@(page: Int, maxPages: Int, posts: Seq[slickmodels.Post])(implicit request: RequestHeader, flash: Flash)
 
 @main("Wpisy", "list") {
     <div class="strap">
@@ -10,11 +10,11 @@
         <div class="box">
             <div class="post-container">
                 <div class="post-title">
-                    <a href="@routes.Posts.view(post.id)">
+                    <a href="@routes.Posts.view(post.id.getOrElse(0))">
                         <h2>@post.title</h2>
                     </a>
                 </div>
-                <div class="post-short">@post.short</div>
+                <div class="post-short">@post.extract</div>
             </div>
         </div>
     }

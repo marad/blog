@@ -1,19 +1,19 @@
-@(posts: List[Post with sorm.Persisted])(implicit request: RequestHeader, flash: Flash)
+@(posts: Seq[slickmodels.Post])(implicit request: RequestHeader, flash: Flash)
 
 @import views.Extensions._
 
-@mainPost(post: Post with sorm.Persisted) = {
+@mainPost(post: slickmodels.Post) = {
     <div class="main-post">
         <div class="wrapper">
             <h2 class="title">
-                <a href="@routes.Posts.view(post.id)">
+                <a href="@routes.Posts.view(post.id.getOrElse(0))">
                     @post.title
                 </a>
             </h2>
             <div class="content">
-                @post.short.markupToHtml
+                @post.extract.markupToHtml
                 <span style="display: inline-block">
-                    <a href="@routes.Posts.view(post.id)">
+                    <a href="@routes.Posts.view(post.id.getOrElse(0))">
                         Czytaj dalej &raquo;
                     </a>
                 </span>
@@ -22,19 +22,19 @@
     </div>
 }
 
-@secondRowPost(post: Post with sorm.Persisted) = {
+@secondRowPost(post: slickmodels.Post) = {
     <div class="pure-u-24-24 pure-u-lg-12-24">
         <div class="box secondary-post">
             <div class="wrapper">
                 <h3 class="title">
-                    <a href="@routes.Posts.view(post.id)" class="story-link">
+                    <a href="@routes.Posts.view(post.id.getOrElse(0))" class="story-link">
                         @post.title
                     </a>
                 </h3>
                 <div class="content">
-                    @post.short.markupToHtml
+                    @post.extract.markupToHtml
 
-                    <a href="@routes.Posts.view(post.id)">
+                    <a href="@routes.Posts.view(post.id.getOrElse(0))">
                         Czytaj dalej &raquo;
                     </a>
                 </div>

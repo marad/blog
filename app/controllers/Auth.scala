@@ -1,10 +1,9 @@
 package controllers
 
-import models.{Db, Account}
-import play.api.data._
+import models.Account
 import play.api.data.Forms._
+import play.api.data._
 import play.api.mvc._
-import sorm.persisted.Persisted
 
 class Auth extends Controller {
 

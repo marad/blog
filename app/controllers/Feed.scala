@@ -1,12 +1,12 @@
 package controllers
 
-import models.{Db, Post}
+import database.slick.Dao
+import slickmodels.Post
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.mvc.{Action, Controller}
-import sorm.Persisted
 
-class Feed extends Controller {
+class Feed(dao: Dao) extends Controller {
 
   import views.Extensions._
 
@@ -15,7 +15,7 @@ class Feed extends Controller {
   val entryTagDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
 
   def feedId = s"tag:$host.${feedTagDateFormat.print(new DateTime)}"
-  def tagId(post: Post with Persisted) = s"tag:$host.${entryTagDateFormat.print(new DateTime)}:${post.id}"
+  def tagId(post: Post) = s"tag:$host.${entryTagDateFormat.print(new DateTime)}:${post.id.get}"
 
 //  def generateRss(posts: List[Post with Persisted]) =
 //    <rss version="2.0">
@@ -54,7 +54,7 @@ class Feed extends Controller {
 //      </channel>
 //    </rss>;
 
-  def generateAtom(posts: List[Post with Persisted]) =
+  def generateAtom(posts: Seq[Post]) =
     <feed xmlns="http://www.w3.org/2005/Atom">
 
       <title>moriturius's blog</title>
@@ -70,13 +70,13 @@ class Feed extends Controller {
       for (post <- posts) yield {
         <entry>
           <title>{post.title}</title>
-          <link href={ s"http://$host${routes.Posts.view(post.id)}" }/>
-          <link rel="alternate" type="text/html" href={ s"http://$host${routes.Posts.view(post.id)}" }/>
+          <link href={ s"http://$host${routes.Posts.view(post.id.get)}" }/>
+          <link rel="alternate" type="text/html" href={ s"http://$host${routes.Posts.view(post.id.get)}" }/>
           <id>{ tagId(post) }</id>
           <updated>{ post.updated }</updated>
           <summary type="xhtml" xml:lang="en"
                    xml:base={s"http://$host/"}>
-            { post.short.markupToHtml }
+            { post.extract.markupToHtml }
           </summary>
           <content type="xhtml" xml:lang="en"
                    xml:base={s"http://$host/"}>
@@ -92,7 +92,7 @@ class Feed extends Controller {
       }
     </feed>;
 
-  def getPosts = Db.query[Post].limit(10).order("date", true).fetch().toList
+  def getPosts = dao.listPosts(0, 10)
 
 //  def getRss = Action {
 //    Ok(generateRss(getPosts)).as("application/rss+xml")

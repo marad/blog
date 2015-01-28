@@ -7,6 +7,9 @@ import slickmodels.{Post, Tag}
 import utils.TupleOps._
 
 class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAndAfterEach {
+  // TODO: usuwanie posta ktorego nie ma
+  // TODO: czytanie posta ktorego nie ma
+  // TODO: postcount
 
   def withDatabase(testCode: Dao => Any) {
     val db = new Db with DbTestData
