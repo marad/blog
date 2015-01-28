@@ -1,8 +1,8 @@
-@(posts: Seq[slickmodels.Post])(implicit request: RequestHeader, flash: Flash)
+@(posts: Seq[Post])(implicit request: RequestHeader, flash: Flash)
 
 @import views.Extensions._
 
-@mainPost(post: slickmodels.Post) = {
+@mainPost(post: Post) = {
     <div class="main-post">
         <div class="wrapper">
             <h2 class="title">
@@ -22,7 +22,7 @@
     </div>
 }
 
-@secondRowPost(post: slickmodels.Post) = {
+@secondRowPost(post: Post) = {
     <div class="pure-u-24-24 pure-u-lg-12-24">
         <div class="box secondary-post">
             <div class="wrapper">

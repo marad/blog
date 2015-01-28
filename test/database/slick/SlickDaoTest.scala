@@ -3,7 +3,7 @@ package database.slick
 import org.joda.time.DateTime
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
-import slickmodels.{Post, Tag}
+import models.{Post, Tag}
 import utils.TupleOps._
 
 class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAndAfterEach {

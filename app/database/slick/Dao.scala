@@ -3,7 +3,7 @@ package database.slick
 import config.Config
 import config.Config.dbDriver._
 import org.joda.time.LocalDate
-import slickmodels.{Post, Tag}
+import models.{Post, Tag}
 
 class Dao(db: Db) {
 

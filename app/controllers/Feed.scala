@@ -1,7 +1,7 @@
 package controllers
 
 import database.slick.Dao
-import slickmodels.Post
+import models.Post
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import play.api.mvc.{Action, Controller}

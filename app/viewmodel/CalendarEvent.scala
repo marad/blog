@@ -3,7 +3,7 @@ package viewmodel
 import controllers.routes
 import org.joda.time.LocalDate
 import play.api.libs.json.Json
-import slickmodels.Post
+import models.Post
 
 case class CalendarEvent(id: Long, title: String, start: LocalDate, url: String)
 

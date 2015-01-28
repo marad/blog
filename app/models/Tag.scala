@@ -1,4 +1,4 @@
-package slickmodels
+package models
 
 import database.slick.DbTag
 import play.api.libs.json.Json

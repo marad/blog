@@ -1,4 +1,4 @@
-package slickmodels
+package models
 
 import database.slick.DbPost
 import org.joda.time.DateTime

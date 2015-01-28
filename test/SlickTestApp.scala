@@ -2,7 +2,7 @@ import config.Config.dbDriver._
 import database.slick._
 import org.joda.time.DateTime
 
-import slickmodels.Tag
+import models.Tag
 
 
 object SlickTestApp {

@@ -10,7 +10,7 @@ import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
 import security.Secured
-import slickmodels._
+import models._
 import viewmodel.CalendarEvent
 
 class Posts(val dao: Dao) extends Controller with Secured {

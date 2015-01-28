@@ -1,9 +1,9 @@
 package controllers
 
-import models.Account
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc._
+import models.Account
 
 class Auth extends Controller {
 
