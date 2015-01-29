@@ -35,7 +35,8 @@ class Posts(val dao: Dao) extends Controller with Secured {
       "tags" -> text.transform( { tags: String =>
         (tags split """\s*,\s*""" map { new Tag(None, _) }).toSeq
       }, { tags: Seq[Tag] =>
-        tags.map({ _.name }).reduce{ (l: String, r:String) => l + ", " + r }
+        if (tags.isEmpty) ""
+        else tags.map({ _.name }).reduce{ (l: String, r:String) => l + ", " + r }
       })
     )(Post.apply)(Post.unapply)
   }
@@ -107,28 +108,11 @@ class Posts(val dao: Dao) extends Controller with Secured {
     }
   }
 
-
   def search(page: Int = 0, phrase: String) = Action { implicit request =>
-//    import sorm.Dsl._
-//    val criteria = phrase.split("\\s+")
-//    val query: Querier[Post] = criteria.foldLeft(Db.query[Post]) { (qr: Querier[Post], s: String) =>
-//      qr.where(
-//        ( ("title"   like s"%$s%" ) or
-//          ("short"   like s"%$s%" ) or
-//          ("content" like s"%$s%" ) )
-//      )
-//
-//    }
-//
-//    val maxPages = countMaxPages(query)
-//
-//    val posts = query
-//      .order("date", true)
-//      .offset(Config.postsPerPage * page)
-//      .limit(Config.postsPerPage)
-//      .fetch
-//    Ok(views.html.list(page, maxPages, posts))
-    Redirect(routes.Application.index())
+    val criteria = phrase.split("\\s+")
+    val maxPages = countMaxPages(dao.countAllSearchResults(criteria))
+    val posts = dao.searchWithPhrase(Config.postsPerPage * page, Config.postsPerPage, criteria)
+    Ok(views.html.list(page, maxPages, posts))
   }
 
   def calendar = Action { implicit request =>

@@ -19,7 +19,6 @@ GET     /post/delete/:id            @controllers.Posts.delete(id: Long)
 GET     /calendar/data              @controllers.Posts.calendarData(start: Option[String], end: Option[String])
 GET     /calendar                   @controllers.Posts.calendar
 
-
 # Authentication
 GET     /auth/login                 @controllers.Auth.viewLoginForm
 POST    /auth/login                 @controllers.Auth.login

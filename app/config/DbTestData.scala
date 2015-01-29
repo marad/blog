@@ -1,7 +1,7 @@
-package database.slick
+package config
 
-import config.Config
-import Config.dbDriver._
+import config.Config.dbDriver._
+import database.slick._
 import org.joda.time.DateTime
 
 trait DbTestData {
@@ -13,7 +13,7 @@ trait DbTestData {
   val connection = instance.createConnection()
 
   instance withSession { implicit session =>
-    (posts.ddl ++ tags.ddl ++ postTags.ddl).create
+//    (posts.ddl ++ tags.ddl ++ postTags.ddl).create
 
     posts ++= Seq(
       DbTestData.firstPostData,

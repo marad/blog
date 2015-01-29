@@ -39,7 +39,7 @@ class Dao(db: Db) {
 
   def deletePost(id:Long): Boolean = db.instance.withTransaction { implicit session =>
     removeTagsFromPost(id)
-    1 == (db.posts.filter(_.id === id).delete)
+    1 == db.posts.filter(_.id === id).delete
   }
 
   def postCount():Int = db.instance.withSession { implicit session =>
@@ -73,6 +73,41 @@ class Dao(db: Db) {
 
   def listTagsForPost(id: Long): Seq[Tag] = db.instance.withTransaction { implicit session =>
     readAllTagsForPost(id)
+  }
+
+  def searchWithPhrase(offset:Int, size:Int, phrases: Seq[String]): Seq[Post] = db.instance.withTransaction { implicit session =>
+    val query = createSearchQueryForPhrases(phrases)
+    val dbPosts: Seq[DbPost] = query
+      .sortBy(_.created.desc)
+      .drop(offset)
+      .take(size)
+      .list
+
+    dbPosts.map { dbPost =>
+      val tags = readAllTagsForPost(dbPost.id.get)
+      Post.fromDbPostAndTags(dbPost, tags)
+    }
+  }
+
+  def countAllSearchResults(phrases: Seq[String]): Int = db.instance.withTransaction { implicit session =>
+    val query = createSearchQueryForPhrases(phrases)
+    query.length.run
+  }
+
+
+  /* ** SEARCH HELPER METHOD ** */
+  private def createSearchQueryForPhrases(phrases: Seq[String]) =
+    phrases
+      .map(createSearchQuery)
+      .reduce( (a, b) => a.union(b) )
+
+  private def createSearchQuery(phrase: String) = {
+    val preparedPhrase = s"%${phrase.toUpperCase}%"
+    db.posts
+      .filter( post =>
+      (post.title.toUpperCase like preparedPhrase) ||
+        (post.content.toUpperCase like preparedPhrase) ||
+        (post.extract.toUpperCase like preparedPhrase))
   }
 
   /* ** TAGS ** */

@@ -91,32 +91,63 @@ class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAn
       .drop(1).take(3)
       .sortWith { (a, b) => a.created.isAfter(b.created) }
   }
+
+  it should "search by phrase for the post in title, extract, and content" in withDatabase { daoUnderTest =>
+    val searchPhrase = "post"
+
+    val posts = daoUnderTest.searchWithPhrase(0, 10, Seq(searchPhrase))
+    posts shouldBe Seq(
+      SlickDaoTest.fifthPost,
+      SlickDaoTest.fourthPost,
+      SlickDaoTest.secondPost,
+      SlickDaoTest.firstPost
+    )
+  }
+
+  it should "count all search results" in withDatabase { daoUnderTest =>
+    val searchPhrases = Seq("post")
+    val count = daoUnderTest.countAllSearchResults(searchPhrases)
+    count shouldBe 4
+  }
+
+  it should "search with offset and max result size" in withDatabase { daoUnderTest =>
+    val searchPhrase = "post"
+    val posts = daoUnderTest.searchWithPhrase(1, 1, Seq(searchPhrase))
+
+    posts shouldBe Seq(SlickDaoTest.fourthPost)
+  }
+
+  it should "search with multiple phrases" in withDatabase { daoUnderTest =>
+    val searchPhrases = Seq("extract", "my")
+
+    val posts = daoUnderTest.searchWithPhrase(0, 10, searchPhrases)
+
+    posts shouldBe Seq(
+      SlickDaoTest.fourthPost,
+      SlickDaoTest.firstPost
+    )
+  }
+
 }
 
 object SlickDaoTest {
-  val firstPost = Post.fromDbPostAndTags(
-    DbTestData.firstPostData, Seq(
-      Tag.fromDbTag(DbTestData.firstTagData),
-      Tag.fromDbTag(DbTestData.secondTagData),
-      Tag.fromDbTag(DbTestData.thirdTagData)
-    )
-  )
-  val fourthPost = Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq())
-
   val firstTag = Tag.fromDbTag(DbTestData.firstTagData)
   val secondTag = Tag.fromDbTag(DbTestData.secondTagData)
   val thirdTag = Tag.fromDbTag(DbTestData.thirdTagData)
   val anotherTag = Tag(Some(4), "another tag")
   val postTags = Seq(firstTag, secondTag, anotherTag)
 
+  val firstPost = Post.fromDbPostAndTags(DbTestData.firstPostData, Seq(firstTag, secondTag, thirdTag))
+  val secondPost = Post.fromDbPostAndTags(DbTestData.secondPostData, Seq(firstTag, secondTag))
+  val thirdPost = Post.fromDbPostAndTags(DbTestData.thirdPostData, Seq(thirdTag))
+  val fourthPost = Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq())
+  val fifthPost = Post.fromDbPostAndTags(DbTestData.fifthPostData, Seq())
+
   val examplePost = new Post(None, "some title", "some extract", "content",
     new DateTime, new DateTime, postTags)
 
   val allPosts = Seq(
-    firstPost,
-    Post.fromDbPostAndTags(DbTestData.secondPostData, Seq(firstTag, secondTag)),
-    Post.fromDbPostAndTags(DbTestData.thirdPostData, Seq(thirdTag)),
-    Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq()),
-    Post.fromDbPostAndTags(DbTestData.fifthPostData, Seq())
+    firstPost, secondPost, thirdPost,
+    fourthPost, fifthPost
   )
 }
