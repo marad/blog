@@ -55,12 +55,13 @@ class Dao(db: Db) {
     }
   }
 
-  def listsPostsForPeriod(from:DateTime, to:DateTime): Seq[Post] =
+  def listsPostsForPeriod(from:DateTime, to:DateTime): Seq[Post] = {
+    import database.slick.JodaSupport._
     db.instance.withTransaction { implicit session =>
       val dbPosts: Seq[DbPost] = db.posts
         // TODO FILTERING
-//        .filter(_.created > from.getMillis)
-//        .filter(_.created < to.getMillis)
+        .filter(_.created >= from)
+        .filter(_.created <= to)
         .sortBy(_.created.desc)
         .list
       dbPosts.map { dbPost =>
@@ -68,6 +69,7 @@ class Dao(db: Db) {
         Post.fromDbPostAndTags(dbPost, tags)
       }
     }
+  }
 
   def listTagsForPost(id: Long): Seq[Tag] = db.instance.withTransaction { implicit session =>
     readAllTagsForPost(id)

@@ -3,14 +3,14 @@ package controllers
 import config.Config
 import database.slick.Dao
 import elements.Breadcrumb
+import models._
+import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import org.joda.time.{DateTime, LocalDate}
 import play.api.data.Forms._
 import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
 import security.Secured
-import models._
 import viewmodel.CalendarEvent
 
 class Posts(val dao: Dao) extends Controller with Secured {
@@ -139,8 +139,8 @@ class Posts(val dao: Dao) extends Controller with Secured {
     (startOpt, endOpt) match {
       case (Some(start), Some(end)) =>
         val format = DateTimeFormat.forPattern("yyyy-MM-dd")
-        val startDate = LocalDate.parse(start, format)
-        val endDate = LocalDate.parse(end, format)
+        val startDate = DateTime.parse(start, format)
+        val endDate = DateTime.parse(end, format)
         val posts = dao.listsPostsForPeriod(startDate, endDate)
         val events = posts.map(CalendarEvent.fromPost)
 

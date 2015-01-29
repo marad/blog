@@ -32,3 +32,7 @@ libraryDependencies ++= Seq(
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test"
 )
 
+fork in Test := true
+
+javaOptions in Test := Seq("-Denv=TEST")
+

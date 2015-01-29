@@ -6,7 +6,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
 
 class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAndAfterEach {
-  // TODO: list posts for period
+  // TODO: check if writing second post with exising tag doesnt add another tag
 
   def withDatabase(testCode: Dao => Any) {
     val db = new Db with DbTestData
@@ -63,12 +63,12 @@ class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAn
     postTags shouldBe empty
   }
 
-  it should "list posts from database and sort by creation date" in withDatabase { daoUnderTest =>
+  it should "list posts from database and sort descending by creation date" in withDatabase { daoUnderTest =>
     val posts = daoUnderTest.listPostsOnFirstPage()
     posts shouldBe SlickDaoTest.allPosts.sortWith { (a, b) => a.created.isAfter(b.created) }
   }
 
-  it should "should paginate listing sorted by creation date" in withDatabase { daoUnderTest =>
+  it should "should paginate listing sorted descending by creation date" in withDatabase { daoUnderTest =>
     val posts = daoUnderTest.listPosts(2, 2)
     val expectedPosts = SlickDaoTest.allPosts
       .sortWith { (a, b) => a.created.isAfter(b.created) }
@@ -82,12 +82,14 @@ class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAn
     count shouldBe SlickDaoTest.allPosts.size
   }
 
-  it should "list posts from period" in withDatabase { daoUnderTest =>
+  it should "list posts from period sorted descending" in withDatabase { daoUnderTest =>
     val start = DbTestData.secondCreateTime
     val end = DbTestData.fourthCreateTime
 
-    val posts = daoUnderTest.listsPostsForPeriod(start.toLocalDate, end.toLocalDate)
-    posts shouldBe SlickDaoTest.allPosts.drop(1).take(3)
+    val posts = daoUnderTest.listsPostsForPeriod(start, end)
+    posts shouldBe SlickDaoTest.allPosts
+      .drop(1).take(3)
+      .sortWith { (a, b) => a.created.isAfter(b.created) }
   }
 }
 

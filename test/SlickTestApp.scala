@@ -16,6 +16,8 @@ object SlickTestApp {
     db withTransaction  { implicit session =>
       (posts.ddl ++ tags.ddl ++ postTags.ddl).create
 
+      for( stmt <- (posts.ddl ++ tags.ddl ++ postTags.ddl).createStatements) println(stmt)
+
       posts ++= Seq(
         DbPost(Some(1l), "Title 1", "Extract 1", "Content 1", new DateTime(), new DateTime()),
         DbPost(Some(2l), "Title 2", "Extract 2", "Content 2", new DateTime(), new DateTime()),
