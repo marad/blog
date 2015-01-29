@@ -2,8 +2,8 @@ package database.slick
 
 import config.Config
 import config.Config.dbDriver._
-import org.joda.time.LocalDate
 import models.{Post, Tag}
+import org.joda.time.DateTime
 
 class Dao(db: Db) {
 
@@ -24,7 +24,7 @@ class Dao(db: Db) {
       db.instance.withTransaction { implicit session =>
         val returnedPostId:Long = post.id match {
           case Some(id) =>
-            db.posts.update(post.toDbPost)
+            db.posts.filter(_.id === post.id).update(post.toDbPost)
             id
           case None =>
             db.posts returning db.posts.map(_.id) += post.toDbPost
@@ -37,14 +37,16 @@ class Dao(db: Db) {
         returnedPostId
       }
 
-  def deletePost(id:Long): Int = db.instance.withTransaction { implicit session =>
+  def deletePost(id:Long): Boolean = db.instance.withTransaction { implicit session =>
     removeTagsFromPost(id)
-    db.posts.filter(_.id === id).delete
+    1 == (db.posts.filter(_.id === id).delete)
   }
 
-  def postCount(): Int = ???
+  def postCount():Int = db.instance.withSession { implicit session =>
+    db.posts.length.run
+  }
 
-  def listPosts(): Seq[Post] = listPosts(0, Config.postsPerPage)
+  def listPostsOnFirstPage(): Seq[Post] = listPosts(0, Config.postsPerPage)
   def listPosts(offset:Int, size: Int): Seq[Post] = db.instance.withSession { implicit session =>
     val dbPosts: Seq[DbPost] = db.posts.sortBy(_.created.desc).drop(offset).take(size).list
     dbPosts.map { dbPost =>
@@ -53,7 +55,19 @@ class Dao(db: Db) {
     }
   }
 
-  def listsPostsForPeriod(from:LocalDate, to:LocalDate): Seq[Post] = ???
+  def listsPostsForPeriod(from:DateTime, to:DateTime): Seq[Post] =
+    db.instance.withTransaction { implicit session =>
+      val dbPosts: Seq[DbPost] = db.posts
+        // TODO FILTERING
+//        .filter(_.created > from.getMillis)
+//        .filter(_.created < to.getMillis)
+        .sortBy(_.created.desc)
+        .list
+      dbPosts.map { dbPost =>
+        val tags = readAllTagsForPost(dbPost.id.get)
+        Post.fromDbPostAndTags(dbPost, tags)
+      }
+    }
 
   def listTagsForPost(id: Long): Seq[Tag] = db.instance.withTransaction { implicit session =>
     readAllTagsForPost(id)

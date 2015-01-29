@@ -14,9 +14,9 @@ object Config extends play.api.GlobalSettings {
   val database = new Db
   val dao = new Dao(database)
 
-  val postsController = new Posts(dao)
-  val applicationController = new Application(dao)
-  val feedController = new Feed(dao)
+  private val postsController = new Posts(dao)
+  private val applicationController = new Application(dao)
+  private val feedController = new Feed(dao)
 
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     if (controllerClass == classOf[Posts]) postsController.asInstanceOf[A]

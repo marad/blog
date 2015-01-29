@@ -6,9 +6,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
 
 class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAndAfterEach {
-  // TODO: usuwanie posta ktorego nie ma
-  // TODO: czytanie posta ktorego nie ma
-  // TODO: postcount
+  // TODO: list posts for period
 
   def withDatabase(testCode: Dao => Any) {
     val db = new Db with DbTestData
@@ -28,23 +26,45 @@ class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAn
     fourth shouldBe Some(SlickDaoTest.fourthPost)
   }
 
-  it should "write single post and return its id" in withDatabase { daoUnderTest =>
+  it should "insert post and return its id" in withDatabase { daoUnderTest =>
     val id: Long = daoUnderTest.writePost(SlickDaoTest.examplePost)
     val post = daoUnderTest.readPost(id).get
     post shouldBe SlickDaoTest.examplePost.copy(id = Some(id))
+    id shouldBe post.id.get
+  }
+
+  it should "update post and return its id" in withDatabase { daoUnderTest =>
+    val newContent = "Changed Content"
+    val changedPost = SlickDaoTest.firstPost.copy(content = newContent)
+    val id: Long = daoUnderTest.writePost(changedPost)
+    val post = daoUnderTest.readPost(id).get
+
+    post shouldBe changedPost
+    id shouldBe post.id.get
+  }
+
+  it should "return None when reading non-existing post" in withDatabase { daoUnderTest =>
+    daoUnderTest.readPost(12345) shouldBe None
+  }
+
+  it should "silently pass when deleting non-existing post" in withDatabase { daoUnderTest =>
+    noException should be thrownBy daoUnderTest.deletePost(12345)
+    daoUnderTest.deletePost(12345) shouldBe false
   }
 
   it should "delete post from database" in withDatabase { daoUnderTest =>
     val id = DbTestData.fifthPostData.id.get
-    daoUnderTest.deletePost(id)
+    val deleted = daoUnderTest.deletePost(id)
     val post = daoUnderTest.readPost(id)
     val postTags = daoUnderTest.listTagsForPost(id)
+
+    deleted shouldBe true
     post shouldBe None
     postTags shouldBe empty
   }
 
   it should "list posts from database and sort by creation date" in withDatabase { daoUnderTest =>
-    val posts = daoUnderTest.listPosts()
+    val posts = daoUnderTest.listPostsOnFirstPage()
     posts shouldBe SlickDaoTest.allPosts.sortWith { (a, b) => a.created.isAfter(b.created) }
   }
 
@@ -55,6 +75,19 @@ class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAn
       .drop(2).take(2)
 
     posts shouldBe expectedPosts
+  }
+
+  it should "count posts" in withDatabase { daoUnderTest =>
+    val count = daoUnderTest.postCount()
+    count shouldBe SlickDaoTest.allPosts.size
+  }
+
+  it should "list posts from period" in withDatabase { daoUnderTest =>
+    val start = DbTestData.secondCreateTime
+    val end = DbTestData.fourthCreateTime
+
+    val posts = daoUnderTest.listsPostsForPeriod(start.toLocalDate, end.toLocalDate)
+    posts shouldBe SlickDaoTest.allPosts.drop(1).take(3)
   }
 }
 
@@ -73,11 +106,12 @@ object SlickDaoTest {
   val thirdTag = Tag.fromDbTag(DbTestData.thirdTagData)
   val anotherTag = Tag(Some(4), "another tag")
   val postTags = Seq(firstTag, secondTag, anotherTag)
+
   val examplePost = new Post(None, "some title", "some extract", "content",
     new DateTime, new DateTime, postTags)
 
   val allPosts = Seq(
-    Post.fromDbPostAndTags(DbTestData.firstPostData, Seq(firstTag, secondTag, thirdTag)),
+    firstPost,
     Post.fromDbPostAndTags(DbTestData.secondPostData, Seq(firstTag, secondTag)),
     Post.fromDbPostAndTags(DbTestData.thirdPostData, Seq(thirdTag)),
     Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq()),

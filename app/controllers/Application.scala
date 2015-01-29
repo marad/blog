@@ -18,7 +18,7 @@ class Application(dao: Dao) extends Controller with Secured {
   }
 
   def listItems = Action { implicit request =>
-    val posts = dao.listPosts()
+    val posts = dao.listPostsOnFirstPage()
     Ok(Json.toJson(posts))
   }
 }
