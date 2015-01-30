@@ -6,8 +6,6 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
 
 class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAndAfterEach {
-  // TODO: check if writing second post with exising tag doesnt add another tag
-
   def withDatabase(testCode: Dao => Any) {
     val db = new Db with DbTestData
     val daoUnderTest = new Dao(db)
@@ -127,7 +125,6 @@ class SlickDaoTest extends FlatSpec with Matchers with MockFactory with BeforeAn
       SlickDaoTest.firstPost
     )
   }
-
 }
 
 object SlickDaoTest {
@@ -143,11 +140,7 @@ object SlickDaoTest {
   val fourthPost = Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq())
   val fifthPost = Post.fromDbPostAndTags(DbTestData.fifthPostData, Seq())
 
-  val examplePost = new Post(None, "some title", "some extract", "content",
-    new DateTime, new DateTime, postTags)
+  val examplePost = new Post(None, "some title", "some extract", "content", new DateTime, new DateTime, postTags)
 
-  val allPosts = Seq(
-    firstPost, secondPost, thirdPost,
-    fourthPost, fifthPost
-  )
+  val allPosts = Seq(firstPost, secondPost, thirdPost, fourthPost, fifthPost)
 }

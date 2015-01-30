@@ -15,10 +15,12 @@ class IntegrationSpec extends Specification {
   "Application" should {
 
     "work from within a browser" in new WithBrowser {
-
       browser.goTo("http://localhost:" + port)
 
-      browser.pageSource must contain("Designed and developed by")
+      browser.pageSource must contain("O mnie")
+      browser.pageSource must contain("Muzyka")
+      browser.pageSource must contain("Programy")
+      browser.pageSource must contain("Gry")
     }
   }
 }

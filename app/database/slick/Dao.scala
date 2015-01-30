@@ -59,7 +59,6 @@ class Dao(db: Db) {
   def listsPostsForPeriod(from:DateTime, to:DateTime): Seq[Post] = {
     db.instance.withTransaction { implicit session =>
       val dbPosts: Seq[DbPost] = db.posts
-        // TODO FILTERING
         .filter(_.created >= from)
         .filter(_.created <= to)
         .sortBy(_.created.desc)

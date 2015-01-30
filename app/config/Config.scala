@@ -3,6 +3,8 @@ package config
 import controllers.{Feed, Posts, Application}
 import database.slick.{Dao, Db}
 
+import scala.slick.driver.JdbcDriver
+
 
 object Config extends play.api.GlobalSettings {
 
@@ -11,55 +13,62 @@ object Config extends play.api.GlobalSettings {
   case object Development extends Environment
   case object Test extends Environment
 
+  sealed abstract class DbConfig {
+    val driver: String
+    val url: String
+    val user: String
+    val password: String
+  }
+
+  case object ProdDb extends DbConfig {
+    // TODO: get settings from ENVIRONMENT
+    val driver = "org.postgresql.Driver"
+    val url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
+    val user = ""
+    val password = ""
+  }
+
+  case object DevDb extends DbConfig {
+    val driver = "org.postgresql.Driver"
+    val url = "jdbc:postgresql://localhost:5432/blog"
+    val user = "blog"
+    val password = "blog"
+  }
+
+  case object TestDb extends DbConfig {
+    val driver = "org.h2.Driver"
+    val url = "jdbc:h2:mem:test"
+    val user = ""
+    val password = ""
+  }
+
   lazy val environment: Environment = {
-    println("ENVIRONMENT: " + System.getProperty("env"))
     System.getProperty("env") match {
-      case "PROD" =>
-        println("I WORK IN PRODUCTION MODE")
-        Production
-      case "TEST" =>
-        println("I WORK IN TEST MODE")
-        Test
-      case _ =>
-        println("I WORK IN DEVELOPMENT MODE")
-        Development
+      case "PROD" => Production
+      case "TEST" => Test
+      case _ => Development
     }
   }
 
-  lazy val dbUrl = environment match {
-    case Production => "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
-    case Development => "jdbc:postgresql://localhost:5432/blog"
-    case Test => "jdbc:h2:mem:test"
-  }
-  lazy val dbDriverClass = environment match {
-    case Production => "org.h2.Driver"
-    case Development => "org.postgresql.Driver"
-    case Test => "org.h2.Driver"
-  }
-  lazy val dbDriver = environment match {
-    case Production => scala.slick.driver.H2Driver
-    case Development => scala.slick.driver.PostgresDriver
-    case Test => scala.slick.driver.H2Driver
-  }
-  lazy val dbUser = environment match {
-    case Production => ""
-    case Development => "blog"
-    case Test => ""
+  lazy val db  = environment match {
+    case Production => ProdDb
+    case Development => DevDb
+    case Test => TestDb
   }
 
-  lazy val dbPassword = environment match {
-    case Production => ""
-    case Development => "blog"
-    case Test => ""
+  lazy val dbDriver = environment match {
+    case Production => scala.slick.driver.PostgresDriver
+    case Development => scala.slick.driver.PostgresDriver
+    case Test => scala.slick.driver.H2Driver
   }
 
   val database = new Db
   val dao = new Dao(database)
-//
+
   private val postsController = new Posts(dao)
   private val applicationController = new Application(dao)
   private val feedController = new Feed(dao)
-//
+
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     if (controllerClass == classOf[Posts]) postsController.asInstanceOf[A]
     else if (controllerClass == classOf[Application]) applicationController.asInstanceOf[A]

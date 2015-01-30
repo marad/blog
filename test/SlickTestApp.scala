@@ -12,7 +12,11 @@ object SlickTestApp {
     val posts = TableQuery[PostTable]
     val tags = TableQuery[TagTable]
     val postTags = TableQuery[PostTagsTable]
-    val db = Database.forURL(Config.dbUrl, driver=Config.dbDriverClass, user=Config.dbUser, password=Config.dbPassword)
+    val db = Database.forURL(
+      Config.db.url,
+      user=Config.db.user,
+      password=Config.db.password,
+      driver=Config.db.driver)
 
     db withTransaction  { implicit session =>
       for( stmt <- (posts.ddl ++ tags.ddl ++ postTags.ddl).createStatements) println(stmt)

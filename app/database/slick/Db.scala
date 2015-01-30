@@ -8,7 +8,11 @@ import scala.slick.jdbc.meta.MTable
 import scala.slick.lifted.TableQuery
 
 class Db {
-  val instance = Database.forURL(Config.dbUrl, user=Config.dbUser, password=Config.dbPassword, driver=Config.dbDriverClass)
+  val instance = Database.forURL(
+    Config.db.url,
+    user=Config.db.user,
+    password=Config.db.password,
+    driver=Config.db.driver)
 
   val posts = TableQuery[PostTable]
   val tags = TableQuery[TagTable]
