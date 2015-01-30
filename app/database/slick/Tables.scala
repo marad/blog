@@ -1,10 +1,8 @@
 package database.slick
 
-import config.Config.dbDriver._
-import database.slick.JodaSupport._
 import org.joda.time.DateTime
-
-import scala.slick.lifted.ProvenShape
+import config.Config.dbDriver.simple._
+import database.slick.JodaSupport.simple._
 
 class PostTable(tag: Tag)
   extends Table[DbPost](tag, "POSTS") {
@@ -41,5 +39,5 @@ class PostTagsTable(t: Tag)
 
   def idx = index("INDEX", (postId, tagId), unique = true)
 
-  override def * : ProvenShape[DbPostTag] = (postId, tagId) <> (DbPostTag.tupled, DbPostTag.unapply)
+  override def * = (postId, tagId) <> (DbPostTag.tupled, DbPostTag.unapply)
 }

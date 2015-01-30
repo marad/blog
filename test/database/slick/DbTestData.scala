@@ -1,7 +1,7 @@
 package database.slick
 
 import config.Config
-import Config.dbDriver._
+import Config.dbDriver.simple._
 import org.joda.time.DateTime
 
 trait DbTestData {

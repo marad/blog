@@ -1,6 +1,7 @@
-import config.Config.dbDriver._
+import config.Config
 import database.slick._
 import org.joda.time.DateTime
+import config.Config.dbDriver.simple._
 
 import models.Tag
 
@@ -11,12 +12,13 @@ object SlickTestApp {
     val posts = TableQuery[PostTable]
     val tags = TableQuery[TagTable]
     val postTags = TableQuery[PostTagsTable]
-    val db = Database.forURL("jdbc:h2:mem:test1;DB_CLOSE_DELAY=-1", driver="org.h2.Driver")
+    val db = Database.forURL(Config.dbUrl, driver=Config.dbDriverClass, user=Config.dbUser, password=Config.dbPassword)
 
     db withTransaction  { implicit session =>
-      (posts.ddl ++ tags.ddl ++ postTags.ddl).create
-
       for( stmt <- (posts.ddl ++ tags.ddl ++ postTags.ddl).createStatements) println(stmt)
+      for( stmt <- (posts.ddl ++ tags.ddl ++ postTags.ddl).dropStatements) println(stmt)
+
+      (posts.ddl ++ tags.ddl ++ postTags.ddl).create
 
       posts ++= Seq(
         DbPost(Some(1l), "Title 1", "Extract 1", "Content 1", new DateTime(), new DateTime()),

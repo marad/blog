@@ -1,9 +1,10 @@
 package database.slick
 
 import config.Config
-import config.Config.dbDriver._
 import models.{Post, Tag}
 import org.joda.time.DateTime
+import Config.dbDriver.simple._
+import database.slick.JodaSupport.simple._
 
 class Dao(db: Db) {
 
@@ -56,7 +57,6 @@ class Dao(db: Db) {
   }
 
   def listsPostsForPeriod(from:DateTime, to:DateTime): Seq[Post] = {
-    import database.slick.JodaSupport._
     db.instance.withTransaction { implicit session =>
       val dbPosts: Seq[DbPost] = db.posts
         // TODO FILTERING

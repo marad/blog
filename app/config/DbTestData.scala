@@ -1,8 +1,8 @@
 package config
 
-import config.Config.dbDriver._
 import database.slick._
 import org.joda.time.DateTime
+import scala.slick.driver.H2Driver.simple._
 
 trait DbTestData {
   val instance: Database
