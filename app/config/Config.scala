@@ -20,9 +20,9 @@ object Config extends play.api.GlobalSettings {
   case object ProdDb extends DbConfig {
     // TODO: get settings from ENVIRONMENT
     val driver = "org.postgresql.Driver"
-    val url = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
-    val user = ""
-    val password = ""
+    val url = getString("db.url", "db.url is not set")
+    val user = getString("db.user", "db.user is not set")
+    val password = getString("db.password", "db.password is not set")
   }
 
   case object DevDb extends DbConfig {
@@ -78,4 +78,9 @@ object Config extends play.api.GlobalSettings {
       case None => 10
     }
 
+  private def getString(settingName: String, defaultValue: String) =
+    configuration.getString(settingName) match {
+      case Some(value) => value
+      case None => defaultValue
+    }
 }
