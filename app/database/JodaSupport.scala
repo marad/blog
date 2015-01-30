@@ -1,8 +1,8 @@
-package database.slick
+package database
 
 import com.github.tototoshi.slick.GenericJodaSupport
 import config.Config
-import config.Config.{Test, Development, Production}
+import config.Config.{Development, Production, Test}
 
 object JodaSupport {
   object H2Driver extends GenericJodaSupport(Config.dbDriver)

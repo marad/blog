@@ -1,4 +1,4 @@
-package database.slick
+package database
 
 import models.{Post, Tag}
 import org.joda.time.DateTime

@@ -21,7 +21,6 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
-//  "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
   "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
   "com.typesafe.slick" %% "slick" % "2.1.0",
   "org.joda" % "joda-convert" % "1.6",
@@ -30,7 +29,8 @@ libraryDependencies ++= Seq(
   "eu.henkelmann" % "actuarius_2.10.0" % "0.2.6",
   "org.webjars" % "bootstrap" % "3.0.2",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
-  "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test"
+  "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test",
+  "org.scalatestplus" % "play_2.10" % "1.0.0" % "test"
 )
 
 fork in Test := true

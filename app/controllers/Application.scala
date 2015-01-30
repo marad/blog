@@ -1,6 +1,6 @@
 package controllers
 
-import database.slick.Dao
+import database.Dao
 import play.api.libs.json.Json
 import play.api.mvc._
 import security.Secured

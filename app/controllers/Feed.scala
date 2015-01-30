@@ -1,6 +1,6 @@
 package controllers
 
-import database.slick.Dao
+import database.Dao
 import models.Post
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat

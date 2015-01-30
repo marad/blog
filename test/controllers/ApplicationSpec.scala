@@ -1,29 +1,22 @@
 package controllers
 
-import org.specs2.mutable._
-import org.specs2.runner._
-import org.junit.runner._
-
+import database.DatabaseTest
+import org.scalatest.{Matchers, FlatSpec}
+import org.scalatestplus.play.OneAppPerSuite
 import play.api.test._
 import play.api.test.Helpers._
 
-import org.mockito.Mockito._
+class ApplicationSpec extends FlatSpec with Matchers with DatabaseTest with OneAppPerSuite {
 
-@RunWith(classOf[JUnitRunner])
-class ApplicationSpec extends Specification {
-
-  "Applicaton" should {
-    "send 404 on a bad request" in new WithApplication {
-      route(FakeRequest(GET, "/boum")) must beNone
-    }
-
-    "render the index page" in new WithApplication {
-      val home = route(FakeRequest(GET, "/")).get
-
-      status(home) must equalTo(OK)
-      contentType(home) must beSome.which(_ == "text/html")
-      contentAsString(home) must contain ("Designed and developed by")
-    }
+  "Applicaton" should "send 404 on a bad request" in withDatabase {
+    route(FakeRequest(GET, "/boum")) shouldBe None
   }
 
+  it should "render the index page" in withDatabase {
+    val home = route(FakeRequest(GET, "/")).get
+
+    status(home) shouldBe OK
+    contentType(home) shouldBe Some("text/html")
+    contentAsString(home) contains "O mnie"
+  }
 }

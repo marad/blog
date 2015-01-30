@@ -1,5 +1,5 @@
 import config.Config
-import database.slick._
+import database._
 import org.joda.time.DateTime
 import config.Config.dbDriver.simple._
 

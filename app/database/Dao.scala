@@ -1,10 +1,10 @@
-package database.slick
+package database
 
 import config.Config
+import config.Config.dbDriver.simple._
 import models.{Post, Tag}
 import org.joda.time.DateTime
-import Config.dbDriver.simple._
-import database.slick.JodaSupport.simple._
+import JodaSupport.simple._
 
 class Dao(db: Db) {
 

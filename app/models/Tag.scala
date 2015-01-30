@@ -1,6 +1,6 @@
 package models
 
-import database.slick.DbTag
+import database.DbTag
 import play.api.libs.json.Json
 
 

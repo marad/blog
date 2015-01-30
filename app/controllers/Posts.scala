@@ -1,7 +1,7 @@
 package controllers
 
 import config.Config
-import database.slick.Dao
+import database.Dao
 import elements.Breadcrumb
 import models._
 import org.joda.time.DateTime

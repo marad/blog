@@ -1,10 +1,7 @@
 package config
 
 import controllers.{Feed, Posts, Application}
-import database.slick.{Dao, Db}
-
-import scala.slick.driver.JdbcDriver
-
+import database.{Db, Dao}
 
 object Config extends play.api.GlobalSettings {
 
@@ -42,13 +39,12 @@ object Config extends play.api.GlobalSettings {
     val password = ""
   }
 
-  lazy val environment: Environment = {
+  lazy val environment: Environment =
     System.getProperty("env") match {
       case "PROD" => Production
       case "TEST" => Test
       case _ => Development
     }
-  }
 
   lazy val db  = environment match {
     case Production => ProdDb

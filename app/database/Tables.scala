@@ -1,8 +1,8 @@
-package database.slick
+package database
 
-import org.joda.time.DateTime
 import config.Config.dbDriver.simple._
-import database.slick.JodaSupport.simple._
+import JodaSupport.simple._
+import org.joda.time.DateTime
 
 class PostTable(tag: Tag)
   extends Table[DbPost](tag, "POSTS") {

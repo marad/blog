@@ -1,8 +1,8 @@
-package database.slick
+package database
 
 import config.Config
-
 import config.Config.dbDriver.simple._
+
 import scala.slick.jdbc.JdbcBackend.Database
 import scala.slick.jdbc.meta.MTable
 import scala.slick.lifted.TableQuery
