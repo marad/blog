@@ -20,10 +20,10 @@ object Config extends play.api.GlobalSettings {
 
   case object ProdDb extends DbConfig {
     // TODO: get settings from ENVIRONMENT
-    val driver = "org.postgresql.Driver"
-    val url = getString("db.url", "db.url is not set")
-    val user = getString("db.user", "db.user is not set")
-    val password = getString("db.password", "db.password is not set")
+    val driver:String = "org.postgresql.Driver"
+    val url:String = System.getProperty("database.url")
+    val user:String = System.getProperty("database.user")
+    val password:String = System.getProperty("database.pass")
   }
 
   case object DevDb extends DbConfig {
@@ -40,12 +40,20 @@ object Config extends play.api.GlobalSettings {
     val password = ""
   }
 
-  lazy val environment: Environment =
-    System.getProperty("env") match {
-      case "PROD" => Production
-      case "TEST" => Test
-      case _ => Development
+  lazy val environment: Environment = {
+    println("ENV: " + System.getProperty("env"))
+    System.getProperty("env", "DEV") match {
+      case "PROD" =>
+        println("RUNNING IN PROD")
+        Production
+      case "TEST" =>
+        println("RUNNING IN TEST")
+        Test
+      case _ =>
+        println("RUNNING IN DEV")
+        Development
     }
+  }
 
   lazy val db  = environment match {
     case Production => ProdDb
@@ -60,6 +68,7 @@ object Config extends play.api.GlobalSettings {
   }
 
   val logger = LoggerFactory.getLogger(Config.getClass)
+  println(s"Trying to connect to database: ${db.url} as ${db.user}")
   logger.info(s"Trying to connect to database: ${db.url} as ${db.user}")
 
   val database = new Db
@@ -82,7 +91,7 @@ object Config extends play.api.GlobalSettings {
       case None => 10
     }
 
-  private def getString(settingName: String, defaultValue: String) =
+  private def getString(settingName: String, defaultValue: String): String =
     configuration.getString(settingName) match {
       case Some(value) => value
       case None => defaultValue
