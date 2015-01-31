@@ -2,6 +2,7 @@ package config
 
 import controllers.{Feed, Posts, Application}
 import database.{Db, Dao}
+import org.slf4j.LoggerFactory
 
 object Config extends play.api.GlobalSettings {
 
@@ -57,6 +58,9 @@ object Config extends play.api.GlobalSettings {
     case Development => scala.slick.driver.PostgresDriver
     case Test => scala.slick.driver.H2Driver
   }
+
+  val logger = LoggerFactory.getLogger(Config.getClass)
+  logger.info(s"Trying to connect to database: ${db.url} as ${db.user}")
 
   val database = new Db
   val dao = new Dao(database)
