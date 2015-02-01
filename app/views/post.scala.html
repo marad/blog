@@ -16,27 +16,31 @@
             <div class="pure-u-16-24 actions">
                 @loggedIn {
                     <ul>
-                        <li><a href="@routes.Posts.edit(post.id.getOrElse(0))">Edytuj</a></li>
-                        <li><a href="@routes.Posts.delete(post.id.getOrElse(0))" onclick="return confirm('Na pewno chcesz usunąć ten post?')">Usuń</a></li>
+                        <li><a href="@routes.Posts.edit(post.id.getOrElse(0))">Edit</a></li>
+                        <li><a href="@routes.Posts.delete(post.id.getOrElse(0))" onclick="return confirm('Na pewno chcesz usunąć ten post?')">Delete</a></li>
                     </ul>
                 }
             </div>
             <div class="pure-u-8-24 date">
                 <div>
-                    Opublikowano @post.created.format("dd.MM.yyyy")
-                    o godzinie @post.created.format("HH:mm")
+                    Published @post.created.format("dd.MM.yyyy")
+                    at @post.created.format("HH:mm")
                 </div>
                 @if(post.created != post.updated) {
                     <div>
-                        Ostatnia aktualizacja @post.updated.format("dd.MM.yyyy")
-                        o godzinie @post.updated.format("HH:mm")
+                        Last update @post.updated.format("dd.MM.yyyy")
+                        at @post.updated.format("HH:mm")
                     </div>
                 }
             </div>
         </div>
         <div class="content">
-            @post.extract.markupToHtml
-            @post.content.markupToHtml
+            <div class="extract">
+                @post.extract.markupToHtml
+            </div>
+            <div>
+                @post.content.markupToHtml
+            </div>
         </div>
     </div>
 }

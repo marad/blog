@@ -18,7 +18,7 @@ object Extensions {
         case Some(pattern) =>
           val fmt = DateTimeFormat.forPattern (pattern)
           fmt.print (t)
-        case None => "Brak datetime.format w application.conf"
+        case None => "datetime.format missing"
       }
     }
   }

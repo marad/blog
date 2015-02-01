@@ -47,20 +47,20 @@
                         <img src="@routes.Assets.at("images/logo.png")" />
                     </a>
                     <ul>
-                        <li><a href="@routes.Pages.about()">O mnie</a></li>
-                        <li><a href="@routes.Pages.music()">Muzyka</a></li>
-                        <li><a href="@routes.Pages.programs()">Programy</a></li>
-                        <li><a href="@routes.Pages.games()">Gry</a></li>
+                        <li><a href="@routes.Pages.about()">About</a></li>
+                        <li><a href="@routes.Pages.music()">Music</a></li>
+                        <li><a href="@routes.Pages.programs()">Programs</a></li>
+                        <li><a href="@routes.Pages.games()">Games</a></li>
                         @loggedIn {
-                            <li><a href="@routes.Auth.logout()">Wyloguj</a></li>
+                            <li><a href="@routes.Auth.logout()">Log Out</a></li>
                         }
                         @notLoggedIn {
-                            <li><a href="@routes.Auth.login()">Zaloguj</a></li>
+                            <li><a href="@routes.Auth.login()">Log In</a></li>
                         }
                     </ul>
 
                     <form id="searchform" method="get" action="@routes.Posts.search()">
-                      <input type="text" id="searchbox" name="phrase" placeholder="Szukaj..."/>
+                      <input type="text" id="searchbox" name="phrase" placeholder="Search..."/>
                     </form>
                 </div>
             </div>
@@ -69,7 +69,7 @@
                 <div>
                     <div class="pure-menu pure-menu-open pure-menu-horizontal">
                         <ul>
-                            <li><a href="@routes.Posts.create()">Dodaj wpis</a></li>
+                            <li><a href="@routes.Posts.create()">Create Post</a></li>
                         </ul>
                     </div>
                 </div>

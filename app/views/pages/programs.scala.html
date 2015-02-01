@@ -1,196 +1,171 @@
 @()(implicit request: RequestHeader, flash: Flash)
 
-@page("Programy") {
-    <style>
-      .programs-content img {
-        max-width: 200px;
-        max-height: 100px;
-        float: left;
-        margin: 5px;
-      }
-    </style>
-    <div class="programs-content">
+@page("Programs") {
+<style>
+    .programs-content img {
+    max-width: 200px;
+    max-height: 100px;
+    float: left;
+    margin: 5px;
+    }
+</style>
+<div class="programs-content">
+    <p>
+        I've created tons of programs during my coding adventures. Unfortunately most of them
+        wasn't finished or wasn't good enough to show it. In this section I'd like to present
+        only a few of my programs.
+    </p>
+
+    <h3>This blog!</h3>
+    <div>
         <p>
-            Przez długie lata kodowania udało mi się stworzyć wiele programów. Niestety większość
-            albo nie została skończona, albo nie została dopracowana na tyle, żeby pokazać je światu.
-            Dlatego tutaj zawita tylko kilka moich projektów. Wszystkie stworzone jeszcze w liceum
-            z użyciem Borland C++ Builder.
+            I've used other blogging systems, but I didn't like them. Limitations were to big!
+            So I've created my own blog with <a href="https://www.youtube.com/watch?v=BGi6Q1pNbS0">blackjack and hookers</a>.
         </p>
-
-        <h3>Ten Blog!</h3>
-        <div>
-          <p>
-            Ten blog został całkowicie zaprojektowany i wykonany przeze mnie.
-          </p>
-          <p>
-            Użyte technologie:
-            <ul>
-              <li><a href="http://www.scala-lang.org/">Scala</a></li>
-              <li><a href="http://sorm-framework.org/">Sorm</a></li>
-              <li><a href="https://www.playframework.com/">Play Framework</a></li>
-              <li><a href="http://lesscss.org/">LESS/CSS</a></li>
-              <li>Oczywiście HTML oraz JavaScript</li>
-            </ul>
-          </p>
-        </div>
-
-        <h3>Windows Manifest Utility</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/wmu.png" data-lightbox="image-2" data-title="Windows Manifest Utility">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/wmu.png" />
-        </a>
-        <div>
-            Niewielki program do tworzenia manifestów i wrzucania do plików wykonywalnych w Windows.
-            Programy z Borland C++ Builder niestety miały wygląd znany z Windows 98 i to narzędzie
-            potrafi to naprawić.
-        </div>
-        <div class="clear"></div>
-
-        <h3>Sprite Editor</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/spriteeditor.png" data-lightbox="image-2" data-title="Sprite Editor">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/spriteeditor.png"/>
-        </a>
-        <div>
-            Program, do tworzenia sprajtów (grafik 2D do wykorzystywania w grach). Potrafi obsługiwać
-            warstwy, przezroczystość oraz duże powiększenie. W zasadzie jest to nieco ulepszony Paint :)
-            Niestety w związku z moim brakiem doświadczenia w pracy z grafiką rastrową na tamten czas
-            wydajność pozostawia wiele do życzenia.
-        </div>
-        <div class="clear"></div>
-
-        <h3>UO Macro</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/uomacro.png" data-lightbox="image-2" data-title="UO Macro">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/uomacro.png"/>
-        </a>
-        <div>
-            <p>
-                To jest przykład mojej radosnej twórczości umotywowanej lenistwem. Dawno temu spędziłem wiele
-                czasu nad grą pod tytułem <em>Ultima Online</em>. W związku z tym, że niektóre czynności
-                potrafiły być nużące postanowiłem troszeczkę sobie ułatwić życie i napisać program, w którym
-                będę mógł łatwo i szybko opisać zadaną czynność i zlecić ją do wykonywania komputerowi, a
-                samemu oddać się ciekawszym zajęciom (np. graniu na gitarze). Komunikacja z grą odbywała się
-                przez wysyłanie Windowsowych eventów kliknięcia myszy lub wciśnięcia danego przycisku
-                bezpośrednio do okna gry.
-            </p>
-            <p>
-                W tamtym czasie istniało już <a href="http://www.easyuo.com/" target="about:blank">EasyUO</a>
-                ale niestety nie działało z wersją klienta, która była wymagana do połączenia z serwerem, na
-                którym grałem.
-            </p>
-            <p>
-                Sam język skryptowy nie jest zbyt elastyczny, ale też nie jest wymagający. Może przypominać
-                troszeczkę fuzję Assemblera z PHP :)
-            </p>
-        </div>
-        <div class="clear"></div>
-
-        <h3>Planner 8LO</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/planer.png" data-lightbox="image-2" data-title="Planner 8LO">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/planer.png"/>
-        </a>
-        <div>
-            <p>
-                Link do pobrania: <a href="http://www.mediafire.com/?5p1au4k9jmr">Planer 8LO</a>
-            </p>
-            <p>
-                W pewnym okresie swojego życia miałem szczęścei chodzić do liceum :) Plan zajęć dla
-                wszystkich klas był dostępny przez przeglądarkę na serwerach szkoły, ale adres był długi,
-                a przeglądarka ładowała się wieki (czasy sprzed SSD :c). Z tego powodu utworzyłem program,
-                który potrafił pobrać listę klas z serwera oraz wyświetlić plan zajęć dla jednej wybranej.
-            </p>
-        </div>
-        <div class="clear"></div>
-
-        <h3>OGame Transporter</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/ogtransport.png" data-lightbox="image-2" data-title="OGame Transporter">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/ogtransport.png"/>
-        </a>
-        <div>
-            <p>
-                Link do pobrania: <a href="http://www.mediafire.com/?9ojow1yma3f">OGame Transporter</a>
-            </p>
-            <p>
-                W liceum grałem również w <a href="http://pl.ogame.gameforge.com/">OGame</a>. Granie wymagało
-                codziennie przeliczania ile transporterów (dużych albo małych) potrzebuję do przewiezienia
-                zasobów potrzebnych do zbudowania danego budynku lub odkrycia danej technologii. Jeśli coś
-                trzeba robić więcej niż raz to zawsze lepiej jest to zautomatyzować. Tak powstał OGame
-                Transporter.
-            </p>
-            <p>
-                Każdy budynek i każda technologia miały pod opisem wypisane wymagania surowcowe. Wystarczyło
-                tylko wkleić tekst opisujący wymagania w pole tekstowe i program automatycznie wyciągał
-                dane o ilości potrzebnych surowców i obliczał ilość potrzebnych transporterów.
-            </p>
-            <p>
-                Dodatkowo w celu jeszcze większej wygody po kliknięciu na dowolną liczbę w okienku jest ona
-                kopiowana do schowka w celu wklejenia jej do przeglądarkowych inputów.
-            </p>
-            <p>
-                Niestety OGame zmienił się od tamtego czasu ogromnie i narzędzie prawdopodobnie nie jest już
-                kompatybilne. Sam również nie gram już od dawna więc nie miałem potrzeby tego uaktualniać.
-            </p>
-        </div>
-
-        <h3>Dir Lister</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/dirlister.png" data-lightbox="image-2" data-title="Dir Lister">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/dirlister.png"/>
-        </a>
-        <div>
-            <p>
-                Wyświetla listę plików oraz katalogów. Istnieje możliwość zdefiniowania rozszerzeń
-                plików jakie mają być wyświetlane. Po prostu kiedyś czegoś takiego potrzebowałem :)
-            </p>
-        </div>
-        <div class="clear"></div>
-
-        <h3>Coff2Omf</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/coff2omf.png" data-lightbox="image-2" data-title="Coff2Omf">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/coff2omf.png"/>
-        </a>
-        <div>
-            <p>
-                Kolejne dziecko mojego lenistwa - słuzy do masowego konwertowania plików COFF do OMF
-                (z formatu Microsoftowego na Borlandowy).
-            </p>
-            <p>
-                Obsługa jest prosta - wystarczy dodać pliki do przekonwertowania, następnie ustawić
-                gdzie przekonwertowane pliki mają wylądować i na koniec ustawić świeżkę do pliku coff2omf.exe,
-                który dołączony jest do Borland C++ Buildera.
-            </p>
-        </div>
-
-        <h3>Numerologia</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/numerologia.png" data-lightbox="image-2" data-title="Numerologia">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/numerologia.png"/>
-        </a>
-        <div>
-            <p>
-                Link do pobrania: <a href="http://www.mediafire.com/?81jglsbxs2t">Numerologia</a>
-            </p>
-            <p>
-                O stworzenie tego programiku poprosiła mnie moja siostra. Jako, że i tak nie miałem
-                co robić - zgodziłem się. Jak się później okazało – więcej miałem przepisywania z
-                książki niż programowania ale jak już zacząłem to skończyłem ;)
-            </p>
-            <p>
-                Programik wylicza jakieś cuda z imienia i nazwiska które podaje się na górze, a następnie
-                po wciśnięciu odpowiedniego przycisku pokazuje naszą liczbę Celu, Wewnętrzną lub Ekspresji
-                wraz z opisem. Co kto później z tym zrobi to już jego sprawa :D
-            </p>
-        </div>
-
-        <h3>Color Palette</h3>
-        <a href="http://i11.photobucket.com/albums/a192/doszes/colorpalette.png" data-lightbox="image-2" data-title="">
-          <img src="http://i11.photobucket.com/albums/a192/doszes/colorpalette.png"/>
-        </a>
-        <div>
-            <p>
-                Link do pobrania: <a href="http://www.mediafire.com/?7gzmmfjz8sg">Color Palette</a>
-            </p>
-            <p>
-                Zadaniem tego programu było imitowanie palety kolorów. Może być przydatny podczas pracy
-                ze Sprite Editorem widocznym gdzieś powyżej :)
-            </p>
-        </div>
-        <div class="clear"></div>
+        <p>
+            Used technologies:
+        <ul>
+            <li><a href="http://www.scala-lang.org/">Scala</a></li>
+            <li><a href="http://slick.typesafe.com/">Slick</a></li>
+            <li><a href="https://www.playframework.com/">Play Framework</a></li>
+            <li><a href="http://lesscss.org/">LESS/CSS</a></li>
+            <li>Of course HTML &amp; JavaScript</li>
+        </ul>
+        </p>
     </div>
+
+    <h3>Windows Manifest Utility</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/wmu.png" data-lightbox="image-2" data-title="Windows Manifest Utility">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/wmu.png" />
+    </a>
+    <div>
+        Little program that I made to create Windows manifest files and embedding them in the
+        executable files. I used it only to make my C++ Builder programs look less like Windows 98
+        in Windows XP and newer.
+    </div>
+    <div class="clear"></div>
+
+    <h3>Sprite Editor</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/spriteeditor.png" data-lightbox="image-2" data-title="Sprite Editor">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/spriteeditor.png"/>
+    </a>
+    <div>
+        Simple graphics editor to create small 2D game sprites. It was designed so it handles
+        multiple layers, transparency and real big zoom in. It's basically a little more advanced
+        Paint :)
+    </div>
+    <div class="clear"></div>
+
+    <h3>UO Macro</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/uomacro.png" data-lightbox="image-2" data-title="UO Macro">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/uomacro.png"/>
+    </a>
+    <div>
+        <p>
+            I'm lazy. Even with games! I've created this tool to aid my playing the <em>Ultima Online</em> game.
+            With this tool you can write a little scripts to make the repeating tasks bearable. It simply sends
+            keystrokes and mouse clicks to the UO game window. I've added variables and delay support and that
+            all I needed at that time.
+        </p>
+        <p>
+            At that time there already was <a href="http://www.easyuo.com/" target="about:blank">EasyUO</a>.
+            Unfortunately it didn't work with the old game client that was required on the server I was playing.
+        </p>
+        <p>
+            The scripting language wasn't very elastic. It was somewhat reminiscent to Assembler and PHP combined :)
+        </p>
+    </div>
+    <div class="clear"></div>
+
+    <h3>Planner 8LO</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/planer.png" data-lightbox="image-2" data-title="Planner 8LO">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/planer.png"/>
+    </a>
+    <div>
+        <p>
+            Download: <a href="http://www.mediafire.com/?5p1au4k9jmr">Planer 8LO</a>
+        </p>
+        <p>
+            I was in High School. The time table was available online. Before leaving to school I normally
+            opened a browser and navigate to the page with the time table to check the books I had to take with me.
+            I figured that a very simple program to load time table for my class at startup would be very nice
+            (browsers start soo loong). In just a few lines of code I was able to make my life better :)
+        </p>
+    </div>
+    <div class="clear"></div>
+
+    <h3>OGame Transporter</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/ogtransport.png" data-lightbox="image-2" data-title="OGame Transporter">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/ogtransport.png"/>
+    </a>
+    <div>
+        <p>
+            Dobnlowad: <a href="http://www.mediafire.com/?9ojow1yma3f">OGame Transporter</a>
+        </p>
+        <p>
+            In high scool I've played <a href="http://pl.ogame.gameforge.com/">OGame</a> with my friends.
+            Some tasks and calculations were repeatable. This tool was to help me quickly compute the amount
+            of transporters to use when I wanted to transport the resources to another planet to build or
+            research something there.
+        </p>
+        <p>
+            It only worked with Polish OGame and now it doesn't work at all because of the GUI changes.
+        </p>
+    </div>
+
+    <h3>Dir Lister</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/dirlister.png" data-lightbox="image-2" data-title="Dir Lister">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/dirlister.png"/>
+    </a>
+    <div>
+        <p>
+            Creates a list of files and directories in given directory. You can also filter the file extensions
+            you want to have on the list. I guess I needed something like that at some point in my life :)
+        </p>
+    </div>
+    <div class="clear"></div>
+
+    <h3>Coff2Omf</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/coff2omf.png" data-lightbox="image-2" data-title="Coff2Omf">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/coff2omf.png"/>
+    </a>
+    <div>
+        <p>
+            This program was created as a GUI to Borlands <em>coff2omf</em> tool. It converted
+            the library files from Microsoft's COFF format to Borlands OMF format.
+        </p>
+    </div>
+    <div class="clear"></div>
+
+    <h3>Numerology</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/numerologia.png" data-lightbox="image-2" data-title="Numerologia">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/numerologia.png"/>
+    </a>
+    <div>
+        <p>
+            Dobnload: <a href="http://www.mediafire.com/?81jglsbxs2t">Numerology</a>
+        </p>
+        <p>
+            My sister asked me to write the program to compute a simple algorithm from her numerology book.
+            As it turned out - it was much more rewriting text from the book than actual coding.
+        </p>
+        <p>It's Polish only!</p>
+    </div>
+
+    <h3>Color Palette</h3>
+    <a href="http://i11.photobucket.com/albums/a192/doszes/colorpalette.png" data-lightbox="image-2" data-title="">
+        <img src="http://i11.photobucket.com/albums/a192/doszes/colorpalette.png"/>
+    </a>
+    <div>
+        <p>
+            Download: <a href="http://www.mediafire.com/?7gzmmfjz8sg">Color Palette</a>
+        </p>
+        <p>
+            This programs only purpose is to hold informations about colors. It might be useful
+            to create customised color palette to use across your system. I personally used it
+            with my Sprite Editor which is listed above.
+        </p>
+    </div>
+    <div class="clear"></div>
+</div>
 }

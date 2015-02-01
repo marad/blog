@@ -14,7 +14,7 @@
                 @post.extract.markupToHtml
                 <span style="display: inline-block">
                     <a href="@routes.Posts.view(post.id.getOrElse(0))">
-                        Czytaj dalej &raquo;
+                        Read more &raquo;
                     </a>
                 </span>
             </div>
@@ -35,7 +35,7 @@
                     @post.extract.markupToHtml
 
                     <a href="@routes.Posts.view(post.id.getOrElse(0))">
-                        Czytaj dalej &raquo;
+                        Read more &raquo;
                     </a>
                 </div>
             </div>
@@ -47,7 +47,7 @@
 
     @if(posts.size == 0) {
         <div class="box center">
-            Na razie nie ma żadnych postów. Wróć za jakiś czas!
+            There are no posts here now. Please come back later!
         </div>
     } else {
       <div class="strap">
@@ -67,7 +67,7 @@
             <div class="post-container pure-u-24-24">
                 <div class="post center">
                     <a href="@routes.Posts.listIndex()">
-                        Pokaż więcej wpisów &raquo;
+                        Show more posts &raquo;
                     </a>
                 </div>
             </div>

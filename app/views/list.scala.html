@@ -1,9 +1,9 @@
 @(page: Int, maxPages: Int, posts: Seq[Post])(implicit request: RequestHeader, flash: Flash)
 
-@main("Wpisy", "list") {
+@main("Posts", "list") {
     <div class="strap">
         <div>
-            <h1>Lista wpisów</h1>
+            <h1>Post list</h1>
         </div>
     </div>
     @posts.map { post =>
@@ -22,15 +22,15 @@
     <div class="pure-g">
         <div class="pure-u-5-24 left">
             @if(page > 0) {
-                <a href="@routes.Posts.list(page-1)" class="pure-button">Nowsze wpisy</a>
+                <a href="@routes.Posts.list(page-1)" class="pure-button">Newer posts</a>
             }
         </div>
         <div class="pure-u-14-24 page-info center">
-            Strona @{page+1} z @{maxPages+1}
+            Page @{page+1} of @{maxPages+1}
         </div>
         <div class="pure-u-5-24 right">
             @if(page < maxPages) {
-                <a href="@routes.Posts.list(page+1)" class="pure-button">Starsze wpisy</a>
+                <a href="@routes.Posts.list(page+1)" class="pure-button">Older posts</a>
             }
         </div>
     </div>
