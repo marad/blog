@@ -1,6 +1,6 @@
 package models
 
-import database.DbPost
+import database.model.DbPost
 import org.joda.time.DateTime
 import play.api.libs.json.Json
 

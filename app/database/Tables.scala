@@ -2,6 +2,7 @@ package database
 
 import config.Config.dbDriver.simple._
 import JodaSupport.simple._
+import database.model.{DbTag, DbPostTag, DbPost}
 import org.joda.time.DateTime
 
 class PostTable(tag: Tag)

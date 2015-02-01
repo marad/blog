@@ -1,5 +1,6 @@
 import config.Config
 import database._
+import database.model.{DbTag, DbPostTag, DbPost}
 import org.joda.time.DateTime
 import config.Config.dbDriver.simple._
 

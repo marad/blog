@@ -1,6 +1,6 @@
 package models
 
-import database.DbTag
+import database.model.DbTag
 import play.api.libs.json.Json
 
 
