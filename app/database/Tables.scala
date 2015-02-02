@@ -2,16 +2,16 @@ package database
 
 import config.Config.dbDriver.simple._
 import JodaSupport.simple._
-import database.model.{DbTag, DbPostTag, DbPost}
+import database.model.{DbAccount, DbTag, DbPostTag, DbPost}
 import org.joda.time.DateTime
 
 class PostTable(tag: Tag)
   extends Table[DbPost](tag, "POSTS") {
 
   def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
-  def title = column[String]("TITLE")
-  def extract = column[String]("EXTRACT")
-  def content = column[String]("CONTENT")
+  def title = column[String]("TITLE", O.DBType("VARCHAR(250)"))
+  def extract = column[String]("EXTRACT", O.DBType("TEXT"))
+  def content = column[String]("CONTENT", O.DBType("TEXT"))
   def created = column[DateTime]("CREATED")
   def updated = column[DateTime]("UPDATED")
 
@@ -22,7 +22,7 @@ class TagTable(tag: Tag)
   extends Table[DbTag](tag, "TAGS") {
 
   def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
-  def name = column[String]("NAME")
+  def name = column[String]("NAME", O.DBType("VARCHAR(100)"))
 
   def uniqueName = index("NAME_IS_UNIQUE", name, unique = true)
 
@@ -41,4 +41,14 @@ class PostTagsTable(t: Tag)
   def idx = index("INDEX", (postId, tagId), unique = true)
 
   override def * = (postId, tagId) <> (DbPostTag.tupled, DbPostTag.unapply)
+}
+
+class AccountTable(t: Tag)
+  extends Table[DbAccount](t, "ACCOUNTS") {
+
+  def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
+  def username = column[String]("USERNAME", O.DBType("VARCHAR(50)"))
+  def password = column[String]("PASSWORD", O.DBType("VARCHAR(50)"))
+
+  override def * = (id.?, username, password) <> (DbAccount.tupled, DbAccount.unapply)
 }

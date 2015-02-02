@@ -17,12 +17,14 @@ class Db {
   val posts = TableQuery[PostTable]
   val tags = TableQuery[TagTable]
   val postTags = TableQuery[PostTagsTable]
+  val accounts = TableQuery[AccountTable]
 
 
   instance.withTransaction { implicit session =>
     if (MTable.getTables("POSTS").list.isEmpty) posts.ddl.create
     if (MTable.getTables("TAGS").list.isEmpty) tags.ddl.create
     if (MTable.getTables("POST_TAGS").list.isEmpty) postTags.ddl.create
+    if (MTable.getTables("ACCOUNTS").list.isEmpty) accounts.ddl.create
   }
 }
 

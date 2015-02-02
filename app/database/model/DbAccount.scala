@@ -1,5 +1,3 @@
 package database.model
 
-class DbAccount {
-
-}
+case class DbAccount(id: Option[Long], username: String, password: String)
