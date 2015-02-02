@@ -9,9 +9,9 @@ class Auth extends Controller {
 
   val loginForm: Form[Account] = Form {
     mapping(
-      "name" -> nonEmptyText,
-      "password" -> nonEmptyText,
-      "email" -> ignored("")
+      "id" -> ignored[Option[Long]](None),
+      "username" -> nonEmptyText,
+      "password" -> nonEmptyText
     )(Account.apply)(Account.unapply)
   }
 
@@ -23,9 +23,9 @@ class Auth extends Controller {
     loginForm bindFromRequest() fold ({ errors =>
       BadRequest(views.html.auth.login(errors))
     }, { creds =>
-      if (creds.name == "morti" && creds.password == "ewqdsacxz") {
+      if (creds.username == "morti" && creds.password == "ewqdsacxz") {
         Redirect(routes.Application.index()).withSession(
-          Security.username -> creds.name
+          Security.username -> creds.username
         )
       } else {
         Ok(views.html.auth.login(loginForm.withGlobalError("Błąd logowania")))

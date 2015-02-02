@@ -1,6 +1,6 @@
 package database
 
-import database.model.{DbTag, DbPostTag, DbPost}
+import database.model.{DbAccount, DbTag, DbPostTag, DbPost}
 import org.joda.time.DateTime
 import config.Config.dbDriver.simple._
 
@@ -22,6 +22,10 @@ object DbTestData {
   val firstTagData = DbTag(Some(1l), "Tag 1")
   val secondTagData = DbTag(Some(2l), "Tag 2")
   val thirdTagData = DbTag(Some(3l), "Tag 3")
+
+  val firstAccount = DbAccount(Some(1l), "First", "Acc1")
+  val secondAccount = DbAccount(Some(2l), "Second", "Acc2")
+  val thirdAccount = DbAccount(Some(3l), "Third", "Acc3")
 }
 
 trait DbTestData {
@@ -29,11 +33,12 @@ trait DbTestData {
   val posts: TableQuery[PostTable]
   val tags: TableQuery[TagTable]
   val postTags: TableQuery[PostTagsTable]
+  val accounts: TableQuery[AccountTable]
 
   val connection = instance.createConnection()
 
   instance withSession { implicit session =>
-    (posts.ddl ++ tags.ddl ++ postTags.ddl).create
+    (posts.ddl ++ tags.ddl ++ postTags.ddl ++ accounts.ddl).create
 
     posts ++= Seq(
       DbTestData.firstPostData,
@@ -57,6 +62,13 @@ trait DbTestData {
       DbPostTag(2l, 2l),
       DbPostTag(3l, 3l)
     )
+
+    accounts ++= Seq(
+      DbTestData.firstAccount,
+      DbTestData.secondAccount,
+      DbTestData.thirdAccount
+    )
+
 
   }
 }

@@ -12,7 +12,6 @@ trait DatabaseTest {
   }
 
   def withDatabase(testCode: => Any) {
-    println("CREATING TEST DATABASE")
     val db = new Db with DbTestData
     try { testCode }
     finally db.connection.close()

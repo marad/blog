@@ -12,7 +12,7 @@ trait PostsDao {
   val db: Db
 
   /* ** POSTS ** */
-  def readPost(id:Long): Option[Post] =
+  def findPost(id:Long): Option[Post] =
     db.instance.withTransaction { implicit session =>
       val result = db.posts.filter(_.id === id).list
       result match {
@@ -24,7 +24,7 @@ trait PostsDao {
       }
     }
 
-  def writePost(post:Post): Long =
+  def savePost(post:Post): Long =
     db.instance.withTransaction { implicit session =>
       val returnedPostId:Long = post.id match {
         case Some(id) =>

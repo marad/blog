@@ -48,7 +48,7 @@ class Posts(val dao: Dao) extends Controller with Secured {
       new Breadcrumb("Post")
     )
 
-    dao.readPost(id) match {
+    dao.findPost(id) match {
       case Some(p) => Ok(views.html.post(p, breadcrumbs))
       case _ => NotFound(views.html.error("Nie odnaleziono posta"))
     }
@@ -59,7 +59,7 @@ class Posts(val dao: Dao) extends Controller with Secured {
       BadRequest(views.html.editor(errors))
     },
       { post =>
-        val id = dao.writePost(post)
+        val id = dao.savePost(post)
         Redirect(routes.Posts.view(id))
       })
   }
@@ -68,7 +68,7 @@ class Posts(val dao: Dao) extends Controller with Secured {
     postForm bindFromRequest() fold ({ errors =>
       BadRequest(views.html.editor(errors))
     }, { post =>
-      dao.writePost(post.copy(id = Some(id)))
+      dao.savePost(post.copy(id = Some(id)))
       Redirect(routes.Posts.view(id))
     })
   }
@@ -78,7 +78,7 @@ class Posts(val dao: Dao) extends Controller with Secured {
   }
 
   def edit(id: Long) = loggedIn { implicit request =>
-    dao.readPost(id) match {
+    dao.findPost(id) match {
       case Some(post) => Ok(views.html.editor(postForm.fill(post)))
       case _ => NotFound(views.html.error("Nie odnaleziono posta"))
     }
