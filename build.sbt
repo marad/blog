@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.7.2",
   "eu.henkelmann" % "actuarius_2.10.0" % "0.2.6",
   "org.webjars" % "bootstrap" % "3.0.2",
+  "org.mindrot" % "jbcrypt" % "0.3m",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test",
   "org.scalatestplus" % "play_2.10" % "1.0.0" % "test"

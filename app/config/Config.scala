@@ -1,6 +1,6 @@
 package config
 
-import controllers.{Feed, Posts, Application}
+import controllers.{Auth, Feed, Posts, Application}
 import database.{Db, Dao}
 import org.slf4j.LoggerFactory
 
@@ -77,11 +77,13 @@ object Config extends play.api.GlobalSettings {
   private val postsController = new Posts(dao)
   private val applicationController = new Application(dao)
   private val feedController = new Feed(dao)
+  private val authController = new Auth(dao)
 
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     if (controllerClass == classOf[Posts]) postsController.asInstanceOf[A]
     else if (controllerClass == classOf[Application]) applicationController.asInstanceOf[A]
     else if (controllerClass == classOf[Feed]) feedController.asInstanceOf[A]
+    else if (controllerClass == classOf[Auth]) authController.asInstanceOf[A]
     else super.getControllerInstance(controllerClass)
   }
 
