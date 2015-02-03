@@ -4,17 +4,14 @@ import database.Dao
 import models.Account
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{FlatSpec, Matchers}
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.http.{HeaderNames, Status}
-import play.api.mvc.{Results, Result, AnyContent, Request}
+import org.scalatest.Matchers
+import play.api.mvc.{Result, AnyContent, Request}
 import play.api.test._
 import org.scalatest.PartialFunctionValues._
 
 import scala.concurrent.Future
 
-class AuthTest extends FlatSpec with Matchers with MockitoSugar with Results with ResultExtractors
-  with Status with HeaderNames with DefaultAwaitTimeout with OneAppPerSuite {
+class AuthTest extends ControllerSpec with Matchers with MockitoSugar {
 
   val daoMock: Dao = mock[Dao]
   val requestMock: Request[AnyContent] = mock[Request[AnyContent]]
