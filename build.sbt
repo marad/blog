@@ -10,7 +10,7 @@ excludeFilter in (Assets, LessKeys.less) := "_*.less"
 
 LessKeys.compress in Assets := true
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.5"
 
 resolvers ++= Seq(
   Resolver.sonatypeRepo("releases"),
@@ -26,12 +26,11 @@ libraryDependencies ++= Seq(
   "org.joda" % "joda-convert" % "1.6",
   "com.github.tototoshi" %% "slick-joda-mapper" % "1.2.0",
   "org.slf4j" % "slf4j-simple" % "1.7.2",
-  "eu.henkelmann" % "actuarius_2.10.0" % "0.2.6",
   "org.webjars" % "bootstrap" % "3.0.2",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.scalatest" %% "scalatest" % "2.2.1" % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test",
-  "org.scalatestplus" % "play_2.10" % "1.0.0" % "test"
+  "org.scalatestplus" %% "play" % "1.2.0" % "test"
 )
 
 fork in Test := true
