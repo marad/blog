@@ -48,7 +48,7 @@ class AccountTable(t: Tag)
 
   def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
   def username = column[String]("USERNAME", O.DBType("VARCHAR(50)"))
-  def password = column[String]("PASSWORD", O.DBType("VARCHAR(50)"))
+  def password = column[String]("PASSWORD", O.DBType("VARCHAR(80)"))
 
   override def * = (id.?, username, password) <> (DbAccount.tupled, DbAccount.unapply)
 }
