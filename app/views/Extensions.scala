@@ -1,6 +1,5 @@
 package views
 
-import eu.henkelmann.actuarius.ActuariusTransformer
 import org.joda.time.{ReadableInstant, DateTime}
 import org.joda.time.format.DateTimeFormat
 import play.api.Play
@@ -26,8 +25,10 @@ object Extensions {
 
   // STRING WRAPPER
   class StringWrapper[T <: String](t:T) {
-    val markupTransformer = new ActuariusTransformer()
-    def markupToHtml(): Html = Html.apply(markupTransformer.apply(t))
+//    val markupTransformer = new ActuariusTransformer()
+//    def markupToHtml(): Html = Html.apply(markupTransformer.apply(t))
+    // TODO: MARKUP!
+    def markupToHtml(): Html = Html(t)
   }
   implicit def convertToStringWrapper[T <: String](t:String) = new StringWrapper(t)
 
