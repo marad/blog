@@ -1,9 +1,10 @@
 package views
 
-import org.joda.time.{ReadableInstant, DateTime}
+import org.joda.time.ReadableInstant
 import org.joda.time.format.DateTimeFormat
+import org.markdown4j.Markdown4jProcessor
 import play.api.Play
-import play.api.mvc.{RequestHeader, Security, Request}
+import play.api.mvc.{RequestHeader, Security}
 import play.twirl.api.Html
 
 object Extensions {
@@ -25,10 +26,8 @@ object Extensions {
 
   // STRING WRAPPER
   class StringWrapper[T <: String](t:T) {
-//    val markupTransformer = new ActuariusTransformer()
-//    def markupToHtml(): Html = Html.apply(markupTransformer.apply(t))
-    // TODO: MARKUP!
-    def markupToHtml(): Html = Html(t)
+    val processor = new Markdown4jProcessor()
+    def markupToHtml(): Html = Html(processor.process(t))
   }
   implicit def convertToStringWrapper[T <: String](t:String) = new StringWrapper(t)
 
