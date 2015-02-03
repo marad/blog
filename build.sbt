@@ -21,6 +21,7 @@ libraryDependencies ++= Seq(
   jdbc,
   cache,
   ws,
+  "org.commonjava.googlecode.markdown4j" % "markdown4j" % "2.2-cj-1.0",
   "org.postgresql" % "postgresql" % "9.3-1102-jdbc41",
   "com.typesafe.slick" %% "slick" % "2.1.0",
   "org.joda" % "joda-convert" % "1.6",
