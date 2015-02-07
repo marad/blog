@@ -50,4 +50,9 @@ object Extensions {
       case Some(username) => username
       case None => ""
     }
+
+
+  case object EditorFieldConstructor {
+
+  }
 }

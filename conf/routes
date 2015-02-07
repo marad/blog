@@ -24,6 +24,9 @@ GET     /auth/login                 @controllers.Auth.viewLoginForm
 POST    /auth/login                 @controllers.Auth.login
 GET     /auth/logout                @controllers.Auth.logout
 
+# JSON routes
+POST    /markdown/render               @controllers.Application.renderMarkdown
+
 # Static Pages
 GET     /programs                   @controllers.Pages.programs
 GET     /about                      @controllers.Pages.about
