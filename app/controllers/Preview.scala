@@ -34,7 +34,6 @@ object Preview extends Controller with Secured {
   }
 
   def view = loggedIn { implicit request =>
-    println(preview)
     preview match {
       case Some(post) => Ok(views.html.post(post))
       case _ => NotFound(views.html.error("No post to set"))

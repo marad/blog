@@ -1,7 +1,7 @@
 @(postForm: Form[Post])(implicit request: RequestHeader, flash: Flash)
 
 @import helper._
-@import helper.twitterBootstrap._
+@import views.constructors.BasicConstructor._
 @import views.Extensions._
 
 @main("New Post", "post-edit") {
@@ -46,25 +46,23 @@
         $("#title, #content, #short")
           .keyup(submitPreview).keyup();
       });
-      $(".editable").each(function() { this.contentEditable = true; });
     </script>
 
     <div class="pure-g whole-width">
         <div class="source pure-u-1-2">
           <div class="box">
             <form id="post-form" method="post" class="pure-form pure-form-stacked">
+              <p>
                 @inputText(postForm("title"), '_label -> "", 'class -> "wide", 'placeholder -> "Title")
-                @inputText(postForm("tags"), '_label -> "", 'class -> "wide", 'placeholder -> "tag1, tag2")
-                @textarea(postForm("short"), '_label -> "Abstract", 'class -> "wide", 'placeholder -> "Short description...")
-                @textarea(postForm("content"), '_label -> "Content", 'class -> "wide content", 'placeholder -> "Post content...")
+                @inputText(postForm("tags"), '_label -> "", 'class -> "wide", 'placeholder -> "Tags")
+                @textarea(postForm("short"), '_label -> "Abstract", 'class -> "wide", 'placeholder -> "Abstract")
+                @textarea(postForm("content"), '_label -> "Content", 'class -> "wide content", 'placeholder -> "Content")
+              </p>
 
-                <div class="editable">
-                </div>
-
-                <div class="right">
-                  <a class="pure-button" target="about:blank" href="@routes.Preview.view()">Preview</a>
-                  <input type="submit" value="Save" class="pure-button"/>
-                </div>
+              <div class="right">
+                <a class="pure-button" target="about:blank" href="@routes.Preview.view()">Preview</a>
+                <input type="submit" value="Save" class="pure-button"/>
+              </div>
             </form>
           </div>
         </div>
@@ -74,8 +72,5 @@
             <div id="preview-content"></div>
           </div>
         </div>
-    </div>
-    <div onClick="this.contentEditable=true">
-        This is a test
     </div>
 }
