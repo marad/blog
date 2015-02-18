@@ -2,7 +2,6 @@ package controllers
 
 import config.Config
 import database.Dao
-import elements.Breadcrumb
 import models._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -43,13 +42,8 @@ class Posts(val dao: Dao) extends Controller with Secured {
 
   def view(id: Long) = Action { implicit request =>
 
-    val breadcrumbs = List(
-      new Breadcrumb("Strona Główna", "/"),
-      new Breadcrumb("Post")
-    )
-
     dao.findPost(id) match {
-      case Some(p) => Ok(views.html.post(p, breadcrumbs))
+      case Some(p) => Ok(views.html.post(p))
       case _ => NotFound(views.html.error("Nie odnaleziono posta"))
     }
   }

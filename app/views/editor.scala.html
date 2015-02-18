@@ -7,37 +7,51 @@
 @main("New Post", "post-edit") {
     <script src="@routes.Assets.at("controllers/edit-post.js")" type="text/javascript"></script>
     <script>
-        function render(text, callback) {
-            $.post("/markdown/render", text).done(callback);
-        }
+      function render(text, callback) {
+        $.post("@routes.Application.renderMarkdown()", text).done(callback);
+      }
 
-        $(function() {
-            $("#short, #content").keydown(function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight+20)+'px';
-            });
+      function submitPreview() {
+        var data = {
+          title: $("#title").val(),
+          short: $("#short").val(),
+          content: $("#content").val()
+        };
 
-            $("#content").keydown(function() {
-                var content = $(this).val();
-                render($(this).val(), function(html) {
-                    $("#preview-content").html(html);
-                });
-            });
+        $.post("@routes.Preview.update()", data);
+      }
 
-            $("#short").keydown(function() {
-                var content = $(this).val();
-                render($(this).val(), function(html) {
-                    $("#preview-abstract").html(html);
-                });
-            });
-
-            $("#content, #short").keydown();
+      $(function() {
+        $("#short, #content").keydown(function() {
+          this.style.height = 'auto';
+          this.style.height = (this.scrollHeight+20)+'px';
         });
-        $(".editable").each(function() { this.contentEditable = true; });
+
+        $("#content").keyup(function() {
+          var content = $(this).val();
+          render($(this).val(), function(html) {
+            $("#preview-content").html(html);
+          });
+        });
+
+        $("#short").keyup(function() {
+          var content = $(this).val();
+          render($(this).val(), function(html) {
+            $("#preview-abstract").html(html);
+          });
+        });
+
+        $("#content, #short").keydown();
+
+        $("#title, #content, #short")
+          .keyup(submitPreview).keyup();
+      });
+      $(".editable").each(function() { this.contentEditable = true; });
     </script>
 
-    <div class="pure-g whole-width" ng-controller="PostEditCtrl">
+    <div class="pure-g whole-width">
         <div class="source pure-u-1-2">
+          <div class="box">
             <form id="post-form" method="post" class="pure-form pure-form-stacked">
                 @inputText(postForm("title"), '_label -> "", 'class -> "wide", 'placeholder -> "Title")
                 @inputText(postForm("tags"), '_label -> "", 'class -> "wide", 'placeholder -> "tag1, tag2")
@@ -48,13 +62,17 @@
                 </div>
 
                 <div class="right">
-                    <input type="submit" value="Save" class="pure-button"/>
+                  <a class="pure-button" target="about:blank" href="@routes.Preview.view()">Preview</a>
+                  <input type="submit" value="Save" class="pure-button"/>
                 </div>
             </form>
+          </div>
         </div>
         <div class="preview pure-u-1-2">
+          <div class="box">
             <div id="preview-abstract"></div>
             <div id="preview-content"></div>
+          </div>
         </div>
     </div>
     <div onClick="this.contentEditable=true">

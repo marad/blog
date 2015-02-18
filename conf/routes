@@ -7,6 +7,8 @@ GET     /                           @controllers.Application.index
 GET     /list                       @controllers.Application.listItems
 GET     /error                      @controllers.Application.error
 
+GET     /post/preview               controllers.Preview.view
+POST    /post/preview/update        controllers.Preview.update
 GET     /post/list                  @controllers.Posts.listIndex
 GET     /post/list/:page            @controllers.Posts.list(page: Int)
 GET     /post/search                @controllers.Posts.search(page: Int ?= 0, phrase: String ?= "")
