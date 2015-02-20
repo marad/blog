@@ -23,7 +23,6 @@
 }
 
 @secondRowPost(post: Post) = {
-    <div class="pure-u-24-24 pure-u-lg-12-24">
         <div class="box secondary-post">
             <div class="wrapper">
                 <h3 class="title">
@@ -40,7 +39,6 @@
                 </div>
             </div>
         </div>
-    </div>
 }
 
 @main("Blog", "index") {
@@ -56,12 +54,15 @@
     }
 
     <div class="pure-g">
-
+      <div class="pure-u-24-24 pure-u-lg-12-24">
         @posts.lift(1).map @{ secondRowPost }
-        @posts.lift(2).map @{ secondRowPost }
-
         @posts.lift(3).map @{ secondRowPost }
+      </div>
+
+      <div class="pure-u-24-24 pure-u-lg-12-24">
+        @posts.lift(2).map @{ secondRowPost }
         @posts.lift(4).map @{ secondRowPost }
+      </div>
 
         @if(posts.size >= 5) {
             <div class="post-container pure-u-24-24">
