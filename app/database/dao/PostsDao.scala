@@ -28,10 +28,22 @@ trait PostsDao {
     db.instance.withTransaction { implicit session =>
       val returnedPostId:Long = post.id match {
         case Some(id) =>
-          db.posts.filter(_.id === post.id).update(post.toDbPost)
+          val oldPost = findPost(id).get
+          db.posts
+            .filter(_.id === post.id)
+            .update(
+              post.copy(
+                created = oldPost.created,
+                updated = new DateTime
+              ).toDbPost)
           id
         case None =>
-          db.posts returning db.posts.map(_.id) += post.toDbPost
+          val creationTime = new DateTime
+          val postWithTime = post.copy(
+            created = creationTime,
+            updated = creationTime
+          )
+          db.posts returning db.posts.map(_.id) += postWithTime.toDbPost
       }
 
       removeTagsFromPost(returnedPostId)
