@@ -10,7 +10,10 @@ import org.scalatestplus.play._
  * add your integration spec here.
  * An integration test will fire up a whole play application in a real (or headless) browser
  */
-class IntegrationSpec extends FlatSpec with Matchers with DatabaseTest with OneServerPerSuite with WebBrowser {
+class IntegrationSpec extends FlatSpec with Matchers
+with DatabaseTest with OneServerPerSuite with WebBrowser {
+
+
   implicit val webDriver = new HtmlUnitDriver
 
   "Application" should "work from within a browser" in withDatabase {

@@ -1,2 +1,2 @@
-angular.module('blog', []);
-
+// Start highlighting code
+hljs.initHighlightingOnLoad();
