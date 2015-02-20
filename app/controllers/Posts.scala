@@ -31,6 +31,7 @@ class Posts(val dao: Dao) extends Controller with Secured {
       "content" -> nonEmptyText,
       "date" -> ignored(new DateTime()),
       "updated" -> ignored(new DateTime()),
+      "published" -> boolean,
       "tags" -> text.transform( { tags: String =>
         (tags split """\s*,\s*""" map { new Tag(None, _) }).toSeq
       }, { tags: Seq[Tag] =>

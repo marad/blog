@@ -20,6 +20,7 @@ object Preview extends Controller with Secured {
       "content" -> text,
       "date" -> ignored(new DateTime()),
       "updated" -> ignored(new DateTime()),
+      "published" -> ignored(true),
       "tags" -> ignored(Seq[Tag]())
     )(Post.apply)(Post.unapply)
   }

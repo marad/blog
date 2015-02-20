@@ -53,10 +53,13 @@
           <div class="box">
             <form id="post-form" method="post" class="pure-form pure-form-stacked">
               <p>
-                @inputText(postForm("title"), '_label -> "", 'class -> "wide", 'placeholder -> "Title")
-                @inputText(postForm("tags"), '_label -> "", 'class -> "wide", 'placeholder -> "Tags")
-                @textarea(postForm("short"), '_label -> "Abstract", 'class -> "wide", 'placeholder -> "Abstract")
-                @textarea(postForm("content"), '_label -> "Content", 'class -> "wide content", 'placeholder -> "Content")
+                  @inputText(postForm("title"), '_label -> "", 'class -> "wide", 'placeholder -> "Title")
+                  @inputText(postForm("tags"), '_label -> "", 'class -> "wide", 'placeholder -> "Tags")
+                  @textarea(postForm("short"), '_label -> "Abstract", 'class -> "wide", 'placeholder -> "Abstract")
+                  @textarea(postForm("content"), '_label -> "Content", 'class -> "wide content", 'placeholder -> "Content")
+                  <div>
+                    @checkbox(postForm("published")) <label for="published">Publish post</label>
+                  </div>
               </p>
 
               <div class="right">

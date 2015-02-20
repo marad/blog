@@ -14,8 +14,9 @@ class PostTable(tag: Tag)
   def content = column[String]("CONTENT", O.DBType("TEXT"))
   def created = column[DateTime]("CREATED")
   def updated = column[DateTime]("UPDATED")
+  def published = column[Boolean]("PUBLISHED")
 
-  override def * = (id.?, title, extract, content, created, updated) <> ( DbPost.tupled, DbPost.unapply)
+  override def * = (id.?, title, extract, content, created, updated, published) <> ( DbPost.tupled, DbPost.unapply)
 }
 
 class TagTable(tag: Tag)
