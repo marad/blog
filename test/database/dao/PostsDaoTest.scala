@@ -3,10 +3,9 @@ package database.dao
 import database.{DatabaseTest, DbTestData}
 import models.{Post, Tag}
 import org.joda.time.DateTime
-import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfterEach, FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers}
 
-class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFactory with BeforeAndAfterEach {
+class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers {
 
   "DAO" should "read single post by id" in withDao { daoUnderTest =>
     val first = daoUnderTest.findPost(1l)
@@ -19,7 +18,11 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFac
   it should "insert post and return its id" in withDao { daoUnderTest =>
     val id: Long = daoUnderTest.savePost(PostsDaoTest.examplePost)
     val post = daoUnderTest.findPost(id).get
-    post shouldBe PostsDaoTest.examplePost.copy(id = Some(id))
+    post shouldBe PostsDaoTest.examplePost.copy(
+      id = Some(id),
+      created = post.created,
+      updated = post.updated
+    )
     id shouldBe post.id.get
   }
 
@@ -29,7 +32,10 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFac
     val id: Long = daoUnderTest.savePost(changedPost)
     val post = daoUnderTest.findPost(id).get
 
-    post shouldBe changedPost
+    post shouldBe changedPost.copy(
+      created = post.created,
+      updated = post.updated
+    )
     id shouldBe post.id.get
   }
 
@@ -53,18 +59,28 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFac
     postTags shouldBe empty
   }
 
-  it should "list posts from database and sort descending by creation date" in withDao { daoUnderTest =>
-    val posts = daoUnderTest.listPostsOnFirstPage()
-    posts shouldBe PostsDaoTest.allPosts.sortWith { (a, b) => a.created.isAfter(b.created) }
+  it should "sort posts on first page descending by creation date" in withDao { daoUnderTest =>
+    val publishedPosts = daoUnderTest.listPostsOnFirstPage()
+    publishedPosts shouldBe PostsDaoTest.allPosts
+      .filter(_.published)
+      .sortWith { (a, b) => a.created.isAfter(b.created) }
   }
 
-  it should "should paginate listing sorted descending by creation date" in withDao { daoUnderTest =>
-    val posts = daoUnderTest.listPosts(2, 2)
-    val expectedPosts = PostsDaoTest.allPosts
-      .sortWith { (a, b) => a.created.isAfter(b.created) }
+  it should "should paginate listing of posts sorted descending by creation date" in withDao { daoUnderTest =>
+    val expectedAllPosts = PostsDaoTest.allPosts
+      .sortWith { (a, b) => a.created.isAfter(b.created)}
       .drop(2).take(2)
 
-    posts shouldBe expectedPosts
+    val expectedPublishedPosts = PostsDaoTest.allPosts
+      .filter(_.published)
+      .sortWith { (a, b) => a.created.isAfter(b.created)}
+      .drop(2).take(2)
+
+    val allPosts = daoUnderTest.listPosts(2, 2, publishedOnly = false)
+    val publishedPosts = daoUnderTest.listPosts(2, 2)
+
+    allPosts shouldBe expectedAllPosts
+    publishedPosts shouldBe expectedPublishedPosts
   }
 
   it should "count posts" in withDao { daoUnderTest =>
@@ -76,10 +92,14 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFac
     val start = DbTestData.secondCreateTime
     val end = DbTestData.fourthCreateTime
 
-    val posts = daoUnderTest.listsPostsForPeriod(start, end)
-    posts shouldBe PostsDaoTest.allPosts
+    val allPosts = daoUnderTest.listsPostsForPeriod(start, end, publishedOnly = false)
+    val publishedPosts = daoUnderTest.listsPostsForPeriod(start, end)
+
+    allPosts shouldBe PostsDaoTest.allPosts
       .drop(1).take(3)
       .sortWith { (a, b) => a.created.isAfter(b.created) }
+
+    publishedPosts shouldBe allPosts.filter(_.published)
   }
 
   it should "search by phrase for the post in title, extract, and content" in withDao { daoUnderTest =>
@@ -89,7 +109,6 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFac
     posts shouldBe Seq(
       PostsDaoTest.fifthPost,
       PostsDaoTest.fourthPost,
-      PostsDaoTest.secondPost,
       PostsDaoTest.firstPost
     )
   }
@@ -97,7 +116,7 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFac
   it should "count all search results" in withDao { daoUnderTest =>
     val searchPhrases = Seq("post")
     val count = daoUnderTest.countAllSearchResults(searchPhrases)
-    count shouldBe 4
+    count shouldBe 3
   }
 
   it should "search with offset and max result size" in withDao { daoUnderTest =>
@@ -105,6 +124,13 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers with MockFac
     val posts = daoUnderTest.searchWithPhrase(1, 1, Seq(searchPhrase))
 
     posts shouldBe Seq(PostsDaoTest.fourthPost)
+  }
+
+  it should "search only in published posts" in withDao { daoUnderTest =>
+    val searchPhrase = "published"
+    val posts = daoUnderTest.searchWithPhrase(0, 10, Seq(searchPhrase))
+
+    posts shouldBe Seq(PostsDaoTest.firstPost)
   }
 
   it should "search with multiple phrases" in withDao { daoUnderTest =>
@@ -132,7 +158,7 @@ object PostsDaoTest {
   val fourthPost = Post.fromDbPostAndTags(DbTestData.fourthPostData, Seq())
   val fifthPost = Post.fromDbPostAndTags(DbTestData.fifthPostData, Seq())
 
-  val examplePost = new Post(None, "some title", "some extract", "content", new DateTime, new DateTime, postTags)
+  val examplePost = new Post(None, "some title", "some extract", "content", new DateTime, new DateTime, true, postTags)
 
   val allPosts = Seq(firstPost, secondPost, thirdPost, fourthPost, fifthPost)
 }

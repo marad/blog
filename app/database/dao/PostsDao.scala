@@ -63,17 +63,23 @@ trait PostsDao {
   }
 
   def listPostsOnFirstPage(): Seq[Post] = listPosts(0, Config.postsPerPage)
-  def listPosts(offset:Int, size: Int): Seq[Post] = db.instance.withSession { implicit session =>
-    val dbPosts: Seq[DbPost] = db.posts.sortBy(_.created.desc).drop(offset).take(size).list
+  def listPosts(offset:Int, size: Int, publishedOnly: Boolean = true): Seq[Post] = db.instance.withSession { implicit session =>
+    val dbPosts: Seq[DbPost] = db.posts
+      .filter(_.published === true || publishedOnly == false)
+      .sortBy(_.created.desc)
+      .drop(offset)
+      .take(size)
+      .list
     dbPosts.map { dbPost =>
       val tags = readAllTagsForPost(dbPost.id.get)
       Post.fromDbPostAndTags(dbPost, tags)
     }
   }
 
-  def listsPostsForPeriod(from:DateTime, to:DateTime): Seq[Post] = {
+  def listsPostsForPeriod(from:DateTime, to:DateTime, publishedOnly: Boolean = true): Seq[Post] = {
     db.instance.withTransaction { implicit session =>
       val dbPosts: Seq[DbPost] = db.posts
+        .filter(_.published === true || publishedOnly == false)
         .filter(_.created >= from)
         .filter(_.created <= to)
         .sortBy(_.created.desc)
@@ -118,6 +124,7 @@ trait PostsDao {
   private def createSearchQuery(phrase: String) = {
     val preparedPhrase = s"%${phrase.toUpperCase}%"
     db.posts
+      .filter(_.published)
       .filter( post =>
       (post.title.toUpperCase like preparedPhrase) ||
         (post.content.toUpperCase like preparedPhrase) ||

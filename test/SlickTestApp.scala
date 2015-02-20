@@ -27,11 +27,11 @@ object SlickTestApp {
       (posts.ddl ++ tags.ddl ++ postTags.ddl).create
 
       posts ++= Seq(
-        DbPost(Some(1l), "Title 1", "Extract 1", "Content 1", new DateTime(), new DateTime()),
-        DbPost(Some(2l), "Title 2", "Extract 2", "Content 2", new DateTime(), new DateTime()),
-        DbPost(Some(3l), "Title 3", "Extract 3", "Content 3", new DateTime(), new DateTime()),
-        DbPost(Some(4l), "Title 4", "Extract 4", "Content 4", new DateTime(), new DateTime()),
-        DbPost(Some(5l), "Title 5", "Extract 5", "Content 5", new DateTime(), new DateTime())
+        DbPost(Some(1l), "Title 1", "Extract 1", "Content 1", new DateTime(), new DateTime(), published = true),
+        DbPost(Some(2l), "Title 2", "Extract 2", "Content 2", new DateTime(), new DateTime(), published = false),
+        DbPost(Some(3l), "Title 3", "Extract 3", "Content 3", new DateTime(), new DateTime(), published = true),
+        DbPost(Some(4l), "Title 4", "Extract 4", "Content 4", new DateTime(), new DateTime(), published = true),
+        DbPost(Some(5l), "Title 5", "Extract 5", "Content 5", new DateTime(), new DateTime(), published = true)
       )
 
       tags ++= Seq(

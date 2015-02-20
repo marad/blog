@@ -14,11 +14,11 @@ object DbTestData {
   val fourthCreateTime = new DateTime(4)
   val fifthCreateTime = new DateTime(5)
 
-  val firstPostData   = DbPost(Some(1l), "First Title", "My first post", "Content 1", DbTestData.firstCreateTime, DbTestData.updateTime)
-  val secondPostData  = DbPost(Some(2l), "Second Post Title", "Work in progress", "Content 2", DbTestData.secondCreateTime, DbTestData.updateTime2)
-  val thirdPostData   = DbPost(Some(3l), "Third Title", "Some random data", "Content 3", DbTestData.thirdCreateTime, DbTestData.updateTime2)
-  val fourthPostData  = DbPost(Some(4l), "Fourth Title", "Another extract", "Content 4POSTS", DbTestData.fourthCreateTime, DbTestData.updateTime)
-  val fifthPostData   = DbPost(Some(5l), "Fifth Title", "Last post", "Content 5", DbTestData.fifthCreateTime, DbTestData.updateTime2)
+  val firstPostData   = DbPost(Some(1l), "First Title", "My first post", "Content 1 published", DbTestData.firstCreateTime, DbTestData.updateTime, true)
+  val secondPostData  = DbPost(Some(2l), "Second Post Title", "Work in progress", "Content 2 not published", DbTestData.secondCreateTime, DbTestData.updateTime2, false)
+  val thirdPostData   = DbPost(Some(3l), "Third Title", "Some random data", "Content 3", DbTestData.thirdCreateTime, DbTestData.updateTime2, true)
+  val fourthPostData  = DbPost(Some(4l), "Fourth Title", "Another extract", "Content 4POSTS", DbTestData.fourthCreateTime, DbTestData.updateTime, true)
+  val fifthPostData   = DbPost(Some(5l), "Fifth Title", "Last post", "Content 5", DbTestData.fifthCreateTime, DbTestData.updateTime2, true)
 
   val firstTagData = DbTag(Some(1l), "Tag 1")
   val secondTagData = DbTag(Some(2l), "Tag 2")
