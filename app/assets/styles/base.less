@@ -1,56 +1,8 @@
 @import 'mixins.less';
 @import 'variables.less';
 
-* {
-    font-family: 'Open Sans', sans-serif;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    text-rendering: optimizeLegibility;
-}
-
-@pageMargin: 10px;
-.page-container > div, .strap > div  {
-    margin-left: @pageMargin;
-    margin-right: @pageMargin;
-    
-}
-
-.strap {
-    background-image: url("/assets/images/step1.jpg");
-    padding-top: 10px;
-    padding-bottom: 10px;
-}
-
-@media screen and (min-width: 768px) {
-    .page-container > div, .strap > div  {
-        margin-left: @pageMargin;
-        margin-right: @pageMargin;
-    }
-}
-
-@media screen and (min-width: 1280px) {
-    @pageMargin: 200px;
-    .page-container > div, .strap > div  {
-        margin-left: @pageMargin;
-        margin-right: @pageMargin;
-    }
-}
-
-@media screen and (min-width: 1600px) {
-    @pageMargin: 400px;
-    .page-container > div, .strap > div  {
-        margin-left: @pageMargin;
-        margin-right: @pageMargin;
-    }
-
-}
-
-.page-container > .strap {
-    margin-left: 0;
-    margin-right: 0;
-    color: white;
-}
+@import 'setup.less';
+@import 'code-style.less';
 
 @successColor: hsl(130, 60%, 80%);
 @warningColor: hsl(60, 85%, 80%);
