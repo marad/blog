@@ -4,14 +4,15 @@ import database.Dao
 import models.Account
 import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.Matchers
+import org.scalatest.{FlatSpec, Matchers}
+import org.scalatestplus.play.OneAppPerSuite
 import play.api.mvc.{Result, AnyContent, Request}
 import play.api.test._
 import org.scalatest.PartialFunctionValues._
 
 import scala.concurrent.Future
 
-class AuthTest extends ControllerSpec with Matchers with MockitoSugar {
+class AuthTest extends FlatSpec with ControllerSpec with Matchers with MockitoSugar with OneAppPerSuite {
 
   val daoMock: Dao = mock[Dao]
   val requestMock: Request[AnyContent] = mock[Request[AnyContent]]

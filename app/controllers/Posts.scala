@@ -42,21 +42,24 @@ class Posts(val dao: Dao) extends Controller with Secured {
   }
 
   def view(id: Long) = Action { implicit request =>
-
     dao.findPost(id) match {
       case Some(p) => Ok(views.html.post(p))
-      case _ => NotFound(views.html.error("Nie odnaleziono posta"))
+        if (p.published) Ok(views.html.post(p))
+        else NotFound(views.html.error("Post not found"))
+      case _ => NotFound(views.html.error("Post not found"))
     }
   }
 
-  def insert = loggedIn { implicit request =>
-    postForm bindFromRequest() fold ({ errors =>
+  def insert = loggedIn { implicit request: Request[AnyContent] =>
+    postForm bindFromRequest() fold( { errors =>
+      println(request.body.asFormUrlEncoded)
       BadRequest(views.html.editor(errors))
-    },
-      { post =>
-        val id = dao.savePost(post)
-        Redirect(routes.Posts.view(id))
-      })
+    }, { post =>
+      println(post)
+      println(post)
+      val id = dao.savePost(post)
+      Redirect(routes.Posts.view(id))
+    })
   }
 
   def save(id: Long) = loggedIn { implicit request =>

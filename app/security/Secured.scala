@@ -10,17 +10,21 @@ trait Secured {
 
   def username(request: RequestHeader) = request.session.get(Security.username)
 
-  def onUnauthorized(request: RequestHeader) =
+  def onUnauthorized(request: RequestHeader): Result =
     Results.Redirect(routes.Application.index())
-      .flashing( ErrorMessage -> "Brak uprawnień do zasobu")
+      .flashing( ErrorMessage -> "You cannot access this resource.")
 
-  def loggedIn(f : => Result) = {
+  def onUnauthorized2: Result =
+    Results.Redirect(routes.Application.index())
+      .flashing( ErrorMessage -> "You cannot access this resource.")
+
+  def loggedIn(f : => Result): EssentialAction = {
     Security.Authenticated(username, onUnauthorized) { user =>
       Action(f)
     }
   }
 
-  def loggedIn(f: Request[AnyContent] => Result) = {
+  def loggedIn(f: Request[AnyContent] => Result): EssentialAction = {
     Security.Authenticated(username, onUnauthorized) { user =>
       Action(f)
     }
