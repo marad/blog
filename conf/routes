@@ -20,7 +20,7 @@ GET     /post/preview               controllers.Preview.view
 POST    /post/preview/update        controllers.Preview.update
 GET     /post/list                  @controllers.Posts.listIndex
 GET     /post/list/:page            @controllers.Posts.list(page: Int)
-GET     /post/search                @controllers.Posts.search(page: Int ?= 0, phrase: String ?= "")
+GET     /post/search                @controllers.Posts.search(page: Int ?= 1, phrase: String ?= "")
 GET     /calendar/data              @controllers.Posts.calendarData(start: Option[String], end: Option[String])
 GET     /calendar                   @controllers.Posts.calendar
 

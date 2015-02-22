@@ -1,4 +1,4 @@
-@(page: Int, maxPages: Int, posts: Seq[Post])(implicit request: RequestHeader, flash: Flash)
+@(page: Int, maxPages: Int, posts: Seq[Post], pageRoute: Int => String)(implicit request: RequestHeader, flash: Flash)
 
 @main("Posts", "list") {
     <div class="strap">
@@ -21,16 +21,16 @@
 
     <div class="pure-g">
         <div class="pure-u-5-24 left">
-            @if(page > 0) {
-                <a href="@routes.Posts.list(page-1)" class="pure-button">Newer posts</a>
+            @if(page > 1) {
+                <a href="@pageRoute(page-1)" class="pure-button">Newer posts</a>
             }
         </div>
         <div class="pure-u-14-24 page-info center">
-            Page @{page+1} of @{maxPages+1}
+            Page @{page} of @{maxPages}
         </div>
         <div class="pure-u-5-24 right">
             @if(page < maxPages) {
-                <a href="@routes.Posts.list(page+1)" class="pure-button">Older posts</a>
+                <a href="@pageRoute(page+1)" class="pure-button">Older posts</a>
             }
         </div>
     </div>

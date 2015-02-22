@@ -60,7 +60,7 @@ class PostsDaoTest extends FlatSpec with DatabaseTest with Matchers {
   }
 
   it should "sort posts on first page descending by creation date" in withDao { daoUnderTest =>
-    val publishedPosts = daoUnderTest.listPostsOnFirstPage()
+    val publishedPosts = daoUnderTest.listPostsOnFirstPage(10)
     publishedPosts shouldBe PostsDaoTest.allPosts
       .filter(_.published)
       .sortWith { (a, b) => a.created.isAfter(b.created) }

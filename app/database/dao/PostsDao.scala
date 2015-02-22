@@ -62,19 +62,23 @@ trait PostsDao {
     db.posts.length.run
   }
 
-  def listPostsOnFirstPage(): Seq[Post] = listPosts(0, Config.postsPerPage)
-  def listPosts(offset:Int, size: Int, publishedOnly: Boolean = true): Seq[Post] = db.instance.withSession { implicit session =>
-    val dbPosts: Seq[DbPost] = db.posts
-      .filter(_.published === true || publishedOnly == false)
-      .sortBy(_.created.desc)
-      .drop(offset)
-      .take(size)
-      .list
-    dbPosts.map { dbPost =>
-      val tags = readAllTagsForPost(dbPost.id.get)
-      Post.fromDbPostAndTags(dbPost, tags)
+  def listPostsOnFirstPage(postsPerPage: Int = Config.postsPerPage): Seq[Post] =
+    listPosts(0, postsPerPage)
+
+  def listPosts(offset:Int, size: Int,
+                publishedOnly: Boolean = true): Seq[Post] =
+    db.instance.withSession { implicit session =>
+      val dbPosts: Seq[DbPost] = db.posts
+        .filter(_.published === true || publishedOnly == false)
+        .sortBy(_.created.desc)
+        .drop(offset)
+        .take(size)
+        .list
+      dbPosts.map { dbPost =>
+        val tags = readAllTagsForPost(dbPost.id.get)
+        Post.fromDbPostAndTags(dbPost, tags)
+      }
     }
-  }
 
   def listsPostsForPeriod(from:DateTime, to:DateTime, publishedOnly: Boolean = true): Seq[Post] = {
     db.instance.withTransaction { implicit session =>

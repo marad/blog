@@ -1,23 +1,27 @@
 package controllers.blog
 
-import controllers.{Posts, routes, ControllerSpec}
+import controllers.{routes, ControllerSpec}
 import database.{DbTestData, Dao}
 import models.Post
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.{Matchers, WordSpec}
 import org.scalatestplus.play.OneAppPerSuite
-import play.api.mvc.Security
+import play.api.mvc.{Controller, Security}
 import play.api.test.{FakeRequest, Writeables, EssentialActionCaller}
 import org.mockito.Mockito._
 import org.mockito.Matchers._
+import security.Secured
 import utils.MessageType
 
 class PostCrudTest extends WordSpec with ControllerSpec with Matchers with MockitoSugar
 with OneAppPerSuite with EssentialActionCaller with Writeables
 with TableDrivenPropertyChecks {
+
+  class TestController(val dao: Dao) extends Controller with Secured with PostCrud
+
   val daoMock: Dao = mock[Dao]
-  val posts: PostCrud = new Posts(daoMock)
+  val posts: PostCrud = new TestController(daoMock)
   val publishedPost = Post.fromDbPostAndTags(DbTestData.firstPostData, Seq())
   val unpublishedPost = Post.fromDbPostAndTags(DbTestData.secondPostData, Seq())
 

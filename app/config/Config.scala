@@ -1,6 +1,7 @@
 package config
 
 import controllers._
+import controllers.blog.Pager
 import database.{Db, Dao}
 import org.slf4j.LoggerFactory
 
@@ -19,7 +20,6 @@ object Config extends play.api.GlobalSettings {
   }
 
   case object ProdDb extends DbConfig {
-    // TODO: get settings from ENVIRONMENT
     val driver:String = "org.postgresql.Driver"
     val url:String = System.getProperty("database.url")
     val user:String = System.getProperty("database.user")
@@ -41,16 +41,12 @@ object Config extends play.api.GlobalSettings {
   }
 
   lazy val environment: Environment = {
-//    println("ENV: " + System.getProperty("env"))
     System.getProperty("env", "DEV") match {
       case "PROD" =>
-//        println("RUNNING IN PROD")
         Production
       case "TEST" =>
-//        println("RUNNING IN TEST")
         Test
       case _ =>
-//        println("RUNNING IN DEV")
         Development
     }
   }
@@ -67,14 +63,22 @@ object Config extends play.api.GlobalSettings {
     case Test => scala.slick.driver.H2Driver
   }
 
-  val logger = LoggerFactory.getLogger(Config.getClass)
-//  println(s"Trying to connect to database: ${db.url} as ${db.user}")
-//  logger.info(s"Trying to connect to database: ${db.url} as ${db.user}")
+  val postsPerPage : Int =
+    configuration.getInt("pages.list.postsPerPage") match {
+      case Some(value) => value
+      case None => 5
+    }
+
+  private def getString(settingName: String, defaultValue: String): String =
+    configuration.getString(settingName) match {
+      case Some(value) => value
+      case None => defaultValue
+    }
 
   val database = new Db
   val dao = new Dao(database)
 
-  private val postsController = new Posts(dao)
+  private val postsController = new Posts(dao, new Pager(postsPerPage))
   private val applicationController = new Application(dao)
   private val feedController = new Feed(dao)
   private val authController = new Auth(dao)
@@ -87,15 +91,4 @@ object Config extends play.api.GlobalSettings {
     else super.getControllerInstance(controllerClass)
   }
 
-  val postsPerPage : Int =
-    configuration.getInt("pages.list.postsPerPage") match {
-      case Some(value) => value
-      case None => 10
-    }
-
-  private def getString(settingName: String, defaultValue: String): String =
-    configuration.getString(settingName) match {
-      case Some(value) => value
-      case None => defaultValue
-    }
 }
