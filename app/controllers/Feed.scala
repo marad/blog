@@ -70,8 +70,8 @@ class Feed(dao: Dao) extends Controller {
       for (post <- posts) yield {
         <entry>
           <title>{post.title}</title>
-          <link href={ s"http://$host${routes.Posts.view(post.id.get)}" }/>
-          <link rel="alternate" type="text/html" href={ s"http://$host${routes.Posts.view(post.id.get)}" }/>
+          <link href={ s"http://$host${routes.PostCrud.view(post.id.get)}" }/>
+          <link rel="alternate" type="text/html" href={ s"http://$host${routes.PostCrud.view(post.id.get)}" }/>
           <id>{ tagId(post) }</id>
           <updated>{ post.updated }</updated>
           <summary type="xhtml" xml:lang="en"

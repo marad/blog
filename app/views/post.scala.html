@@ -14,8 +14,8 @@
             <div class="pure-u-16-24 actions">
                 @loggedIn {
                   <ul>
-                    <li><a href="@routes.Posts.edit(post.id.getOrElse(0))">Edit</a></li>
-                    <li><a href="@routes.Posts.delete(post.id.getOrElse(0))" onclick="return confirm('Are you sure you want to delete this post?')">Delete</a></li>
+                    <li><a href="@routes.PostCrud.edit(post.id.getOrElse(0))">Edit</a></li>
+                    <li><a href="@routes.PostCrud.delete(post.id.getOrElse(0))" onclick="return confirm('Are you sure you want to delete this post?')">Delete</a></li>
                     </ul>
                 }
             </div>

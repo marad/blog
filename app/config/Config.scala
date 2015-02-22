@@ -1,6 +1,6 @@
 package config
 
-import controllers.{Auth, Feed, Posts, Application}
+import controllers._
 import database.{Db, Dao}
 import org.slf4j.LoggerFactory
 
@@ -41,16 +41,16 @@ object Config extends play.api.GlobalSettings {
   }
 
   lazy val environment: Environment = {
-    println("ENV: " + System.getProperty("env"))
+//    println("ENV: " + System.getProperty("env"))
     System.getProperty("env", "DEV") match {
       case "PROD" =>
-        println("RUNNING IN PROD")
+//        println("RUNNING IN PROD")
         Production
       case "TEST" =>
-        println("RUNNING IN TEST")
+//        println("RUNNING IN TEST")
         Test
       case _ =>
-        println("RUNNING IN DEV")
+//        println("RUNNING IN DEV")
         Development
     }
   }
@@ -68,19 +68,21 @@ object Config extends play.api.GlobalSettings {
   }
 
   val logger = LoggerFactory.getLogger(Config.getClass)
-  println(s"Trying to connect to database: ${db.url} as ${db.user}")
-  logger.info(s"Trying to connect to database: ${db.url} as ${db.user}")
+//  println(s"Trying to connect to database: ${db.url} as ${db.user}")
+//  logger.info(s"Trying to connect to database: ${db.url} as ${db.user}")
 
   val database = new Db
   val dao = new Dao(database)
 
   private val postsController = new Posts(dao)
+  private val postCrudController = new PostCrud(dao)
   private val applicationController = new Application(dao)
   private val feedController = new Feed(dao)
   private val authController = new Auth(dao)
 
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     if (controllerClass == classOf[Posts]) postsController.asInstanceOf[A]
+    else if (controllerClass == classOf[PostCrud]) postCrudController.asInstanceOf[A]
     else if (controllerClass == classOf[Application]) applicationController.asInstanceOf[A]
     else if (controllerClass == classOf[Feed]) feedController.asInstanceOf[A]
     else if (controllerClass == classOf[Auth]) authController.asInstanceOf[A]

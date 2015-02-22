@@ -2,11 +2,8 @@ package controllers
 
 import config.Config
 import database.Dao
-import models._
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
-import play.api.data.Forms._
-import play.api.data._
 import play.api.libs.json.Json
 import play.api.mvc._
 import security.Secured
@@ -15,79 +12,6 @@ import viewmodel.CalendarEvent
 class Posts(val dao: Dao) extends Controller with Secured {
 
   import utils.MessageType._
-
-  val tagForm: Form[Tag] = Form {
-    mapping(
-      "id" -> ignored(None:Option[Long]),
-      "name" -> nonEmptyText
-    )(Tag.apply)(Tag.unapply)
-  }
-
-  val postForm: Form[Post] = Form {
-    mapping(
-      "id" -> ignored(None:Option[Long]),
-      "title" -> nonEmptyText,
-      "short" -> nonEmptyText,
-      "content" -> nonEmptyText,
-      "date" -> ignored(new DateTime()),
-      "updated" -> ignored(new DateTime()),
-      "published" -> boolean,
-      "tags" -> text.transform( { tags: String =>
-        (tags split """\s*,\s*""" map { new Tag(None, _) }).toSeq
-      }, { tags: Seq[Tag] =>
-        if (tags.isEmpty) ""
-        else tags.map({ _.name }).reduce{ (l: String, r:String) => l + ", " + r }
-      })
-    )(Post.apply)(Post.unapply)
-  }
-
-  def view(id: Long) = Action { implicit request =>
-    dao.findPost(id) match {
-      case Some(p) => Ok(views.html.post(p))
-        if (p.published) Ok(views.html.post(p))
-        else NotFound(views.html.error("Post not found"))
-      case _ => NotFound(views.html.error("Post not found"))
-    }
-  }
-
-  def insert = loggedIn { implicit request: Request[AnyContent] =>
-    postForm bindFromRequest() fold( { errors =>
-      println(request.body.asFormUrlEncoded)
-      BadRequest(views.html.editor(errors))
-    }, { post =>
-      println(post)
-      println(post)
-      val id = dao.savePost(post)
-      Redirect(routes.Posts.view(id))
-    })
-  }
-
-  def save(id: Long) = loggedIn { implicit request =>
-    postForm bindFromRequest() fold ({ errors =>
-      BadRequest(views.html.editor(errors))
-    }, { post =>
-      dao.savePost(post.copy(id = Some(id)))
-      Redirect(routes.Posts.view(id))
-    })
-  }
-
-  def create = loggedIn { implicit request =>
-    Ok(views.html.editor(postForm))
-  }
-
-  def edit(id: Long) = loggedIn { implicit request =>
-    dao.findPost(id) match {
-      case Some(post) => Ok(views.html.editor(postForm.fill(post)))
-      case _ => NotFound(views.html.error("Nie odnaleziono posta"))
-    }
-  }
-
-  def delete(id: Long) = loggedIn { implicit request =>
-    dao.deletePost(id)
-    Redirect(routes.Application.index())
-      .flashing( SuccessMessage -> s"Usunięto post $id")
-    // TODO case _ => NotFound(views.html.error("Nie odnaleziono posta"))
-  }
 
   def countMaxPages(postCount: Int) =
     Math.ceil(postCount.toDouble / Config.postsPerPage.toDouble).toInt - 1
@@ -99,7 +23,7 @@ class Posts(val dao: Dao) extends Controller with Secured {
 
     if (page < 0 || page > maxPages) {
       Redirect(routes.Posts.listIndex())
-        .flashing( ErrorMessage -> "Niepoprawna strona")
+        .flashing( ErrorMessage -> "Invalid page")
     } else {
       val posts = dao.listPosts(postsPerPage * page, postsPerPage)
       Ok(views.html.list(page, maxPages, posts))
