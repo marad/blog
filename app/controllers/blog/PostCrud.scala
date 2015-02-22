@@ -1,5 +1,6 @@
-package controllers
+package controllers.blog
 
+import controllers.routes
 import database.Dao
 import models.{Post, Tag}
 import org.joda.time.DateTime

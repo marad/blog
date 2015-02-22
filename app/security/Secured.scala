@@ -14,10 +14,6 @@ trait Secured {
     Results.Redirect(routes.Application.index())
       .flashing( ErrorMessage -> "You cannot access this resource.")
 
-  def onUnauthorized2: Result =
-    Results.Redirect(routes.Application.index())
-      .flashing( ErrorMessage -> "You cannot access this resource.")
-
   def loggedIn(f : => Result): EssentialAction = {
     Security.Authenticated(username, onUnauthorized) { user =>
       Action(f)

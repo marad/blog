@@ -1,6 +1,6 @@
 package controllers.blog
 
-import controllers.{Posts, routes, PostCrud, ControllerSpec}
+import controllers.{Posts, routes, ControllerSpec}
 import database.{DbTestData, Dao}
 import models.Post
 import org.scalatest.mock.MockitoSugar
@@ -11,12 +11,13 @@ import play.api.mvc.Security
 import play.api.test.{FakeRequest, Writeables, EssentialActionCaller}
 import org.mockito.Mockito._
 import org.mockito.Matchers._
+import utils.MessageType
 
 class PostCrudTest extends WordSpec with ControllerSpec with Matchers with MockitoSugar
 with OneAppPerSuite with EssentialActionCaller with Writeables
 with TableDrivenPropertyChecks {
   val daoMock: Dao = mock[Dao]
-  val posts = new Posts(daoMock)
+  val posts: PostCrud = new Posts(daoMock)
   val publishedPost = Post.fromDbPostAndTags(DbTestData.firstPostData, Seq())
   val unpublishedPost = Post.fromDbPostAndTags(DbTestData.secondPostData, Seq())
 
@@ -111,6 +112,30 @@ with TableDrivenPropertyChecks {
       status(result) shouldBe NOT_FOUND
       contentAsString(result) should include("Post not found")
       verify(daoMock, never()).deletePost(5)
+    }
+  }
+
+  "Security" should {
+    val cases = Table(
+      ("action", "desc"),
+      (posts.edit(1), "editing"),
+      (posts.insert, "inserting"),
+      (posts.save(1), "saving"),
+      (posts.create, "creating"),
+      (posts.delete(1), "deleting")
+    )
+
+    forAll(cases) { (action, desc) =>
+      s"require authorization when $desc" in {
+        val result = call(action, req.get)
+        status(result) shouldBe SEE_OTHER
+        flash(result).get(MessageType.ErrorMessage) shouldBe Some("You cannot access this resource.")
+      }
+    }
+
+    "not require authorization when viewing" in {
+      val result = call(posts.view(1), req.get)
+      status(result) shouldBe OK
     }
   }
 }
