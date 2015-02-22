@@ -9,7 +9,8 @@ import play.api.mvc._
 import security.Secured
 import utils.MessageType
 
-class PostCrud(dao: Dao) extends Controller with Secured {
+trait PostCrud { this : Controller with Secured =>
+  val dao: Dao
 
   val tagForm: Form[Tag] = Form {
     mapping(
@@ -50,7 +51,7 @@ class PostCrud(dao: Dao) extends Controller with Secured {
       BadRequest(views.html.editor(errors))
     }, { post =>
       val id = dao.savePost(post.copy(id = givenId))
-      Redirect(routes.PostCrud.view(id))
+      Redirect(routes.Posts.view(id))
     })
   }
 

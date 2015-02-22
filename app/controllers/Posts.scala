@@ -9,7 +9,8 @@ import play.api.mvc._
 import security.Secured
 import viewmodel.CalendarEvent
 
-class Posts(val dao: Dao) extends Controller with Secured {
+class Posts(val dao: Dao) extends Controller with Secured
+with PostCrud {
 
   import utils.MessageType._
 

@@ -13,7 +13,7 @@ object CalendarEvent {
       post.id.get,
       post.title,
       post.created.toLocalDate,
-      routes.PostCrud.view(post.id.get).toString()
+      routes.Posts.view(post.id.get).toString()
     )
 
 

@@ -1,6 +1,6 @@
 package controllers.blog
 
-import controllers.{routes, PostCrud, ControllerSpec}
+import controllers.{Posts, routes, PostCrud, ControllerSpec}
 import database.{DbTestData, Dao}
 import models.Post
 import org.scalatest.mock.MockitoSugar
@@ -16,7 +16,7 @@ class PostCrudTest extends WordSpec with ControllerSpec with Matchers with Mocki
 with OneAppPerSuite with EssentialActionCaller with Writeables
 with TableDrivenPropertyChecks {
   val daoMock: Dao = mock[Dao]
-  val posts = new PostCrud(daoMock)
+  val posts = new Posts(daoMock)
   val publishedPost = Post.fromDbPostAndTags(DbTestData.firstPostData, Seq())
   val unpublishedPost = Post.fromDbPostAndTags(DbTestData.secondPostData, Seq())
 
@@ -64,7 +64,7 @@ with TableDrivenPropertyChecks {
         val request = req.authorizedPostWithBody(publishedPost)
         val result = call(action, request)
         status(result) shouldBe SEE_OTHER
-        redirectLocation(result) shouldBe Some(routes.PostCrud.view(1).url)
+        redirectLocation(result) shouldBe Some(routes.Posts.view(1).url)
       }
     }
 

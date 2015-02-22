@@ -8,12 +8,12 @@ GET     /list                       @controllers.Application.listItems
 GET     /error                      @controllers.Application.error
 
 # Post CRUD
-GET     /post/create                @controllers.PostCrud.create
-POST    /post/create                @controllers.PostCrud.insert
-GET     /post/edit/:id              @controllers.PostCrud.edit(id: Long)
-POST    /post/edit/:id              @controllers.PostCrud.save(id: Long)
-GET     /post/view/:id              @controllers.PostCrud.view(id: Long)
-GET     /post/delete/:id            @controllers.PostCrud.delete(id: Long)
+GET     /post/create                @controllers.Posts.create
+POST    /post/create                @controllers.Posts.insert
+GET     /post/edit/:id              @controllers.Posts.edit(id: Long)
+POST    /post/edit/:id              @controllers.Posts.save(id: Long)
+GET     /post/view/:id              @controllers.Posts.view(id: Long)
+GET     /post/delete/:id            @controllers.Posts.delete(id: Long)
 
 # Other post operations
 GET     /post/preview               controllers.Preview.view
