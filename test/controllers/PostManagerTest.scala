@@ -2,6 +2,7 @@ package controllers
 
 import _root_.play.api.mvc.Security
 import _root_.play.api.test.{EssentialActionCaller, Writeables, _}
+import controllers.blog.Pager
 import database.Dao
 import org.scalatest.FreeSpec
 import org.scalatest.prop.TableDrivenPropertyChecks
@@ -10,7 +11,7 @@ import utils.MessageType
 class PostManagerTest extends FreeSpec with ControllerSpec with TableDrivenPropertyChecks
 with EssentialActionCaller with Writeables {
   val dao = mock[Dao]
-  val controller = new PostManager(dao)
+  val controller = new PostManager(dao, new Pager(5))
 
   def req = new {
     val unauthorizedGet = FakeRequest("GET", "/ignored")

@@ -14,7 +14,7 @@ class PostManager(val dao: Dao, val pager: Pager)
   case class PostView(id: Long, title: String, published: Boolean)
   object PostView {
     implicit val postFormat = Json.format[PostView]
-    def fromPost(p:Post) = PostView(p.id.get, p.content, p.published)
+    def fromPost(p:Post) = PostView(p.id.get, p.title, p.published)
   }
 
   def get = loggedIn { implicit request =>

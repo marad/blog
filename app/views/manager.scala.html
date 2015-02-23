@@ -48,7 +48,7 @@
                   <td class="published">{{post.published}}</td>
                   <td class="actions">
                     <a href="/post/edit/{{post.id}}">Edit</a>
-                    <a href="/post/delete/{{post.id}}" 
+                    <a href="/post/delete/{{post.id}}"
                       onclick="return confirm('Are you sure you want to delete this post?')">
                       Delete
                     </a>
@@ -61,8 +61,8 @@
               <ul class="pure-paginator">
                 <li><button class="pure-button prev" ng-click="getPage(currentPage-1)">&#171;</button></li>
                 <li ng-repeat="i in times(pageCount)">
-                  <button 
-                    class="pure-button" 
+                  <button
+                    class="pure-button"
                     ng-click="getPage($index+1)"
                     ng-class="{'pure-button-active': ($index+1) == currentPage}">
                     {{ $index + 1 }}
