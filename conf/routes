@@ -24,6 +24,10 @@ GET     /post/search                @controllers.Posts.search(page: Int ?= 1, ph
 GET     /calendar/data              @controllers.Posts.calendarData(start: Option[String], end: Option[String])
 GET     /calendar                   @controllers.Posts.calendar
 
+# Post Manager
+GET     /post/manager               @controllers.PostManager.get
+GET     /post/manager/page/count    @controllers.PostManager.getPageCount
+GET     /post/manager/page/:page    @controllers.PostManager.getPage(page: Int)
 
 # Authentication
 GET     /auth/login                 @controllers.Auth.viewLoginForm

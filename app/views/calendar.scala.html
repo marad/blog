@@ -7,7 +7,6 @@
   <script>
     $(function() {
       $('#calendar').fullCalendar({
-        lang: 'pl',
         firstDay: 1,
         events: "@routes.Posts.calendarData(None, None)",
         eventRender: function(event, element) {

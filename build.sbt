@@ -29,7 +29,7 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.7.2",
   "org.webjars" % "bootstrap" % "3.0.2",
   "org.mindrot" % "jbcrypt" % "0.3m",
-  "org.scalatest" %% "scalatest" % "2.2.1" % "test",
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test",
   "org.scalamock" %% "scalamock-scalatest-support" % "3.2" % "test",
   "org.scalatestplus" %% "play" % "1.2.0" % "test"
 )

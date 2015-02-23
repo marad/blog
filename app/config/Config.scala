@@ -82,12 +82,14 @@ object Config extends play.api.GlobalSettings {
   private val applicationController = new Application(dao)
   private val feedController = new Feed(dao)
   private val authController = new Auth(dao)
+  private val postManagerController = new PostManager(dao, new Pager(5))
 
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
     if (controllerClass == classOf[Posts]) postsController.asInstanceOf[A]
     else if (controllerClass == classOf[Application]) applicationController.asInstanceOf[A]
     else if (controllerClass == classOf[Feed]) feedController.asInstanceOf[A]
     else if (controllerClass == classOf[Auth]) authController.asInstanceOf[A]
+    else if (controllerClass == classOf[PostManager]) postManagerController.asInstanceOf[A]
     else super.getControllerInstance(controllerClass)
   }
 
