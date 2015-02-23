@@ -43,4 +43,10 @@ trait Secured {
       onUnauthorized(request)
     }
   }
+
+  def isLoggedIn(request: Request[AnyContent]) =
+    request.session.get(Security.username) match {
+      case Some(_) => true
+      case None => false
+    }
 }

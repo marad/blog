@@ -41,7 +41,7 @@ trait PostCrud { this : Controller with Secured =>
   def view(id: Long) = Action { implicit request =>
     dao.findPost(id) match {
       case Some(p) => Ok(views.html.post(p))
-        if (p.published) Ok(views.html.post(p))
+        if (p.published || isLoggedIn(request)) Ok(views.html.post(p))
         else NotFound(views.html.error("Post not found"))
       case _ => NotFound(views.html.error("Post not found"))
     }

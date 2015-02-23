@@ -45,7 +45,7 @@ with TableDrivenPropertyChecks {
       ("action", "expectedContent", "desc"),
       (posts.view(1), publishedPost.content, "show existing and published posts"),
       (posts.view(5), "Post not found", "show error for not existing posts"),
-      (posts.view(2), "Post not found", "show error for not published posts")
+      (posts.view(2), "Post not found", "show error for not published posts when not authorized")
     )
 
     forAll(actions) { (action, expectedContent, desc) =>
@@ -53,6 +53,11 @@ with TableDrivenPropertyChecks {
         val result = action(req.get)
         contentAsString(result) should include(expectedContent)
       }
+    }
+
+    "show unpublished post to authorized user" in {
+      val result = posts.view(2)(req.authorizedGet)
+      contentAsString(result) should include(unpublishedPost.content)
     }
   }
 
