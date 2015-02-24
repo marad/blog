@@ -10,7 +10,7 @@ class Feed(dao: Dao) extends Controller {
 
   import views.Extensions._
 
-  val host = "radoszewski.pl"
+  val host = "blog.radoszewski.pl"
   val feedTagDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy:HH-mm")
   val entryTagDateFormat = DateTimeFormat.forPattern("dd-MM-yyyy")
 
