@@ -1,7 +1,0 @@
-@(breadcrumbs: List[elements.Breadcrumb])
-
-<ul>
-    @breadcrumbs.map { breadcrumb =>
-        <li><a href="@breadcrumb.link">@breadcrumb.name</a></li>
-    }
-</ul>
