@@ -27,7 +27,6 @@
             <link rel="stylesheet" media="screen" href="@routes.Assets.at("styles/page/" + pageCssToLoad + ".min.css")">
         }
 
-        @parts.lightbox()
         <script src="@routes.Assets.at("javascripts/angular.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("highlightjs/highlight.pack.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/jquery-1.11.1.min.js")" type="text/javascript"></script>
@@ -35,6 +34,7 @@
         <script src="@routes.Assets.at("javascripts/yui-min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/app.js")" type="text/javascript"></script>
 
+        @parts.lightbox()
     </head>
     <body>
         <div class="page-container">
