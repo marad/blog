@@ -67,7 +67,13 @@
                     </div>
                 </div>
                 <div class="pure-u-8-24" id="tools">
-                    <a id="rssicon" href="@routes.Feed.getAtom()">
+                    <a class="icon" href="http://twitter.com/moriturius" target="about:blank">
+                      <i class="fa fa-twitter"></i>
+                    </a>
+                    <a class="icon" href="http://github.com/marad" target="about:blank">
+                      <i class="fa fa-github"></i>
+                    </a>
+                    <a class="icon" href="@routes.Feed.getAtom()" target="about:blank">
                         <i class="fa fa-rss-square"></i>
                     </a>
                     <form id="searchform" method="get" action="@routes.Posts.search()">
