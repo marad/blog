@@ -1,6 +1,12 @@
 @(page: Int, maxPages: Int, posts: Seq[Post], pageRoute: Int => String)(implicit request: RequestHeader, flash: Flash)
 
 @main("Posts", "list") {
+    <style>
+      .page-info .pure-paginator .pure-button {
+        font-size: 12px;
+        height: inherit;
+      }
+    </style>
     <div class="strap">
         <div>
             <h1>Post list</h1>
@@ -19,19 +25,22 @@
         </div>
     }
 
-    <div class="pure-g">
-        <div class="pure-u-5-24 left">
+    <div class="page-info center">
+        <ul class="pure-paginator">
             @if(page > 1) {
-                <a href="@pageRoute(page-1)" class="pure-button">Newer posts</a>
+              <li><a class="pure-button prev" href="@pageRoute(page-1)">&#171;</a></li>
             }
-        </div>
-        <div class="pure-u-14-24 page-info center">
-            Page @{page} of @{maxPages}
-        </div>
-        <div class="pure-u-5-24 right">
+
+            @for(i <- 1 to maxPages) {
+                <li>
+                  <a href="@pageRoute(i)" class="pure-button @("pure-button-active".when(i == page))">
+                        @i
+                    </a>
+                </li>
+            }
             @if(page < maxPages) {
-                <a href="@pageRoute(page+1)" class="pure-button">Older posts</a>
+              <li><a class="pure-button next" href="@pageRoute(page+1)">&#187;</a></li>
             }
-        </div>
+        </ul>
     </div>
 }
