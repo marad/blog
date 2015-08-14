@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Scalartemis</title>
+  <meta name="description" content="Recently I’ve been creating entity component framework which I named Scalartemis. Name is direct descendant of two words. First (surprisingly) is Scala - the...">
+
+  <link rel="icon" type="image/png" href="/assets/images/favicon.png"/>
+
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="canonical" href="http://blog.radoszewski.pl/programming/2015/04/04/scalartemis.html">
+  <link rel="alternate" type="application/rss+xml" title="Marad Blog" href="http://blog.radoszewski.pl/feed.xml" />
+
+  <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+
+  <script src="/assets/js/jquery-1.11.1.min.js" type="text/javascript"></script>
+
+  <link rel="stylesheet" media="screen" href="/assets/lightbox/css/lightbox.css">
+
+  <script src="/assets/lightbox/js/lightbox.min.js" type="text/javascript"></script>
+  <script src="/assets/js/links.js" type="text/javascript"></script>
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">
+      <img src="/assets/images/logo.svg" height="70" class="logo" alt="Logo"/>
+    </a>
+
+    <nav class="site-nav">
+      <a href="#" class="menu-icon">
+        <svg viewBox="0 0 18 15">
+          <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+          <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+          <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+        </svg>
+      </a>
+
+      <div class="trigger">
+        <a class="page-link" href="/">Home</a>
+        
+          
+          <a class="page-link" href="/about/">About</a>
+          
+        
+          
+        
+          
+          <a class="page-link" href="/games/">Games</a>
+          
+        
+          
+        
+          
+        
+          
+          <a class="page-link" href="/music/">Music</a>
+          
+        
+          
+          <a class="page-link" href="/programs/">Programs</a>
+          
+        
+      </div>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <div class="page-content">
+      <div class="wrapper">
+        <div class="post">
+  <div class="breadcrumb">
+    <a href="/">Home</a> » <a href="/programming/2015/04/04/scalartemis.html">Scalartemis</a>
+  </div>
+
+  <header class="post-header">
+    <h1 class="post-title">Scalartemis</h1>
+    <p class="post-meta">Apr 4, 2015 • marad</p>
+  </header>
+
+
+  <article class="post-content">
+    <p>Recently I’ve been creating entity component framework which I named <em>Scalartemis</em>. Name is direct descendant of two words. First (surprisingly) is <em>Scala</em> - the language it’s written in. Second is <em>Artemis</em>.</p>
+
+<p><a href="http://gamadu.com/artemis/">Artemis</a> is entity component framework that I wanted to port to Scala. During the process of porting I started to change things a bit to achieve better performance/api/usability. At some point I decided that this is pointless and I should start from scratch using the knowledge I’ve gained. This is exactly what I’ve done.</p>
+
+<p>I’ve found <a href="http://entity-systems.wikidot.com/fast-entity-component-system">document</a> which was the base for Artemis. Unfortunately its creators had not followed it closely. I think that there is room for improvements so I decided to give it a shot.</p>
+
+<h3 id="what-it-is-all-about">What it is all about?</h3>
+
+<p>If you’ve ever tried to make a game you must have noticed that you should manage your game objects. You should be able to draw the elements that can be drawn but there could be also entities without graphic representation like some special areas. The entities differ from one another. Hero, bullet, and a gun are all entities but are entirely different. Hero does have stats like <em>health</em> or <em>stamina</em> but this is totally not applicable to his gun.</p>
+
+<p>Component Entity Frameworks are one way of dealing with this problem. They try to make entity as abstract as it can be and then add multiple components describing its properties. I’ve seen many implementations which tried to represent the <em>entity</em> as a class which had list of components. One of the problems with this approach is performance. Implementing this you would probably say <em>‘RenderComponent is so common that I should make it special and available from the entity class without searching in the component list.’</em>. At least this is what I ended up with every time I tried to approach component entity systems.</p>
+
+<h3 id="what-is-different-from-artemis">What is different from Artemis?</h3>
+
+<p>While I liked the overall concept I didn’t like the code that was written to satisfy it. The more I read the Artemis code base the more I wanted to rewrite it from scratch. Starting from the beginning I’ve reimplemented almost completely (no entity tagging yet) Artemis and I believe I’ve cut number of classes in a half. We all know that the less code we have the less code can break ;)</p>
+
+<p>Also I’ve implemented everything using TDD so every functionality has it’s unit test. This of course gives me very good indication whether my changes break something somewhere or not :)</p>
+
+<h3 id="enough-talking-show-me-the-code">Enough talking, show me the code!</h3>
+
+<p>Sure, sure. I wanted to keep the API very similar to Artemis’s:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span class="lineno"> 1</span> <span class="k">case</span> <span class="k">class</span> <span class="nc">Position</span><span class="o">(</span><span class="k">var</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="k">var</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Component</span>
+<span class="lineno"> 2</span> 
+<span class="lineno"> 3</span> <span class="k">class</span> <span class="nc">PositionUpdateSystem</span><span class="o">(</span><span class="k">val</span> <span class="n">world</span><span class="k">:</span> <span class="kt">World</span><span class="o">)</span>
+<span class="lineno"> 4</span>       <span class="k">extends</span> <span class="nc">SequentialProcessingSystem</span><span class="o">(</span><span class="nc">Aspect</span><span class="o">.</span><span class="n">forAll</span><span class="o">[</span><span class="kt">Position</span><span class="o">])</span>
+<span class="lineno"> 5</span>       <span class="k">with</span> <span class="nc">ComponentMapping</span> <span class="o">{</span>
+<span class="lineno"> 6</span> 
+<span class="lineno"> 7</span>   <span class="k">override</span> <span class="k">def</span> <span class="n">process</span><span class="o">(</span><span class="n">entity</span><span class="k">:</span> <span class="kt">Entity</span><span class="o">,</span> <span class="n">delta</span><span class="k">:</span> <span class="kt">Float</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+<span class="lineno"> 8</span>     <span class="n">component</span><span class="o">[</span><span class="kt">Position</span><span class="o">](</span><span class="n">entity</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+<span class="lineno"> 9</span>       <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">position</span><span class="o">)</span> <span class="k">=&gt;</span>
+<span class="lineno">10</span>         <span class="n">position</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="lineno">11</span>         <span class="n">position</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="lineno">12</span>       <span class="k">case</span> <span class="nc">None</span> <span class="k">=&gt;</span>
+<span class="lineno">13</span>     <span class="o">}</span>
+<span class="lineno">14</span>   <span class="o">}</span>
+<span class="lineno">15</span> <span class="o">}</span>
+<span class="lineno">16</span> 
+<span class="lineno">17</span> <span class="k">val</span> <span class="n">world</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">World</span>
+<span class="lineno">18</span> <span class="n">world</span><span class="o">.</span><span class="n">registerSystem</span><span class="o">(</span><span class="k">new</span> <span class="nc">PositionUpdateSystem</span><span class="o">(</span><span class="n">world</span><span class="o">))</span>
+<span class="lineno">19</span> <span class="n">world</span><span class="o">.</span><span class="n">createEntity</span><span class="o">(</span><span class="nc">Position</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">))</span>
+<span class="lineno">20</span> <span class="n">world</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="mi">1</span><span class="n">f</span><span class="o">)</span></code></pre></div>
+
+<p>On the first line we declare new component class <code>Position</code>. Next up is declaration of entity processing system. In this case we extend <code>SequentialProcessingSystem</code> which just give us all entities one by one. The interesting thing here is that every entity system has to has an <code>Aspect</code>. Aspects define which entities can be processed by the system. Here we want all entities with <code>Position</code> component.</p>
+
+<p>The <code>process</code> method of entity system is the one that does the job. In this case we just get the component of type <code>Position</code> for processed entity and increase its <code>x</code> and <code>y</code> values by 1.</p>
+
+<p>The <code>component[T](entity: Entity)</code> method is provided by <code>ComponentMapping</code> trait. This trait requires that the class has the <code>world: World</code> field so it can fetch the entity components.</p>
+
+<p>Starting from line 17 we create new World, register our entity processing system and create single entity with component <code>Position(1, 2)</code>. This four lines causes a lot of events under the hood. First of all when the system is registered <em>world</em> creates a set of entities with matching aspect required by the system. If set for such aspect already exists it’s only passed to the system. Of course in this case we don’t have any entities yet, but empty set is created and is updated when entity with required aspect is created.</p>
+
+<p>Then when the entity is created it’s automatically added to the right entity sets and is instantly available to all the system that are interested in it (based on component set).</p>
+
+<p>Last line - 20 - is where everything comes to life. We perform one update of all systems. Here we have only one system with one entity and the logic is not very spectacular but hey, it’s something! After this call to <code>update</code> method the entity position is going to be <code>Position(2, 3)</code> of course .</p>
+
+<h3 id="thats-all">That’s all!</h3>
+
+<p>OK, I think this post is already too long. I just wanted to present the implementation of component entity framework I’m working on. If you’d like to dive into the code you could view it on <a href="https://github.com/marad/scalartemis">GitHub</a>.</p>
+
+<p>Cheers!</p>
+
+
+  </article>
+
+  
+
+</div>
+
+      </div>
+    </div>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col  footer-col-1">
+        <ul class="contact-list">
+          <li>Marad Blog</li>
+          <li>moriturius (at) gmail.com</li>
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/marad">
+              <span class="icon  icon--github">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+                </svg>
+              </span>
+
+              <span class="username">marad</span>
+            </a>
+          </li>
+          
+
+          
+          <li>
+            <a href="https://twitter.com/moriturius">
+              <span class="icon  icon--twitter">
+                <svg viewBox="0 0 16 16">
+                  <path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                  c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+                </svg>
+              </span>
+
+              <span class="username">moriturius</span>
+            </a>
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col  footer-col-3">
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+
+
+    
+  </body>
+
+</html>

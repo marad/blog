@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Marad Blog</title>
+    <description>Programming, functional programming and all the cool stuff you can find!</description>
+    <link>http://blog.radoszewski.pl/</link>
+    <atom:link href="http://blog.radoszewski.pl/feed.xml" rel="self" type="application/rss+xml"/>
+    <pubDate>Fri, 14 Aug 2015 12:15:09 +0000</pubDate>
+    <lastBuildDate>Fri, 14 Aug 2015 12:15:09 +0000</lastBuildDate>
+    <generator>Jekyll v2.4.0</generator>
+    
+      <item>
+        <title>Custom Collectors in Java 8</title>
+        <description>&lt;p&gt;Java 8 sure did bring a few interesting features. One of them are definitely the streams. Internet is
+full of the instructions on how to create and use them. Today I’d like to talk about something a
+little bit different - collectors.&lt;/p&gt;
+
+&lt;h1 id=&quot;what-is-a-collector&quot;&gt;What is a collector?&lt;/h1&gt;
+
+&lt;p&gt;Streams can be used to process collections. The way it works is that we first define all
+transformations on the collection with non-terminal operations like &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;flatMap&lt;/code&gt;, &lt;code&gt;filter&lt;/code&gt;, etc.
+Calling these functions on the stream only defines the transformations but doesn’t run them unless
+there is a terminal operation called at the end.&lt;/p&gt;
+
+&lt;p&gt;There are few basic terminal operations like &lt;code&gt;sum&lt;/code&gt;, &lt;code&gt;count&lt;/code&gt;, or &lt;code&gt;reduce&lt;/code&gt; but there is also more
+generic method: &lt;code&gt;collect&lt;/code&gt;. This method takes a &lt;em&gt;collector&lt;/em&gt; and returns whatever that
+collector returns.&lt;/p&gt;
+
+&lt;p&gt;The purpose of the collector is to compose the data from the stream into one another type.&lt;/p&gt;
+
+&lt;h1 id=&quot;how-does-the-collector-look-like&quot;&gt;How does the collector look like?&lt;/h1&gt;
+
+&lt;p&gt;Let’s see the collector interface:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Collector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Supplier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;          &lt;span class=&quot;nf&quot;&gt;supplier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;BiConsumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&quot;nf&quot;&gt;accumulator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;BinaryOperator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&quot;nf&quot;&gt;combiner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;R&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;        &lt;span class=&quot;nf&quot;&gt;finisher&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Characteristics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;characteristics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see the collector is a generic type that has type parameters named &lt;em&gt;T&lt;/em&gt;, &lt;em&gt;A&lt;/em&gt;, and &lt;em&gt;R&lt;/em&gt;.
+First one (&lt;em&gt;T&lt;/em&gt;) is the type of a stream we want to collect. For example for &lt;code&gt;Stream&amp;lt;String&amp;gt;&lt;/code&gt;
+the &lt;em&gt;T&lt;/em&gt; is &lt;code&gt;String&lt;/code&gt;. Second (&lt;em&gt;A&lt;/em&gt;) is the accumulator type. This is the type that is used to store
+values while processing the stream. Finally the &lt;em&gt;R&lt;/em&gt; is returned type. This is what the collector
+actually returns.&lt;/p&gt;
+
+&lt;p&gt;This means that you can collect &lt;code&gt;Stream&amp;lt;T&amp;gt;&lt;/code&gt; to value of type &lt;code&gt;R&lt;/code&gt; using some helper variables of
+type &lt;code&gt;A&lt;/code&gt; while collecting.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;supplier()&lt;/code&gt; method returns a function (!) that is used to create our accumulator. This is
+important here. All this methods (except for the &lt;code&gt;characteristics()&lt;/code&gt;) return functions.&lt;/p&gt;
+
+&lt;p&gt;Next up is method named &lt;code&gt;acumulator&lt;/code&gt;. This returns a function that takes our accumulator (of type
+&lt;em&gt;A&lt;/em&gt;) and a value from a stream (of type &lt;em&gt;T&lt;/em&gt;) and combines them. For example if &lt;em&gt;A&lt;/em&gt; would be of type
+&lt;code&gt;List&amp;lt;T&amp;gt;&lt;/code&gt; then we could just add the element to the list here. This is exactly what
+&lt;code&gt;Collectors.toList&lt;/code&gt; does :)&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;combiner()&lt;/code&gt; is a method that returns a binary combiner for our accumulator. This means that the
+returned function should take two arguments of type &lt;em&gt;A&lt;/em&gt;, combine them, and return new value of
+type &lt;em&gt;A&lt;/em&gt;. Continuing the example for lists this would simply merge two lists together into one.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;finisher()&lt;/code&gt; method returns a function that extracts the final result of type &lt;em&gt;R&lt;/em&gt; from
+intermediate accumulator. Our example doesn’t help much here because for lists the accumulator type
+and returned type could be the same and &lt;code&gt;finisher()&lt;/code&gt; could simply return the final accumulator
+value. It’s not hard to imagine tough, that we could use some kind of a container while processing
+the collection and finally extract the result from the container. This is the function for the job.&lt;/p&gt;
+
+&lt;p&gt;Finally the &lt;code&gt;characteristics()&lt;/code&gt; method. This returns a set of characteristics that the collector
+has. This is used to optimize collecting the stream. We can return there a set of values from
+&lt;code&gt;Collector.Characteristics&lt;/code&gt; enum. The values are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;CONCURRENT - This tells that the collector can be used with multiple threads.&lt;/li&gt;
+  &lt;li&gt;IDENTITY_FINISH - This indicates that the intermediate type &lt;em&gt;A&lt;/em&gt; is the same as returned type &lt;em&gt;R&lt;/em&gt;
+so there is no need to call &lt;code&gt;finisher()&lt;/code&gt; method.&lt;/li&gt;
+  &lt;li&gt;UNORDERED - Means that the order of elements is not important. This information can be used to
+optimize processing.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;implement-all-the-collectors&quot;&gt;Implement, all the collectors!&lt;/h1&gt;
+
+&lt;p&gt;Well, maybe let us choose one collector that we would like to have. Recently I’ve stumbled upon the
+problem of finding the most popular element in a collection. By most popular I mean the element that
+occurs the most. So in &lt;code&gt;a, a, a, b, b, c&lt;/code&gt; the most popular is obviously &lt;code&gt;a&lt;/code&gt; because it occurs three
+times.&lt;/p&gt;
+
+&lt;p&gt;In terms of a collector. We want to collect the stream of type &lt;em&gt;X&lt;/em&gt; to single value of type
+&lt;em&gt;Optional&amp;lt;X&amp;gt;&lt;/em&gt;. This value should be the most popular item. We use optional here because if we supply
+empty list then we do not have any most popular item there. As the accumulator type I suggest using
+&lt;code&gt;Map&amp;lt;X, Integer&amp;gt;&lt;/code&gt; to store elements with their occurrence count. I’ll explain this in detail later.
+So the collector generic parameters should be &lt;code&gt;Collector&amp;lt;X, Map&amp;lt;X,Integer&amp;gt;, Optional&amp;lt;X&amp;gt;&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;To implement the collector we can simply implement the interface:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;MostPopular&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;implements&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Collector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// all the methods listed for collector above&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we can just implement the functions. Let’s start with simple accumulator supplier:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Supplier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;supplier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nl&quot;&gt;HashMap:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here we simply return the reference to the &lt;code&gt;HashMap&lt;/code&gt; constructor as the supplier. Whenever the
+supplier method is called new &lt;code&gt;HashMap&lt;/code&gt; will be created.&lt;/p&gt;
+
+&lt;p&gt;Moving on, to the accumulator:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BiConsumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;accumulator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;elem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;acc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;elem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;acc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;put&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;elem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ofNullable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;orElse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This method should be used to add another element to our accumulator. In this implementation we
+simply fetch the occurrence count for this element from the map. If the value is &lt;code&gt;null&lt;/code&gt; then this is
+the first occurrence and we set the value to 1. If the value is other than &lt;code&gt;null&lt;/code&gt; then we simply add
+1 to this value, and lastly we store the value back in the map.&lt;/p&gt;
+
+&lt;p&gt;This method gets called for every element. This means that after all elements are processed by this
+method we end up with the accumulator that have the mapping from the element to its occurrence
+times.&lt;/p&gt;
+
+&lt;p&gt;Next on the list is the combiner method:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BinaryOperator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;combiner&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;acc2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;UnsupportedOperationException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Well… this is not what you expected at all. I can tell! Let me explain myself. The combiner method
+is used when the process can be parallelized. This method is here to merge processing results from
+different threads. Every thread gets part of the stream to collect, and in the end all the
+resulting accumulators are merged by this method. In this particular collector the implementation
+for this method can be a bit tricky, but is not crucial so I just let it go :)&lt;/p&gt;
+
+&lt;p&gt;This method is not used unless you create &lt;code&gt;parallelStream()&lt;/code&gt; instead of &lt;code&gt;stream()&lt;/code&gt; from the
+collection.&lt;/p&gt;
+
+&lt;p&gt;Let’s almost finish with finisher method implementation:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;finisher&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;acc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;acc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;entrySet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;reduce&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;Entry&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getKey&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here we want to extract the final result from accumulator.
+This implementation is pretty straight forward if you are used to the stream-way of processing data.
+We have our accumulator &lt;code&gt;acc&lt;/code&gt; which is a map of elements with their occurrence count. We create a
+stream from this map’s entry set and using reduce we find the value of type &lt;code&gt;Optional&amp;lt;Map.Entry&amp;lt;T,
+Integer&amp;gt;&amp;gt;&lt;/code&gt; that represents the entry with the biggest occurrence value.&lt;/p&gt;
+
+&lt;p&gt;As here we have got whole &lt;code&gt;Map.Entry&amp;lt;T, Integer&amp;gt;&lt;/code&gt; but need only the key from the entry we simply use
+&lt;code&gt;map(Map.Entry::getKey)&lt;/code&gt; on the optional value. This gives us exactly what we want - &lt;code&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;
+with the most popular value.&lt;/p&gt;
+
+&lt;p&gt;Last method that we have to implement is the &lt;code&gt;characteristics()&lt;/code&gt; method:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;nd&quot;&gt;@Override&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Set&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Characteristics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;characteristics&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Collections&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;emptySet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Not very exciting but does the job. I guess we could use &lt;code&gt;UNORDERED&lt;/code&gt; here as well.&lt;/p&gt;
+
+&lt;p&gt;Finally you can see whole implementation &lt;a href=&quot;http://pastebin.com/k5QPqn7Q&quot;&gt;here&lt;/a&gt;. Having this collector we can simply use it to
+find the most popular element in collection of any type:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;Lists&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MostPopular&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;());&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;Lists&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&amp;#39;d&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;collect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MostPopular&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;());&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h1 id=&quot;summing-up&quot;&gt;Summing up&lt;/h1&gt;
+
+&lt;p&gt;Collectors are in fact a Java way of defining custom &lt;a href=&quot;https://en.wikipedia.org/wiki/Fold_(higher-order_function)&quot;&gt;folds&lt;/a&gt;. As it’s the Java way it has to
+be a little verbose ;) Anyway - folds are great thus collectors are great too! Thanks for reading!&lt;/p&gt;
+
+</description>
+        <pubDate>Fri, 31 Jul 2015 08:20:10 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/programming/java/2015/07/31/custom-java-8-collectors.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/programming/java/2015/07/31/custom-java-8-collectors.html</guid>
+        
+        <category>collector</category>
+        
+        <category>stream</category>
+        
+        <category>java 8</category>
+        
+        
+        <category>programming</category>
+        
+        <category>java</category>
+        
+      </item>
+    
+      <item>
+        <title>The Mighty Monad</title>
+        <description>&lt;p&gt;When you begin to learn functional programming everybody is telling you that pure functions with no
+side effects are the only way to go. This is fine up to the point. Sooner or later you will hear
+about monads. This post tries to explain what the monad is and why you should use it.&lt;/p&gt;
+
+&lt;h1 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h1&gt;
+
+&lt;p&gt;To fully understand the examples here you should know at least basics of Scala language. You should
+also know &lt;a href=&quot;http://www.tutorialspoint.com/scala/scala_options.htm&quot;&gt;how to use &lt;code&gt;Option[T]&lt;/code&gt;&lt;/a&gt; type in Scala or at least know the Java’s &lt;code&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;
+which I described &lt;a href=&quot;/programming/java/2015/04/19/java-optional.html&quot;&gt;here&lt;/a&gt;. In the section about pure functional languages I used a bit of
+Haskell, but I tried to make the examples as clear as I could for those who don’t know it.&lt;/p&gt;
+
+&lt;h1 id=&quot;the-definition&quot;&gt;The definition&lt;/h1&gt;
+
+&lt;p class=&quot;notice&quot;&gt;This is raw definition of monad. Please note that you don&#39;t have to fully
+understand it to read the following sections. You can safely skip to the &lt;em&gt;Simpler definition&lt;/em&gt;
+section. Having said that, I encourage you to face this definition. It may help you later on.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with something not simple at all! The monad definition:&lt;/p&gt;
+
+&lt;p&gt;We can say that &lt;em&gt;M&lt;/em&gt; is a monad when:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;it is generic type &lt;code&gt;M[T]&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;there is a &lt;em&gt;unit&lt;/em&gt; function &lt;code&gt;T =&amp;gt; M[T]&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;there is a &lt;em&gt;flatMap&lt;/em&gt; function &lt;code&gt;(M[T], T =&amp;gt; M[T]) =&amp;gt; M[T]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To make things even worse, there are three monad laws:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Left identity: &lt;code&gt;unit(x) flatMap f == f(x)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Right identity: &lt;code&gt;m flatMap unit == m&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Associativity: &lt;code&gt;(m flatMap f) flatMap g == m flatMap (f flatMap g)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let me clarify this definition a bit. Leaving the laws for later let us jump back to the &lt;em&gt;M&lt;/em&gt; type
+and the &lt;em&gt;unit&lt;/em&gt; and &lt;em&gt;flatMap&lt;/em&gt; functions.  Type &lt;em&gt;M&lt;/em&gt; is just regular generic type like &lt;code&gt;Option[T]&lt;/code&gt; or
+&lt;code&gt;Try[T]&lt;/code&gt;.  The &lt;em&gt;unit&lt;/em&gt; function takes the value of type &lt;em&gt;T&lt;/em&gt; and wraps it with a monadic type. For
+&lt;code&gt;Option[T]&lt;/code&gt; the &lt;em&gt;unit&lt;/em&gt; operation is simple &lt;code&gt;Some(t: T)&lt;/code&gt;.  Lastly - the &lt;em&gt;flatMap&lt;/em&gt;. Literature refers
+to it as the &lt;em&gt;bind&lt;/em&gt; operation. I decided to call it &lt;em&gt;flatMap&lt;/em&gt; here so it sounds more familiar. It,
+of course, takes a monadic value &lt;code&gt;M[T]&lt;/code&gt; and a function &lt;code&gt;T =&amp;gt; M[T]&lt;/code&gt; and returns another &lt;code&gt;M[T]&lt;/code&gt;. This
+basically means that we can do some computation on value that is inside the monad and create a new
+monad with the result of that computation. Scala is object oriented so &lt;code&gt;flatMap&lt;/code&gt; is just a method
+and takes one parameter (the function) the other being just &lt;em&gt;this object&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;To sum this up with an example based on type &lt;code&gt;Option[T]&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;we have got generic type &lt;code&gt;Option[T]&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;we have &lt;em&gt;unit&lt;/em&gt; function &lt;code&gt;Some(t: T)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;we have &lt;em&gt;bind/flatMap&lt;/em&gt; method &lt;code&gt;Option.flatMap(f: T =&amp;gt; Option[T]): Option[T]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Going back to the monad laws. The first two laws are fairly simple and describe the relations
+between &lt;em&gt;unit&lt;/em&gt; and &lt;em&gt;flatMap&lt;/em&gt;. The &lt;em&gt;associativity&lt;/em&gt; law tells us just that the order of the &lt;em&gt;flatMap&lt;/em&gt;
+doesn’t matter. We can write the laws for &lt;code&gt;Option[T]&lt;/code&gt; as following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code&gt;Some(t) flatMap f == f(t)&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;opt flatMap Some[T] == opt&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code&gt;(opt flatMap f) flatMap g == opt flatMap (t =&amp;gt; f(t) flatMap g)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To prove that the laws hold we should replace our methods with their implementations to see if we
+can end up with the other side of equation. This could be a topic for whole new post (and maybe will
+be) so I’ll skip this for now.&lt;/p&gt;
+
+&lt;h1 id=&quot;simpler-definition&quot;&gt;Simpler definition&lt;/h1&gt;
+
+&lt;p&gt;The reality is that these monad laws are mainly important when you want to implement a monad
+yourself or you need to rely on one of these properties in your code. In fact when talking about
+monads most developers are thinking just about generic type &lt;em&gt;M[T]&lt;/em&gt; with &lt;em&gt;unit&lt;/em&gt; and &lt;em&gt;flatMap&lt;/em&gt;
+operations.&lt;/p&gt;
+
+&lt;p&gt;There is even more! There are types that we call a monads but they do not satisfy those laws! Let’s
+take &lt;code&gt;Try[T]&lt;/code&gt; for example. This monad is used to deal with possible exceptions that might occur
+while processing. If you have some operation &lt;code&gt;expr: T&lt;/code&gt; that can throw some exception you
+may want to wrap it with &lt;code&gt;Try(expr)&lt;/code&gt;. This will return &lt;code&gt;Success(t: T)&lt;/code&gt; containing the result of the
+function or &lt;code&gt;Failure(ex: Throwable)&lt;/code&gt; with the exception that was thrown by that function. If you
+closely examine all monad laws you can see that the &lt;em&gt;left identity&lt;/em&gt; law does not hold.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;n&quot;&gt;unit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flatMap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This tells us that following should be true:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;nc&quot;&gt;Try&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flatMap&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;expr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The law works fine if everything goes smooth and no exception is thrown. The problem pops up when
+either &lt;code&gt;f&lt;/code&gt; or &lt;code&gt;expr&lt;/code&gt; throws an exception. The left hand side &lt;code&gt;Try(expr) flatMap f&lt;/code&gt; never throws an
+exception and just returns &lt;code&gt;Failure(ex)&lt;/code&gt;. The right hand side &lt;code&gt;f(expr)&lt;/code&gt; will just throw the
+exception so the law does not hold thus &lt;code&gt;Try[T]&lt;/code&gt; is not precisely a monad, but that is not a problem
+for us. We are not mathematicians (no offense ment!). We just want things to work :)&lt;/p&gt;
+
+&lt;h1 id=&quot;so-what-does-all-this-means-for-developers&quot;&gt;So what does all this means for developers?&lt;/h1&gt;
+
+&lt;p&gt;Monadic structure gives us, developers, a uniform way of defining a chain of transformations on
+virtually any type. Just look at this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;a&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;a&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;b&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;c&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;d&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;-Symbol&quot;&gt;&amp;#39;e&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;#39;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;      &lt;span class=&quot;c1&quot;&gt;// List[Char]&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;groupBy&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;identity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                                      &lt;span class=&quot;c1&quot;&gt;// Map[Char, List[Char]]&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mapValues&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                                      &lt;span class=&quot;c1&quot;&gt;// Map[Char, Int]&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reduceLeftOption&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// Option[(Char, Int)]&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;_1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                                              &lt;span class=&quot;c1&quot;&gt;// Option[Char]&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;foreach&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The above code finds the most popular element in the list. In this example the most popular element
+is &lt;code&gt;c&lt;/code&gt; because it appears 4 times. I’ve defined a chain of transformations to find this value. The
+most interesting thing about that is that the type I’m operating on changed three times, but the
+chain still looks uniform! We start with a &lt;code&gt;List[Char]&lt;/code&gt; after calling &lt;code&gt;groupBy&lt;/code&gt; method we have a
+&lt;code&gt;Map[Char, List[Char]]&lt;/code&gt;. Then we replace the lists with just their sizes so after &lt;code&gt;mapValues&lt;/code&gt; the
+type is &lt;code&gt;Map[Char, Int]&lt;/code&gt;. With &lt;code&gt;reduceToOption&lt;/code&gt; we find the element of the map that has the biggest
+value and create &lt;code&gt;Option[(Char, Int)]&lt;/code&gt;. Then we just get the first element from the tuple (this is
+our most popular char) with &lt;code&gt;map&lt;/code&gt; and the final type is &lt;code&gt;Option[Char]&lt;/code&gt;. Last operation is just
+printing the value (if found) to the standard output.&lt;/p&gt;
+
+&lt;p&gt;We used three different monads: List, Map, and Option. Every line of code changed the output type.
+Yet we still could invoke new transformations like we didn’t care! I personally think that this is
+fantastic :)&lt;/p&gt;
+
+&lt;p&gt;You may have noticed that I didn’t use the &lt;code&gt;flatMap&lt;/code&gt; method. In fact every method that I used above
+CAN be implemented using one or more &lt;code&gt;flatMap&lt;/code&gt; calls. Let’s take simple &lt;code&gt;map&lt;/code&gt; for example:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;map&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flatMap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;unit&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;These methods are just some combinations of &lt;code&gt;flatMap&lt;/code&gt; that are useful and were given a name.  Of
+course they are not implemented with &lt;code&gt;flatMap&lt;/code&gt; in Scala because it would hurt the performance, but
+the point is that they are the result of those types (List, Map, Option) being a monads.&lt;/p&gt;
+
+&lt;h1 id=&quot;word-about-functional-programming&quot;&gt;Word about functional programming&lt;/h1&gt;
+
+&lt;p class=&quot;warning&quot;&gt;This part contains dangerous amounts of Haskell.&lt;/p&gt;
+
+&lt;p&gt;Scala is kind-of functional programming language. You can write some parts functionally and other
+imperatively. This is great because by mixing the styles we can end up with code that is both
+readable and concise. Monads have another side which is extremely important for pure functional
+languages like Haskell.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-order&quot;&gt;The order&lt;/h2&gt;
+
+&lt;p&gt;You see, in pure functional languages you cannot define the order of operations. You can just define
+some equivalences. What do I mean? Take a look:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We are used to call this a function definition but what really happens here? We just tell that the
+&lt;code&gt;add(x,y)&lt;/code&gt; string can be replaced with &lt;code&gt;x + y&lt;/code&gt; string on the code level. In fact we could evaluate
+pure functional code just by replacing strings!&lt;/p&gt;
+
+&lt;p&gt;Going back to the monads. In pure functional languages to define the order of computation you would
+have to invoke a function on a call to function etc.:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;h&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You can see that here we have to evaluate &lt;code&gt;h(x)&lt;/code&gt; then pass the value to &lt;code&gt;g&lt;/code&gt; and finally to &lt;code&gt;f&lt;/code&gt;. Try
+to imagine bigger program written like that. Well yes, it would be unreadable!&lt;/p&gt;
+
+&lt;p&gt;Now we could scream: &lt;em&gt;Monads to the rescue!&lt;/em&gt;. But let’s not. If you look again at the code to find
+the most popular element in list you can see that we strictly defined the order for the operations.&lt;/p&gt;
+
+&lt;p&gt;This is exactly what we use in Haskell to pretend that we are doing imperative code. Of course
+Haskell has some syntactic sugar on top of it so instead of writing &lt;code&gt;flatMap&lt;/code&gt; (which in Haskell is
+&lt;code&gt;&amp;gt;&amp;gt;=&lt;/code&gt;) you can write it imperatively-ish. The &lt;code&gt;do&lt;/code&gt; notation:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-haskell&quot; data-lang=&quot;haskell&quot;&gt;&lt;span class=&quot;kr&quot;&gt;do&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;thing1&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;thing2&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func2&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;What is going on here? The &lt;code&gt;thing1&lt;/code&gt; and &lt;code&gt;thing2&lt;/code&gt; are monadic values (we can call &lt;code&gt;flatMap&lt;/code&gt; on them).
+The &lt;code&gt;func1&lt;/code&gt; and &lt;code&gt;func2&lt;/code&gt; returns a monadic values. What is going on here is that first we get the
+value form &lt;code&gt;thing1&lt;/code&gt; and name it &lt;code&gt;x&lt;/code&gt;. Then we pass it as a value to the &lt;code&gt;func1&lt;/code&gt; which returns another
+monad. Then we take value from the monad and name it &lt;code&gt;y&lt;/code&gt;… You see where this is going. This
+clearly defines the order of operations.&lt;/p&gt;
+
+&lt;p&gt;Example above is exactly the same as:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-haskell&quot; data-lang=&quot;haskell&quot;&gt;&lt;span class=&quot;nf&quot;&gt;thing1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func1&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;thing2&lt;/span&gt;
+       &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;kr&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;func2&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;z&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;You see that the &lt;code&gt;do&lt;/code&gt; notation is a bit more readable :) This example is taken from &lt;a href=&quot;https://wiki.haskell.org/Monad&quot;&gt;Haskell
+Wiki&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-state-and-side-effects&quot;&gt;The state and side effects&lt;/h2&gt;
+
+&lt;p&gt;Another thing is that in Scala we can talk about mutable and immutable state. In pure functional
+programming there is no state at all! There are only arguments passed to functions. That’s the
+closest thing to state you can get.&lt;/p&gt;
+
+&lt;p&gt;But there is state in the world. Our hard drives have state. Keyboard has state. There is a lot of
+state everywhere! How to deal with this in Haskell? You guessed it - monads. Lets look at this quick
+example:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-haskell&quot; data-lang=&quot;haskell&quot;&gt;&lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;IO&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;do&lt;/span&gt;
+         &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getChar&lt;/span&gt;
+         &lt;span class=&quot;n&quot;&gt;putChar&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This program, as you might suspect, reads one character from the standard input and writes it to
+standard output. To put it simply: awaits for keyboard button to be pressed and prints the letter to
+the console.&lt;/p&gt;
+
+&lt;p&gt;Here you can see that &lt;code&gt;getChar&lt;/code&gt; does have some kind of state as the value seems to materialize from
+nothing - it doesn’t expect any arguments. So what happens here? Well - the input/output operations
+are wrapped with a monad which acts here as a gate between our stateful world and the world of pure
+functions.&lt;/p&gt;
+
+&lt;p&gt;We can rewrite it using &lt;code&gt;flatMap&lt;/code&gt; (which in Haskell is &lt;code&gt;&amp;gt;&amp;gt;=&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-haskell&quot; data-lang=&quot;haskell&quot;&gt;&lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;::&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;IO&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getChar&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;putChar&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;In Scala it would look like:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Unit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getChar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flatMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;putChar&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;getChar&lt;/code&gt; function returns a monad. If we invoke &lt;code&gt;flatMap&lt;/code&gt; on it gives us a key pressed on the keyboard as a
+parameter to our function. Our function here is &lt;code&gt;putChar&lt;/code&gt;. It takes one char and returns a monad
+back. The returned monad is empty (like &lt;code&gt;Unit&lt;/code&gt; in Scala) so the value is not interesting. The
+&lt;code&gt;putChar&lt;/code&gt; function does something else behind the scenes. It writes the character to the standard
+output. This is side effect that we wanted. The ability to talk to stateful world.&lt;/p&gt;
+
+&lt;p&gt;All this is thanks to humble &lt;code&gt;flatMap&lt;/code&gt; :)&lt;/p&gt;
+
+&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;Thanks for reading! I hope that you will not be frightened by the &lt;em&gt;monad&lt;/em&gt; word anymore! These are
+useful little creatures. They are easy to use when you get the hang of them, but quite hard to learn
+(and explain!). I really hope that this post was helpful to you because when I wanted to learn
+monads the first time I couldn’t understand a single thing about them. Then something just &lt;em&gt;clicked&lt;/em&gt;
+and everything was clear. I hope that it just &lt;em&gt;clicked&lt;/em&gt; for you today :)&lt;/p&gt;
+
+&lt;p&gt;If you have any questions please leave a comment below!&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 31 May 2015 11:52:40 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/programming/scala/2015/05/31/mighty-monad.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/programming/scala/2015/05/31/mighty-monad.html</guid>
+        
+        <category>monad</category>
+        
+        
+        <category>programming</category>
+        
+        <category>scala</category>
+        
+      </item>
+    
+      <item>
+        <title>No one expects the Spanish functions</title>
+        <description>&lt;p&gt;Scala, as a functional language, treats functions as first class citizens. Of course it’s also
+object oriented language. Those two paradigms can be seen as conflicting with each other. In this
+post I’d like to show you some different ways of creating a functions in Scala to show that these
+two worlds can coexist.&lt;/p&gt;
+
+&lt;h1 id=&quot;foreword&quot;&gt;Foreword&lt;/h1&gt;
+
+&lt;h2 id=&quot;function&quot;&gt;Function&lt;/h2&gt;
+&lt;p&gt;Let us start by defining what a function is. Wikipedia supplies us with this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;A function f from X to Y is a subset of the Cartesian product X × Y subject to the following
+condition: every element of X is the first component of one and only one ordered pair in the
+subset.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is of course mathematical definition of a function. It says that given two sets &lt;code&gt;X&lt;/code&gt; and &lt;code&gt;Y&lt;/code&gt; we
+define &lt;code&gt;f&lt;/code&gt; as some kind of mapping from &lt;code&gt;X&lt;/code&gt; to &lt;code&gt;Y&lt;/code&gt;. Also we have to define such mapping for all
+elements from &lt;code&gt;X&lt;/code&gt;, and each element from &lt;code&gt;X&lt;/code&gt; have only one mapping to any element from &lt;code&gt;Y&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So let’s get back to the programming world. We have functions here, but our functions are not quite
+like the definition says. We can make the function be non-deterministic which means that it can
+basically return different values when called with the same inputs twice. Those functions have some
+kind of side effect. Reading data from network with &lt;code&gt;receive&lt;/code&gt; function is a good example. We always
+call it with the same arguments, yet it always returns different data.&lt;/p&gt;
+
+&lt;p&gt;But as it turns out - if we create a function that operates &lt;strong&gt;only&lt;/strong&gt; on its arguments it’s
+impossible to make it return different values for the same arguments.&lt;/p&gt;
+
+&lt;p&gt;Functions that operate only on their arguments are called &lt;em&gt;pure functions&lt;/em&gt;. We all should always use
+pure functions, because they are easy to reason about.  Unfortunately sometimes we have to interact
+with outside world and this is mostly done through side effects.&lt;/p&gt;
+
+&lt;h2 id=&quot;partial-function&quot;&gt;Partial function&lt;/h2&gt;
+
+&lt;p&gt;Partial function is a function that is defined only for some elements of &lt;code&gt;X&lt;/code&gt;. This means that
+there are some elements of &lt;code&gt;X&lt;/code&gt; that cannot be supplied as an argument to our function - it would
+give us an error.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;partial&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;One&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This example function will work only for one argument: &lt;code&gt;1&lt;/code&gt;. Any other value would cause an error.&lt;/p&gt;
+
+&lt;h2 id=&quot;higher-order-function&quot;&gt;Higher order function&lt;/h2&gt;
+
+&lt;p&gt;One last thing we should know before going further is: what is higher order function? Well it’s just
+a function that operates on other functions. It can receive a function as an argument or it can
+create a function and return it as a value.&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This simple higher order function just takes two parameters - a function and a number. Then it
+applies the &lt;code&gt;f&lt;/code&gt; function to the number.&lt;/p&gt;
+
+&lt;h1 id=&quot;define-a-function-in-scala&quot;&gt;Define a function in Scala&lt;/h1&gt;
+
+&lt;p&gt;To define a function or method in Scala we normally write:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;greet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Hello $name&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Then we can use this function as a parameter to other function:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;nc&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Bob&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;greet&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Here &lt;code&gt;map&lt;/code&gt; is a higher order function which translates each &lt;code&gt;Seq&lt;/code&gt; element to new element using the
+function that was supplied as its argument. Result will be: &lt;code&gt;Seq(&quot;Hello Bob&quot;, &quot;Hello Ben&quot;)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In Scala there is a special method that we can implement in our class or object that gives it
+function-like invocation:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Greeter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Hello $name&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nc&quot;&gt;Greeter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// will return &amp;quot;Hello Ben&amp;quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;So the &lt;code&gt;apply&lt;/code&gt; method gives us some syntactic sugar in Scala - nice! But if we can use it as a
+function, can we pass it to the higher order function like &lt;code&gt;map&lt;/code&gt;?&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;nc&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Bob&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Greeter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This will unfortunately throw an error at compile time saying that it wanted a function &lt;code&gt;String =&amp;gt;
+String&lt;/code&gt; and got &lt;code&gt;Greeter&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The good news is that we can fix this! We must tell the compiler that our object is also a function
+by extending it’s type signature:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Greeter&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Hello $name&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now we can pass our &lt;code&gt;Greeter&lt;/code&gt; object to &lt;code&gt;map&lt;/code&gt; and everything works fine!&lt;/p&gt;
+
+&lt;p&gt;As you can see Scala merges the world of object oriented programming and the world of functional
+programming by allowing objects and classes to act like functions.&lt;/p&gt;
+
+&lt;h1 id=&quot;sequences-and-maps&quot;&gt;Sequences and Maps&lt;/h1&gt;
+
+&lt;p&gt;As I mentioned above - functions are mappings. This means that we could define a new function just
+by defining a mapping between two sets of data. This is why Scala’s &lt;code&gt;Map[A, B]&lt;/code&gt; extends the &lt;code&gt;A =&amp;gt; B&lt;/code&gt;
+type signature. It basically allows us to use any &lt;code&gt;Map&lt;/code&gt; as a function from type &lt;code&gt;A&lt;/code&gt; to type &lt;code&gt;B&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;numbers&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;one&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;two&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;three&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;numbers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This will give the &lt;code&gt;result&lt;/code&gt; a value of &lt;code&gt;Seq(&quot;three&quot;, &quot;two&quot;, &quot;one&quot;)&lt;/code&gt; so map acts exactly as partial
+function. It’s partial because it’s defined only for values 1, 2, and 3.&lt;/p&gt;
+
+&lt;p&gt;And what about other collections? Well, a sequence maps index to a value, doesn’t it?&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;letters&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;e&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;h&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;l&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;o&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;letters&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mkString&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code&gt;result&lt;/code&gt; value will be &lt;em&gt;“hello”&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h1 id=&quot;function-composition&quot;&gt;Function composition&lt;/h1&gt;
+
+&lt;p&gt;Mapping over some sequence is fine to show that lists and maps are functions but you may say that it
+doesn’t really give us much because after all we can write it like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;nc&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;letters&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;The true fun begins when you want to operate on some functions. For example we would like to compose
+two functions. This means that we apply the first function to the argument and then apply the second
+to the value returned by the first: &lt;code&gt;f(g(x))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This can be also done with maps and sequences:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;englishToInteger&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;zero&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;one&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;two&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;three&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;integerToGerman&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Seq&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;null&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;eins&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;zwei&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;drei&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;englishToGerman&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;englishToInteger&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;andThen&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;integerToGerman&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;zwei&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;englishToGerman&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;two&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Of course value of &lt;code&gt;zwei&lt;/code&gt; will be a string &lt;em&gt;“zwei”&lt;/em&gt;. The &lt;code&gt;andThen&lt;/code&gt; is a method of
+&lt;a href=&quot;http://www.scala-lang.org/api/current/index.html#scala.Function1&quot;&gt;Function1&lt;/a&gt; class and it composes two functions. Here we create the function
+&lt;code&gt;englishToGerman&lt;/code&gt; by composing &lt;code&gt;englishToInteger&lt;/code&gt; with &lt;code&gt;integerToGerman&lt;/code&gt;. The argument flow is quite
+straightforward here - &lt;em&gt;“one”&lt;/em&gt; is passed to the &lt;code&gt;englishToInteger&lt;/code&gt; function (which is a Map!). This
+gives us an integer representing the number: &lt;code&gt;1&lt;/code&gt;. Then this integer is passed to &lt;code&gt;integerToGerman&lt;/code&gt;
+sequence which maps indexes to German numbers.&lt;/p&gt;
+
+&lt;h1 id=&quot;summary&quot;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;Even though I’ve been using Scala for some time now I’ve discovered that maps and lists act as
+functions very recently. What is great here is that knowing that gives me a new perspective on those
+data structures. I hope that for you this is as much fun as it is for me.&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading!&lt;/p&gt;
+
+&lt;p&gt;If you are still wondering what’s with the title &lt;a href=&quot;https://www.youtube.com/watch?v=7WJXHY2OXGE&quot;&gt;watch this&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 26 Apr 2015 15:07:45 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/programming/scala/2015/04/26/spanish-functions.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/programming/scala/2015/04/26/spanish-functions.html</guid>
+        
+        <category>seq</category>
+        
+        <category>map</category>
+        
+        <category>functional programming</category>
+        
+        
+        <category>programming</category>
+        
+        <category>scala</category>
+        
+      </item>
+    
+      <item>
+        <title>Cake Pattern</title>
+        <description>&lt;p&gt;What is cake pattern?
+What it’s not?
+ - It solves the same problem that dependency injection does.
+   The difference is that DI CAN do a bit more. But is it needed?&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 26 Apr 2015 07:57:00 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/programming/scala/2015/04/26/cake-pattern.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/programming/scala/2015/04/26/cake-pattern.html</guid>
+        
+        <category>cake pattern</category>
+        
+        
+        <category>programming</category>
+        
+        <category>scala</category>
+        
+      </item>
+    
+      <item>
+        <title>Optional in Java 8</title>
+        <description>&lt;p&gt;Recently I’ve been a part of self-educating team. My workmates and I decided to learn Java 8
+features so we could use it at work. Each of us have one or two topics to cover and we had to teach
+each other about the cool new features like streams or better type inference. My part was to
+cover the &lt;code&gt;Optional&lt;/code&gt; class, and today I’d like to show and explain how and why you should use it.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;Optional&lt;/code&gt; class is a very underestimated addition in Java 8. &lt;a href=&quot;http://huguesjohnson.com/programming/java/java8optional.html&quot;&gt;Some people may have a feeling
+that &lt;code&gt;Optional&lt;/code&gt; is pointless&lt;/a&gt;. In fact if you have function that may or may not
+produce some result you should use &lt;code&gt;Optional&lt;/code&gt;. Even using it as shown in linked post gives you some
+benefit. Method signature tells you that when called it may return a value or nothing. No need to
+read the docs to find out where your &lt;code&gt;NullPointerException&lt;/code&gt; is coming from.&lt;/p&gt;
+
+&lt;p&gt;Author of the post tries to understand why &lt;code&gt;Optional&lt;/code&gt; fixes the problem with &lt;code&gt;NullPointerException&lt;/code&gt;
+while giving the examples that it causes more problems than it solves. This is mostly because he’s
+using this class in a way he used to work with &lt;code&gt;null&lt;/code&gt;s - treating &lt;code&gt;Optional&lt;/code&gt; as a value. You should
+treat &lt;code&gt;Optional&lt;/code&gt; more as a container for value and &lt;strong&gt;NEVER&lt;/strong&gt; make a method that returns &lt;code&gt;Optional&lt;/code&gt;
+that is &lt;code&gt;null&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Doing this already fixes most NPEx’es but why stop here? By properly using optionals we can achieve
+cleaner and more readable code.&lt;/p&gt;
+
+&lt;p&gt;Assume we’ve got a library. Library has books, and each book should have an author. We know for a
+fact though that some books in our library doesn’t have an author assigned. So we’ve got structure
+along the lines of:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Author&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Book&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Author&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Author&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getAuthor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ofNullable&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Library&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Book&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;findBook&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Now that we have our model defined let’s think about finding author by book’s title. Normally we
+would have to find book by title, and then check if it’s not null and then get the author and get
+check if that is not null. Finally we could do what we want with the author object. So without
+optionals it would look like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;Book&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;book&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findBook&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;book&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Author&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;book&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getAuthor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;doStuff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;With optionals we can’t get the &lt;code&gt;null&lt;/code&gt; so that’s already a gain. Well - we could but one should
+really have no idea about programming to achieve this in real life. But the code isn’t that great at
+all. I’d say that it looks even worse:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Book&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;book&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findBook&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;book&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isPresent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Author&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;author&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;book&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getAuthor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isPresent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;doStuff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;author&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Still needs some improvement. There is a method in &lt;code&gt;Optional&lt;/code&gt; called &lt;code&gt;ifPresent()&lt;/code&gt; that takes a
+function and invokes it on the inner object if the object is, well, present. Using this method we
+could make it a bit better:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findBook&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ifPresent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;book&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;book&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getAuthor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ifPresent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doStuff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;});&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;But as Hugues states - this is still not entirely readable. What he didn’t mention is the fact that
+&lt;code&gt;Optional&lt;/code&gt; has also another method that give it it’s awesomeness. Meet the &lt;code&gt;flatMap&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span class=&quot;n&quot;&gt;library&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;findBook&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;flatMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Book:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getAuthor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;ifPresent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doStuff&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;What does the &lt;code&gt;flatMap&lt;/code&gt; do? If the value of &lt;code&gt;Optional&lt;/code&gt; is present then it invokes the function
+passed as parameter on that value. If value is not present - &lt;code&gt;flatMap&lt;/code&gt; returns empty &lt;code&gt;Optional&lt;/code&gt;. The
+function must return an &lt;code&gt;Optional&lt;/code&gt; which is in later returned by the &lt;code&gt;flatMap&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In this case we pass the &lt;code&gt;Book::getAuthor&lt;/code&gt; which is a short for &lt;code&gt;book -&amp;gt; book.getAuthor()&lt;/code&gt;. The
+&lt;code&gt;getAuthor()&lt;/code&gt; method returns &lt;code&gt;Optional&amp;lt;Author&amp;gt;&lt;/code&gt; which is returned further by the &lt;code&gt;flatMap&lt;/code&gt; so we can
+invoke &lt;code&gt;ifPresent()&lt;/code&gt; method to operate on &lt;code&gt;Author&lt;/code&gt; object - if it’s present.&lt;/p&gt;
+
+&lt;p&gt;Please note how this notation hides all implementation details from us. We don’t really care if
+something is &lt;code&gt;null&lt;/code&gt; or if something has gone wrong. We only care that if everything is fine we
+just want to invoke some operation on the &lt;code&gt;Author&lt;/code&gt; object.&lt;/p&gt;
+
+&lt;p&gt;You may be saying now: “This is not more readable at all!”. You’re right but your statement is
+false. What do I mean? Well &lt;code&gt;flatMap&lt;/code&gt; is something that one should get used to when playing with
+functional programming because it’s one of the most used functions there. Lambdas, method
+references, functional interfaces and better type inference (which still needs some love) introduced
+in Java 8 is nothing more than inserting functional language properties into Java.&lt;/p&gt;
+
+&lt;p&gt;I mean that when you get the hang of it, it’ll be more readable to you.&lt;/p&gt;
+
+&lt;p&gt;In fact &lt;code&gt;flatMap&lt;/code&gt; is something that has it’s origins in category theory as the part of &lt;em&gt;monad&lt;/em&gt;
+disguised under the name of &lt;code&gt;bind&lt;/code&gt; operation. The category theory isn’t required to use monads or
+&lt;code&gt;flatMaps&lt;/code&gt;. You don’t really have to know how the engine works to drive a car, do you?&lt;/p&gt;
+
+&lt;p&gt;What are monads? I believe that is something to cover in following posts. Thanks for reading!&lt;/p&gt;
+
+</description>
+        <pubDate>Sun, 19 Apr 2015 19:06:46 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/programming/java/2015/04/19/java-optional.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/programming/java/2015/04/19/java-optional.html</guid>
+        
+        <category>optional</category>
+        
+        <category>functional programming</category>
+        
+        
+        <category>programming</category>
+        
+        <category>java</category>
+        
+      </item>
+    
+      <item>
+        <title>Why I abandoned my old blog?</title>
+        <description>&lt;p&gt;This blog has very little content, but I’m not new to blogging at all.  In fact &lt;a href=&quot;https://moriturius.wordpress.com/&quot;&gt;I’ve been
+publishing my thoughts and ideas online for a few years now&lt;/a&gt;. The only problem is that I’ve
+got tired of it. I don’t mean blogging.  I mean &lt;em&gt;writing&lt;/em&gt; posts.&lt;/p&gt;
+
+&lt;p&gt;I can hear you ask “What is the difference?”. Well… I was using &lt;a href=&quot;http://wordpress.com&quot;&gt;Wordpress&lt;/a&gt;. This
+software is great for blogging, but sometimes I wanted more. I wanted to insert my code into pages,
+create custom themes and extensions etc.  Of course with tools like &lt;a href=&quot;http://heroku.org&quot;&gt;Heroku&lt;/a&gt; I could host my
+own instance of Wordpress and create themes or extensions myself, but I don’t really like PHP and
+Wordpress theming is not something I wanted to learn.&lt;/p&gt;
+
+&lt;p&gt;Then there is also Vim. After I started using it I really didn’t want to edit text in the browser
+ever again. Creating content with online editor wasn’t (and still isn’t) the best way to spend your
+evenings - especially if you hit &lt;code&gt;Esc&lt;/code&gt; key all the time…&lt;/p&gt;
+
+&lt;p&gt;So I stopped blogging. I liked to share the ideas and get feedback from readers, but I needed some
+motivation to get that going again - and Wordpress wasn’t helping with that ;)&lt;/p&gt;
+
+&lt;h2 id=&quot;the-repair-program&quot;&gt;The repair program&lt;/h2&gt;
+
+&lt;p&gt;I’ve started developing my own blog with Scala and &lt;a href=&quot;http://playframework.com/&quot;&gt;Play Framework&lt;/a&gt;. You can view
+it’s &lt;a href=&quot;https://github.com/marad/blog&quot;&gt;source code on my GitHub&lt;/a&gt;. While doing that I’ve learned a lot of Scala. It was
+great experience and I’m very happy that I did that! But when the page was up and running - I still
+didn’t want to write posts because the editor was even worse! Posts had to be written in Markdown so
+I could edit them locally (using Vim) and then copy the text to the page. I wasn’t happy with that
+solution either.&lt;/p&gt;
+
+&lt;h2 id=&quot;salvation&quot;&gt;Salvation&lt;/h2&gt;
+
+&lt;p&gt;Lately I’ve decided to check out what are &lt;a href=&quot;https://pages.github.com/&quot;&gt;GitHub Pages&lt;/a&gt;. This was the best idea I’ve had
+for a while :) Through that I discovered &lt;a href=&quot;http://jekyllrb.com/&quot;&gt;Jekyll&lt;/a&gt;. I wasn’t aware that there exists
+  something like &lt;em&gt;static page generator&lt;/em&gt;. It turned out to be perfect solution for me!&lt;/p&gt;
+
+&lt;p&gt;Now I can create my posts and pages using any editor I want and any markup language I like. Content
+is versioned in git repository. Pages are hosted by GitHub and deployment is as easy as pushing
+changes to remote branch. That’s just perfect :)&lt;/p&gt;
+
+&lt;h2 id=&quot;the-language&quot;&gt;The language&lt;/h2&gt;
+
+&lt;p&gt;If you checked out &lt;a href=&quot;https://moriturius.wordpress.com/&quot;&gt;my previous blog&lt;/a&gt; you may have noticed that I used my native language
+there. I decided to change that because English has just bigger audience. Watching page statistics
+I’ve discovered that some Google searches got foreign people to my page and the content could
+probably help… if they could read them :)&lt;/p&gt;
+
+</description>
+        <pubDate>Thu, 09 Apr 2015 17:47:55 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/blog/2015/04/09/previous-blog.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/blog/2015/04/09/previous-blog.html</guid>
+        
+        <category>vim</category>
+        
+        <category>jekyll</category>
+        
+        <category>editing</category>
+        
+        
+        <category>blog</category>
+        
+      </item>
+    
+      <item>
+        <title>Don&#39;t Use Vim if you like your job!</title>
+        <description>&lt;p&gt;If you’re like me you probably like to make your life easier wherever and whenever it is possible. I
+also like to pick up the gauntlet and try something new and challenging. This is why I started to
+use Vim.&lt;/p&gt;
+
+&lt;p&gt;I’m a professional programmer. I’m paid to edit code. No wonder why I wanted my editing to be
+quicker and easier.  I knew that Vim has it’s worshipers even though it’s &lt;em&gt;very&lt;/em&gt; old so I thought
+there must be something great about it.  I’ve started to learn the Vim ways.&lt;/p&gt;
+
+&lt;p&gt;Now - about a year later I can tell you &lt;strong&gt;don’t use Vim if you like your job!&lt;/strong&gt; Assuming, of course,
+that your job has something to do with computers and editing text ;) You can ask me…&lt;/p&gt;
+
+&lt;h2 id=&quot;why&quot;&gt;Why?&lt;/h2&gt;
+
+&lt;p&gt;I’ve been using Vim for a year now I can edit text quickly and easily. I rarely have to reach out
+with my hands even for the cursor keys - not to mention grabbing a mouse.&lt;/p&gt;
+
+&lt;p&gt;What is wrong then? Well… I can’t edit text or code with anything other than Vim now. Literally
+&lt;strong&gt;every&lt;/strong&gt; other editor is just simple useless notepad to me! Thankfully vast majority of editors
+support Vim-Mode editing. Honestly I was surprised with how many programs allow you to edit content
+like Vim. The only problem is that Vim is huge.  It has hundreds of functions waiting for you to use
+them. Vim-Mode in most programs allows you to do only basic things.&lt;/p&gt;
+
+&lt;p&gt;For my job I use IntelliJ IDEA which (thanks to havens) have a plugin that enables Vim-like editing,
+and it’s actually quite good. It’s a whole lot slower than real Vim but I believe it’s a fair trade
+for features it provides.  Actually I use IntelliJ IDEA for only three reasons:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;auto completion,&lt;/li&gt;
+  &lt;li&gt;organizing imports,&lt;/li&gt;
+  &lt;li&gt;refactoring variable/method/class names.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;In fact I could live without the refactoring, but it’s hard to give up auto completion… Trust me,
+I’ve tried…&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;To sum up. I’d recommend using Vim to everyone if only all editors had great support for it. Only
+problem is that if you get used to editing text the Vim-way you’ll never look at any other editor
+ever again. To be honest Vim was one of the reasons I’ve stopped writing on my previous blog. I just
+didn’t want to use this Wordpress’s online editor.  I could never make the post look like I desired
+and it was just plain simple notepad. Believe me that I had to remove a lot of things like &lt;code&gt;jjcip&lt;/code&gt;
+from the text…&lt;/p&gt;
+
+&lt;p&gt;TL;DR: If you are working with text - try Vim on your own responsibility. Vim will spoil you and you
+will never want to use any other editor!&lt;/p&gt;
+
+&lt;p&gt;See you! (and yes - I wrote this in Vim)&lt;/p&gt;
+</description>
+        <pubDate>Mon, 06 Apr 2015 09:59:31 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/editing/2015/04/06/dont-use-vim.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/editing/2015/04/06/dont-use-vim.html</guid>
+        
+        <category>programming</category>
+        
+        <category>Vim</category>
+        
+        
+        <category>editing</category>
+        
+      </item>
+    
+      <item>
+        <title>Pattern Matching in Scala</title>
+        <description>&lt;p&gt;Not so long ago I gave a presentation about Scala and ScalaTest to my co-workers. This was just
+basics as I wanted to give them a good and solid base for future researching this language. As it
+turned out - I probably learned a lot more than they did from this :)&lt;/p&gt;
+
+&lt;p&gt;Whenever there is &lt;em&gt;Scala&lt;/em&gt; mentioned there also is the phrase &lt;em&gt;pattern matching&lt;/em&gt;. Of course Scala
+does support pattern matching but I didn’t know how much fun one can have with this. In this post
+I’d like to show a few fun things we can do with this.&lt;/p&gt;
+
+&lt;h2 id=&quot;simple-matching&quot;&gt;Simple matching&lt;/h2&gt;
+
+&lt;p&gt;Let’s start with something simple:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;showcase&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;One&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Two&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Other!&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is the simplest case - we have value of some concrete type and we want to execute some code
+depending on that value. This can be easily replaced with Java’s &lt;code&gt;switch&lt;/code&gt; instruction or bunch of
+&lt;code&gt;if-else&lt;/code&gt; instructions.&lt;/p&gt;
+
+&lt;p&gt;If you’re new to Scala then you can be wondering what means the &lt;code&gt;case _&lt;/code&gt; - this will match any other
+value than listed above it. In fact it is important that this is at the very bottom &lt;code&gt;case&lt;/code&gt; because
+values are matched from top. If the value didn’t match the first &lt;code&gt;case&lt;/code&gt; then next is checked. If the
+value doesn’t match any case then exception is thrown. Also - function that is not covering all
+possible inputs is called &lt;em&gt;partial function&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;OK, basic things are simple, but it’s not that we couldn’t write something like this easily in Java.
+Let us try something a bit different:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;sealed&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;abstract&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Base&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;First&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Base&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Second&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Base&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;showcase&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Base&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;First&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;First&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Second&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Second&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;First of all - we declare the &lt;em&gt;Base&lt;/em&gt; class. &lt;code&gt;sealed&lt;/code&gt; keyword means that all direct subclasses of
+this class are contained in the same file. Then we declare subclasses &lt;code&gt;First&lt;/code&gt; and &lt;code&gt;Second&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Having such class structure we can match the class of given &lt;code&gt;input&lt;/code&gt;. This is of course something we
+&lt;em&gt;CAN&lt;/em&gt; do in Java but it’s not that elegant. We would have to write bunch of &lt;code&gt;isInstanceOf&lt;/code&gt; and then
+cast our input to target class. Casting means that we can mix something up and generate some casting
+exceptions. Here - everything is taken care of and is type safe.&lt;/p&gt;
+
+&lt;p&gt;You may have noticed that I’ve not specified the &lt;code&gt;case _&lt;/code&gt;. You might think that this means that the
+&lt;code&gt;showcase&lt;/code&gt; function is &lt;em&gt;partial function&lt;/em&gt; but it is not. In fact by using keyword &lt;code&gt;sealed&lt;/code&gt; I made
+sure that I know &lt;em&gt;EVERY&lt;/em&gt; direct implementation of &lt;code&gt;Base&lt;/code&gt; class. So I know that input can only be
+either of type &lt;code&gt;First&lt;/code&gt; or &lt;code&gt;Second&lt;/code&gt;. There is just no other option!&lt;/p&gt;
+
+&lt;p&gt;Speaking of options - exactly this trick is used with &lt;code&gt;Option[T]&lt;/code&gt; type. It has two implementations -
+&lt;code&gt;Some()&lt;/code&gt; and &lt;code&gt;None&lt;/code&gt;. There is no third option.&lt;/p&gt;
+
+&lt;h2 id=&quot;matching-case-classes&quot;&gt;Matching case classes&lt;/h2&gt;
+
+&lt;p&gt;Assume that we have declared following class:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Defining class as &lt;code&gt;case class&lt;/code&gt; gives us some benefits for pattern matching:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;showcase&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;post with id = 1&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see it’s quite different than matching the type. We get some &lt;code&gt;Post&lt;/code&gt; as the input and then
+test it with our matches.&lt;/p&gt;
+
+&lt;p&gt;On the second line we check if given post has &lt;code&gt;id == 1&lt;/code&gt; and if it does then returns some descriptive
+text. Note that we can tell the compiler that we don’t really care for other parameters with &lt;code&gt;_&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If the post’s &lt;code&gt;id&lt;/code&gt; is not 1 then match it’s title to variable named &lt;code&gt;title&lt;/code&gt; and return that
+variable. Once again - we ignore inputs that we are not interested in.&lt;/p&gt;
+
+&lt;p&gt;But what if we want to check only certain parameter values and then have the whole object to play
+with? Don’t worry - Scala got you covered!&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;showcase&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;nd&quot;&gt;@Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Above example shows that we can match the value of &lt;code&gt;id&lt;/code&gt; and if the value matches 1 we want the whole
+object to be assigned to variable &lt;code&gt;post&lt;/code&gt;. We can later use this variable as a reference to our
+matching object. In this case we just return this post’s content.&lt;/p&gt;
+
+&lt;h2 id=&quot;matching-regular-expressions&quot;&gt;Matching regular expressions&lt;/h2&gt;
+
+&lt;p&gt;You can’t say &lt;em&gt;matching&lt;/em&gt; without saying &lt;em&gt;regular expressions&lt;/em&gt;, can you? Let’s consider this simple
+expression for matching dates:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&amp;quot;(\d\d\d\d)-(\d\d)-(\d\d)&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Having that you can already match any string you want with:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;2015-04-05&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;month&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;day&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;It&amp;#39;s year $year&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see we use the variable name followed parentheses with all the matched groups from
+regular expressions. Then we can use this groups as normal variables. In this case we just want to
+match a year so maybe &lt;code&gt;month&lt;/code&gt; and &lt;code&gt;day&lt;/code&gt; could be replaced with &lt;code&gt;_&lt;/code&gt;? Sure!&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;2015-04-05&amp;quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;year&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;It&amp;#39;s year $year&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Whoah! What happend here? Well… as we are not interested in all remaining groups we can ignore
+them all with this simple notation &lt;code&gt;_*&lt;/code&gt;. In this case it’s not that different but if you had ten
+matching groups you’d have to ignore them all explicitly. This way you can ignore them all together!&lt;/p&gt;
+
+&lt;h2 id=&quot;matching-in-for-loops&quot;&gt;Matching in &lt;code&gt;for&lt;/code&gt; loops&lt;/h2&gt;
+
+&lt;p&gt;Last thing I’d like to show you is that you can easily loop through lists of things that matches
+your criteria:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Title 1&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Content 1&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Title 2&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Content 2&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
+  &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Other Title&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Content 3&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This &lt;code&gt;for&lt;/code&gt; loop will only execute it’s body for the first post from the list. In this case we can
+match only one value because the 1 is passed statically. What if we could combine different matching
+styles to tell the compiler what we desire? Totally doable!&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pattern&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;^Title.*&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;@&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pattern&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;posts&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;What do we have here? We added simple regex pattern to match only titles that start with “Title”.
+Please note the parentheses after regex variable name. We haven’t specified any names for matched
+groups because our regular expression doesn’t capture any groups. Empty parentheses are still
+required. Otherwise scala would think that we want to catch the title and create varaible called
+&lt;code&gt;pattern&lt;/code&gt; with value of the whole title. Adding parentheses tell the compiler that this is regular
+expression and that it should be used for matching.&lt;/p&gt;
+
+&lt;h2 id=&quot;summary&quot;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Pattern matching in Scala is a powerful tool. I’m certain that what is describe here is just the tip
+of an iceberg, but I hope it gives you some useful tips for working with &lt;code&gt;match&lt;/code&gt; keyword.&lt;/p&gt;
+
+&lt;p&gt;See you next time!&lt;/p&gt;
+</description>
+        <pubDate>Sun, 05 Apr 2015 21:54:00 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/programming/2015/04/05/scala-pattern-matching.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/programming/2015/04/05/scala-pattern-matching.html</guid>
+        
+        <category>scala</category>
+        
+        <category>pattern matching</category>
+        
+        
+        <category>programming</category>
+        
+      </item>
+    
+      <item>
+        <title>Scalartemis</title>
+        <description>&lt;p&gt;Recently I’ve been creating entity component framework which I named &lt;em&gt;Scalartemis&lt;/em&gt;. Name is direct descendant of two words. First (surprisingly) is &lt;em&gt;Scala&lt;/em&gt; - the language it’s written in. Second is &lt;em&gt;Artemis&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://gamadu.com/artemis/&quot;&gt;Artemis&lt;/a&gt; is entity component framework that I wanted to port to Scala. During the process of porting I started to change things a bit to achieve better performance/api/usability. At some point I decided that this is pointless and I should start from scratch using the knowledge I’ve gained. This is exactly what I’ve done.&lt;/p&gt;
+
+&lt;p&gt;I’ve found &lt;a href=&quot;http://entity-systems.wikidot.com/fast-entity-component-system&quot;&gt;document&lt;/a&gt; which was the base for Artemis. Unfortunately its creators had not followed it closely. I think that there is room for improvements so I decided to give it a shot.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-it-is-all-about&quot;&gt;What it is all about?&lt;/h3&gt;
+
+&lt;p&gt;If you’ve ever tried to make a game you must have noticed that you should manage your game objects. You should be able to draw the elements that can be drawn but there could be also entities without graphic representation like some special areas. The entities differ from one another. Hero, bullet, and a gun are all entities but are entirely different. Hero does have stats like &lt;em&gt;health&lt;/em&gt; or &lt;em&gt;stamina&lt;/em&gt; but this is totally not applicable to his gun.&lt;/p&gt;
+
+&lt;p&gt;Component Entity Frameworks are one way of dealing with this problem. They try to make entity as abstract as it can be and then add multiple components describing its properties. I’ve seen many implementations which tried to represent the &lt;em&gt;entity&lt;/em&gt; as a class which had list of components. One of the problems with this approach is performance. Implementing this you would probably say &lt;em&gt;‘RenderComponent is so common that I should make it special and available from the entity class without searching in the component list.’&lt;/em&gt;. At least this is what I ended up with every time I tried to approach component entity systems.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-is-different-from-artemis&quot;&gt;What is different from Artemis?&lt;/h3&gt;
+
+&lt;p&gt;While I liked the overall concept I didn’t like the code that was written to satisfy it. The more I read the Artemis code base the more I wanted to rewrite it from scratch. Starting from the beginning I’ve reimplemented almost completely (no entity tagging yet) Artemis and I believe I’ve cut number of classes in a half. We all know that the less code we have the less code can break ;)&lt;/p&gt;
+
+&lt;p&gt;Also I’ve implemented everything using TDD so every functionality has it’s unit test. This of course gives me very good indication whether my changes break something somewhere or not :)&lt;/p&gt;
+
+&lt;h3 id=&quot;enough-talking-show-me-the-code&quot;&gt;Enough talking, show me the code!&lt;/h3&gt;
+
+&lt;p&gt;Sure, sure. I wanted to keep the API very similar to Artemis’s:&lt;/p&gt;
+
+&lt;div class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-scala&quot; data-lang=&quot;scala&quot;&gt;&lt;span class=&quot;lineno&quot;&gt; 1&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Component&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 2&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt; 3&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PositionUpdateSystem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;World&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 4&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;SequentialProcessingSystem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Aspect&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;forAll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 5&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ComponentMapping&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 6&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt; 7&lt;/span&gt;   &lt;span class=&quot;k&quot;&gt;override&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;entity&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Entity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;delta&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Unit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 8&lt;/span&gt;     &lt;span class=&quot;n&quot;&gt;component&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;entity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;match&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt; 9&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;Some&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;10&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;11&lt;/span&gt;         &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;12&lt;/span&gt;       &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;None&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;13&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;14&lt;/span&gt;   &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;15&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;16&lt;/span&gt; 
+&lt;span class=&quot;lineno&quot;&gt;17&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;World&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;18&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;registerSystem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;PositionUpdateSystem&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;world&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;19&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createEntity&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nc&quot;&gt;Position&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;lineno&quot;&gt;20&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;world&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;On the first line we declare new component class &lt;code&gt;Position&lt;/code&gt;. Next up is declaration of entity processing system. In this case we extend &lt;code&gt;SequentialProcessingSystem&lt;/code&gt; which just give us all entities one by one. The interesting thing here is that every entity system has to has an &lt;code&gt;Aspect&lt;/code&gt;. Aspects define which entities can be processed by the system. Here we want all entities with &lt;code&gt;Position&lt;/code&gt; component.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;process&lt;/code&gt; method of entity system is the one that does the job. In this case we just get the component of type &lt;code&gt;Position&lt;/code&gt; for processed entity and increase its &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; values by 1.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;component[T](entity: Entity)&lt;/code&gt; method is provided by &lt;code&gt;ComponentMapping&lt;/code&gt; trait. This trait requires that the class has the &lt;code&gt;world: World&lt;/code&gt; field so it can fetch the entity components.&lt;/p&gt;
+
+&lt;p&gt;Starting from line 17 we create new World, register our entity processing system and create single entity with component &lt;code&gt;Position(1, 2)&lt;/code&gt;. This four lines causes a lot of events under the hood. First of all when the system is registered &lt;em&gt;world&lt;/em&gt; creates a set of entities with matching aspect required by the system. If set for such aspect already exists it’s only passed to the system. Of course in this case we don’t have any entities yet, but empty set is created and is updated when entity with required aspect is created.&lt;/p&gt;
+
+&lt;p&gt;Then when the entity is created it’s automatically added to the right entity sets and is instantly available to all the system that are interested in it (based on component set).&lt;/p&gt;
+
+&lt;p&gt;Last line - 20 - is where everything comes to life. We perform one update of all systems. Here we have only one system with one entity and the logic is not very spectacular but hey, it’s something! After this call to &lt;code&gt;update&lt;/code&gt; method the entity position is going to be &lt;code&gt;Position(2, 3)&lt;/code&gt; of course .&lt;/p&gt;
+
+&lt;h3 id=&quot;thats-all&quot;&gt;That’s all!&lt;/h3&gt;
+
+&lt;p&gt;OK, I think this post is already too long. I just wanted to present the implementation of component entity framework I’m working on. If you’d like to dive into the code you could view it on &lt;a href=&quot;https://github.com/marad/scalartemis&quot;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;Cheers!&lt;/p&gt;
+
+</description>
+        <pubDate>Sat, 04 Apr 2015 22:06:00 +0000</pubDate>
+        <link>http://blog.radoszewski.pl/programming/2015/04/04/scalartemis.html</link>
+        <guid isPermaLink="true">http://blog.radoszewski.pl/programming/2015/04/04/scalartemis.html</guid>
+        
+        <category>scala</category>
+        
+        <category>scalartemis</category>
+        
+        
+        <category>programming</category>
+        
+      </item>
+    
+  </channel>
+</rss>
