@@ -15,9 +15,9 @@ Dependency Injection uses inversion of control to do it's trick. This means that
 
 # The Cake Pattern
 
-_Cake Pattern_ is solves the same problem. It allows you to specify dependencies of your components, but it does this a little different. It never takes the control of the component creation. How is that possible? Well - by proper structuring your code. That's the trick. Did you think that the _pattern_ part was a hoax?
+_Cake Pattern_ solves the same problem. It allows you to specify dependencies of your components, but it does this a little different. It never takes the control of the component creation. How is that possible? Well - by proper structuring your code. That's the trick. Did you think that the _pattern_ part was a hoax?
 
-Let's see some example. Assume that we want to create the `Bakery` which bakes bread (duh!). There is also the `Mill` which can supply some flour. Obviously the `Bakery` is going to need the flour from the `Mill` - thus creating dependency. Also let's not dive to deep in this and assume that `Mill` just produces flour out of thin air.
+Let's take a look at an example. Assume that we want to create the `Bakery` which bakes bread (duh!). There is also the `Mill` which can supply some flour. Obviously the `Bakery` is going to need the flour from the `Mill` - thus creating dependency. Also let's not dive to deep in this and assume that `Mill` just produces flour out of thin air.
 
 With dependency injection you would normally create the two components, and somehow tell the injector that `Bakery` would like to have `Mill` instance injected. The cake pattern is different because it uses interfaces to denote that the dependency will be available some time later. To do that we use a few scala `trait`s that enable us to mix the implementation of that interfaces when creating the actual working instance of an object.
 
@@ -51,7 +51,7 @@ trait RegularMillComponent extends MillComponent {
 
 This is quite simple. We create the component by extending its _definition_ we wrote above - note that this component is still a `trait`. The `RegularMill` implementation is, on the other hand, a class that simply implements the `Mill` interface.
 
-We're done with this component. Please note that its `mill` field is `val`. This means that we want only one instance of it. We could have left the `def` there and then components would create new mill instance everytime they used the `mill` method.
+We're done with this component. Note that its `mill` field is `val`. This means that we want only one instance of it. We could have left the `def` there and then components would create new mill instance everytime they used the `mill` method.
 
 On to the bakery. To create the component we use the same template as before:
 
@@ -99,7 +99,7 @@ Now if you try to create an instance of `RegularBakeryComponent` without some im
 
 # Pros & Cons
 
-As you can see in cake pattern there is no _injection_ of dependencies. You simply declare the dependencies and then mix all the components in one _Object_. Manual dependency management is a lot less _magical_ than the standard dependency injection. Sure it might be a little overwhelming with all those `trait`s and mixing, but this is just using standard language features. If you get this once you'll never have any problem with this type of dependency management again. Another great thing is that dependencies are checked at compile time so there are no long stack traces telling you that some dependency is missing.
+As you can see in cake pattern there is no _injection_ of dependencies. You simply declare the dependencies and then mix all the components in one _Object_. Manual dependency management is a lot less _magical_ than the standard dependency injection. Sure it might be a little overwhelming with all those `trait`s and mixing, but this is just using standard language features. Once you get this you'll never have any problems with this type of dependency management again. Another great thing is that dependencies are checked at compile time so there are no long stack traces telling you that some dependency is missing.
 
 On the sad part - you might have noticed that it's a little verbose when compared to Spring's `@Component` and `@Autowire`. Also it's a bit less flexible than standard DI. Imagine that you want one of the components to use one implementation of some interface and another one want different implementation of the same interface. In Spring you would use `@Qualifier` for this. Here it's a bit more tricky and I could explore this a bit more in some future post.
 
