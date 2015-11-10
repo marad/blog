@@ -193,8 +193,10 @@ Lists.newArrayList('a', 'b', 'c', 'c', 'c', 'd')
 Collectors are in fact a Java way of defining custom [folds][folds]. As it's the Java way it has to
 be a little verbose ;) Anyway - folds are great thus collectors are great too! Thanks for reading!
 
+You can view entire example code at my [github][example].
+
 [code]: http://pastebin.com/k5QPqn7Q
 [folds]: https://en.wikipedia.org/wiki/Fold_(higher-order_function)
 [source]: http://www.nurkiewicz.com/2014/07/introduction-to-writing-custom.html
-
+[example]: https://github.com/marad/java8-custom-collector-example
 

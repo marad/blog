@@ -1,6 +1,6 @@
 ---
 title: Cake Pattern
-date: 2015-04-26 07:57:00
+date: 2015-11-10 10:49:20
 tags: ["cake pattern", "dependency injection", "dependency management", "dependencies"]
 categories: programming scala
 ---
