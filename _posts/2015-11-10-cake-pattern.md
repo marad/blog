@@ -15,7 +15,7 @@ Dependency Injection uses inversion of control to do it's trick. This means that
 
 # The Cake Pattern
 
-_Cake Pattern_ is solves the same problem. It allows you to specify dependencies of your components, but it does this a little different. It never takes the control of the component creation. How is that possible? Well - by proper structuring your code. That's the trick. Did you thought that the _pattern_ part was a hoax?
+_Cake Pattern_ is solves the same problem. It allows you to specify dependencies of your components, but it does this a little different. It never takes the control of the component creation. How is that possible? Well - by proper structuring your code. That's the trick. Did you think that the _pattern_ part was a hoax?
 
 Let's see some example. Assume that we want to create the `Bakery` which bakes bread (duh!). There is also the `Mill` which can supply some flour. Obviously the `Bakery` is going to need the flour from the `Mill` - thus creating dependency. Also let's not dive to deep in this and assume that `Mill` just produces flour out of thin air.
 
