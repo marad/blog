@@ -177,7 +177,7 @@ public Set<Characteristics> characteristics() {
 
 Not very exciting but does the job. I guess we could use `UNORDERED` here as well.
 
-Finally you can see whole implementation [here][code]. Having this collector we can simply use it to
+Finally you can see whole implementation [here][example]. Having this collector we can simply use it to
 find the most popular element in collection of any type:
 
 {% highlight java %}
