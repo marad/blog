@@ -111,13 +111,7 @@ Moving on, to the accumulator:
 {% highlight java %}
 @Override
 public BiConsumer<Map<T, Integer>, T> accumulator() {
-  return (acc, elem) -> {
-    Integer value = acc.get(elem);
-    acc.put(elem, Optional
-        .ofNullable(value)
-        .map(v -> v + 1)
-        .orElse(1));
-  };
+  return (acc, elem) -> acc.merge(elem, 1, (old, v) -> old + v);
 }
 {% endhighlight %}
 
