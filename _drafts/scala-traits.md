@@ -6,7 +6,16 @@ Jestem w stanie wymyślić kilka od razu, a jestem pewien, że jak pogrzebię w 
 
 - cake pattern
 - interfejsy
+- dodawanie kontekstu wewnątrz klasy (DSLe)
+- thin interface => rich interface (https://www.artima.com/pins1ed/traits.html#12.2)
+- implementacje
+- stackable modifications (https://www.artima.com/pins1ed/traits.html)
 
 https://www.safaribooksonline.com/blog/2013/05/30/traits-how-scala-tames-multiple-inheritance/
 http://www.ibm.com/developerworks/library/j-scala04298/
 https://www.artima.com/pins1ed/traits.html
+
+
+
+* supertype traitów to "AnyRef"
+* "super" jest przypisywany dynamicznie
