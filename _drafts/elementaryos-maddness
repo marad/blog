@@ -1,0 +1,4 @@
+Strona start.elementaryos.org stale się ładowała po podłączeniu do sieci.
+Dopiero usunięcie poniższczego pliku naprawiło sprawę
+
+NetworkManager/dispatcher.d/90captive_portal_test
