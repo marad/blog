@@ -1,10 +1,15 @@
-@kitke z portalu ze śmiesznymi obrazkami stwierdził, że spoko byłoby poczytać o różnych użyciach traitów w Scali i porównaniu ich
+@kitke z portalu ze śmiesznymi obrazkami stwierdził, że spoko byłoby poczytać o różnych użyciach traitów wcali i porównaniu ich
 do interfejsów w Javie 8 (z domyślnymi metodami).
 
 Właściwie to jeśli chcesz mógłbym spróbować napisać kolejny post o różnych sposobach uzycia traitów w Scali.
 Jestem w stanie wymyślić kilka od razu, a jestem pewien, że jak pogrzebię w internecie to znajdę tego więcej :)
 
-- cake pattern
+[Hello World][war]
+
+
+
+
+
 - interfejsy
 - dodawanie kontekstu wewnątrz klasy (DSLe)
 - thin interface => rich interface (https://www.artima.com/pins1ed/traits.html#12.2)
@@ -19,3 +24,5 @@ https://www.artima.com/pins1ed/traits.html
 
 * supertype traitów to "AnyRef"
 * "super" jest przypisywany dynamicznie
+
+[war]: http://wp.pl/ "title"
