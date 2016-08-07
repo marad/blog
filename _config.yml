@@ -6,6 +6,7 @@ baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://blog.radoszewski.pl" # the base hostname & protocol for your site
 twitter_username: moriturius
 github_username:  marad
+exclude: [Gemfile, Gemfile.lock, CNAME, .gitignore, .hyde.el]
 description:
   Programming, functional programming and all the cool stuff 
   you can find!

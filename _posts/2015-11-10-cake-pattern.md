@@ -5,7 +5,7 @@ tags: ["cake pattern", "dependency injection", "dependency management", "depende
 categories: programming scala
 ---
 
-Let's think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows.  Managing houndreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us. If you know Java you probably have heard about Dependency Injection (DI) and Inversion of Control (IoC). This is one way to approach the problem. There is another one and it's called _Cake Pattern_.
+Let's think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows.  Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us. If you know Java you probably have heard about Dependency Injection (DI) and Inversion of Control (IoC). This is one way to approach the problem. There is another one and it's called _Cake Pattern_.
 
 # Dependency Injection
 
