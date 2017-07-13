@@ -1,6 +1,6 @@
 ---
 title: Custom Collectors in Java 8
-date: 2015-07-31 08:20:10
+date: "2015-07-31T08:20:10+02:00"
 tags: ["collector", "stream", "java 8"]
 categories: programming java
 aliases:
