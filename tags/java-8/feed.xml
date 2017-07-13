@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java 8 on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/java-8/feed/index.xml</link>
+    <description>Recent content in Java 8 on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://blog.radoszewski.pl/tags/java-8/feed/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Custom Collectors in Java 8</title>
+      <link>http://blog.radoszewski.pl/post/custom-java-8-collectors/</link>
+      <pubDate>Fri, 31 Jul 2015 08:20:10 +0200</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/custom-java-8-collectors/</guid>
+      <description>
+
+&lt;p&gt;Java 8 sure did bring a few interesting features. One of them are definitely the streams. Internet is
+full of the instructions on how to create and use them. Today I&amp;rsquo;d like to talk about something a
+little bit different - collectors.&lt;/p&gt;
+
+&lt;h1 id=&#34;what-is-a-collector&#34;&gt;What is a collector?&lt;/h1&gt;
+
+&lt;p&gt;Streams can be used to process collections. The way it works is that we first define all
+transformations on the collection with non-terminal operations like &lt;code&gt;map&lt;/code&gt;, &lt;code&gt;flatMap&lt;/code&gt;, &lt;code&gt;filter&lt;/code&gt;, etc.
+Calling these functions on the stream only defines the transformations but doesn&amp;rsquo;t run them unless
+there is a terminal operation called at the end.&lt;/p&gt;
+
+&lt;p&gt;There are few basic terminal operations like &lt;code&gt;sum&lt;/code&gt;, &lt;code&gt;count&lt;/code&gt;, or &lt;code&gt;reduce&lt;/code&gt; but there is also more
+generic method: &lt;code&gt;collect&lt;/code&gt;. This method takes a &lt;em&gt;collector&lt;/em&gt; and returns whatever that
+collector returns.&lt;/p&gt;
+
+&lt;p&gt;The purpose of the collector is to compose the data from the stream into one another type.&lt;/p&gt;
+
+&lt;h1 id=&#34;how-does-the-collector-look-like&#34;&gt;How does the collector look like?&lt;/h1&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see the collector interface:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Collector&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;R&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Supplier&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt;          &lt;span class=&#34;nf&#34;&gt;supplier&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;BiConsumer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt;      &lt;span class=&#34;nf&#34;&gt;accumulator&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;BinaryOperator&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt;    &lt;span class=&#34;nf&#34;&gt;combiner&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Function&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;A&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;R&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt;        &lt;span class=&#34;nf&#34;&gt;finisher&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;n&#34;&gt;Set&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Characteristics&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;characteristics&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;As you can see the collector is a generic type that has type parameters named &lt;em&gt;T&lt;/em&gt;, &lt;em&gt;A&lt;/em&gt;, and &lt;em&gt;R&lt;/em&gt;.
+First one (&lt;em&gt;T&lt;/em&gt;) is the type of a stream we want to collect. For example for &lt;code&gt;Stream&amp;lt;String&amp;gt;&lt;/code&gt;
+the &lt;em&gt;T&lt;/em&gt; is &lt;code&gt;String&lt;/code&gt;. Second (&lt;em&gt;A&lt;/em&gt;) is the accumulator type. This is the type that is used to store
+values while processing the stream. Finally the &lt;em&gt;R&lt;/em&gt; is returned type. This is what the collector
+actually returns.&lt;/p&gt;
+
+&lt;p&gt;This means that you can collect &lt;code&gt;Stream&amp;lt;T&amp;gt;&lt;/code&gt; to value of type &lt;code&gt;R&lt;/code&gt; using some helper variables of
+type &lt;code&gt;A&lt;/code&gt; while collecting.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;supplier()&lt;/code&gt; method returns a function (!) that is used to create our accumulator. This is
+important here. All this methods (except for the &lt;code&gt;characteristics()&lt;/code&gt;) return functions.&lt;/p&gt;
+
+&lt;p&gt;Next up is method named &lt;code&gt;acumulator&lt;/code&gt;. This returns a function that takes our accumulator (of type
+&lt;em&gt;A&lt;/em&gt;) and a value from a stream (of type &lt;em&gt;T&lt;/em&gt;) and combines them. For example if &lt;em&gt;A&lt;/em&gt; would be of type
+&lt;code&gt;List&amp;lt;T&amp;gt;&lt;/code&gt; then we could just add the element to the list here. This is exactly what
+&lt;code&gt;Collectors.toList&lt;/code&gt; does :)&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;combiner()&lt;/code&gt; is a method that returns a binary combiner for our accumulator. This means that the
+returned function should take two arguments of type &lt;em&gt;A&lt;/em&gt;, combine them, and return new value of
+type &lt;em&gt;A&lt;/em&gt;. Continuing the example for lists this would simply merge two lists together into one.&lt;/p&gt;
+
+&lt;p&gt;The &lt;code&gt;finisher()&lt;/code&gt; method returns a function that extracts the final result of type &lt;em&gt;R&lt;/em&gt; from
+intermediate accumulator. Our example doesn&amp;rsquo;t help much here because for lists the accumulator type
+and returned type could be the same and &lt;code&gt;finisher()&lt;/code&gt; could simply return the final accumulator
+value. It&amp;rsquo;s not hard to imagine tough, that we could use some kind of a container while processing
+the collection and finally extract the result from the container. This is the function for the job.&lt;/p&gt;
+
+&lt;p&gt;Finally the &lt;code&gt;characteristics()&lt;/code&gt; method. This returns a set of characteristics that the collector
+has. This is used to optimize collecting the stream. We can return there a set of values from
+&lt;code&gt;Collector.Characteristics&lt;/code&gt; enum. The values are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;CONCURRENT - This tells that the collector can be used with multiple threads.&lt;/li&gt;
+&lt;li&gt;IDENTITY_FINISH - This indicates that the intermediate type &lt;em&gt;A&lt;/em&gt; is the same as returned type &lt;em&gt;R&lt;/em&gt;
+so there is no need to call &lt;code&gt;finisher()&lt;/code&gt; method.&lt;/li&gt;
+&lt;li&gt;UNORDERED - Means that the order of elements is not important. This information can be used to
+optimize processing.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&#34;implement-all-the-collectors&#34;&gt;Implement, all the collectors!&lt;/h1&gt;
+
+&lt;p&gt;Well, maybe let us choose one collector that we would like to have. Recently I&amp;rsquo;ve stumbled upon the
+problem of finding the most popular element in a collection. By most popular I mean the element that
+occurs the most. So in &lt;code&gt;a, a, a, b, b, c&lt;/code&gt; the most popular is obviously &lt;code&gt;a&lt;/code&gt; because it occurs three
+times.&lt;/p&gt;
+
+&lt;p&gt;In terms of a collector. We want to collect the stream of type &lt;em&gt;X&lt;/em&gt; to single value of type
+&lt;em&gt;Optional&amp;lt;X&amp;gt;&lt;/em&gt;. This value should be the most popular item. We use optional here because if we supply
+empty list then we do not have any most popular item there. As the accumulator type I suggest using
+&lt;code&gt;Map&amp;lt;X, Integer&amp;gt;&lt;/code&gt; to store elements with their occurrence count. I&amp;rsquo;ll explain this in detail later.
+So the collector generic parameters should be &lt;code&gt;Collector&amp;lt;X, Map&amp;lt;X,Integer&amp;gt;, Optional&amp;lt;X&amp;gt;&amp;gt;&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;To implement the collector we can simply implement the interface:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MostPopular&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;implements&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Collector&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Optional&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;// all the methods listed for collector above&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now we can just implement the functions. Let&amp;rsquo;s start with simple accumulator supplier:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Override&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Supplier&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;supplier&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;HashMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here we simply return the reference to the &lt;code&gt;HashMap&lt;/code&gt; constructor as the supplier. Whenever the
+supplier method is called new &lt;code&gt;HashMap&lt;/code&gt; will be created.&lt;/p&gt;
+
+&lt;p&gt;Moving on, to the accumulator:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Override&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BiConsumer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;accumulator&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;acc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;elem&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;acc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;merge&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;elem&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;old&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;old&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;v&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This method should be used to add another element to our accumulator. In this implementation we
+simply fetch the occurrence count for this element from the map. If the value is &lt;code&gt;null&lt;/code&gt; then this is
+the first occurrence and we set the value to 1. If the value is other than &lt;code&gt;null&lt;/code&gt; then we simply add
+1 to this value, and lastly we store the value back in the map.&lt;/p&gt;
+
+&lt;p&gt;This method gets called for every element. This means that after all elements are processed by this
+method we end up with the accumulator that have the mapping from the element to its occurrence
+times.&lt;/p&gt;
+
+&lt;p&gt;Next on the list is the combiner method:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Override&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;BinaryOperator&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;combiner&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;acc1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;acc2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;throw&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;UnsupportedOperationException&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;};&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Well&amp;hellip; this is not what you expected at all. I can tell! Let me explain myself. The combiner method
+is used when the process can be parallelized. This method is here to merge processing results from
+different threads. Every thread gets part of the stream to collect, and in the end all the
+resulting accumulators are merged by this method. In this particular collector the implementation
+for this method can be a bit tricky, but is not crucial so I just let it go :) We will not use
+distributed processing anyway.&lt;/p&gt;
+
+&lt;p&gt;This method is not used unless you create &lt;code&gt;parallelStream()&lt;/code&gt; instead of &lt;code&gt;stream()&lt;/code&gt; from the
+collection.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s almost finish with finisher method implementation:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Override&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Function&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Integer&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Optional&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;T&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;finisher&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;acc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;acc&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;entrySet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;stream&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;reduce&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getValue&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;?&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;Entry&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getKey&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here we want to extract the final result from accumulator.
+This implementation is pretty straight forward if you are used to the stream-way of processing data.
+We have our accumulator &lt;code&gt;acc&lt;/code&gt; which is a map of elements with their occurrence count. We create a
+stream from this map&amp;rsquo;s entry set and using reduce we find the value of type &lt;code&gt;Optional&amp;lt;Map.Entry&amp;lt;T,
+Integer&amp;gt;&amp;gt;&lt;/code&gt; that represents the entry with the biggest occurrence value.&lt;/p&gt;
+
+&lt;p&gt;As here we have got whole &lt;code&gt;Map.Entry&amp;lt;T, Integer&amp;gt;&lt;/code&gt; but need only the key from the entry we simply use
+&lt;code&gt;map(Map.Entry::getKey)&lt;/code&gt; on the optional value. This gives us exactly what we want - &lt;code&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;
+with the most popular value.&lt;/p&gt;
+
+&lt;p&gt;Last method that we have to implement is the &lt;code&gt;characteristics()&lt;/code&gt; method:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Override&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Set&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Characteristics&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;characteristics&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Collections&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;emptySet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Not very exciting but does the job. I guess we could use &lt;code&gt;UNORDERED&lt;/code&gt; here as well.&lt;/p&gt;
+
+&lt;p&gt;Finally you can see whole implementation &lt;a href=&#34;https://github.com/marad/java8-custom-collector-example&#34;&gt;here&lt;/a&gt;. Having this collector we can simply use it to
+find the most popular element in collection of any type:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Lists&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;newArrayList&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;stream&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;collect&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MostPopular&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;());&lt;/span&gt;
+
+&lt;span class=&#34;n&#34;&gt;Lists&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;newArrayList&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;sc&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;d&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+  &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;stream&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;collect&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;MostPopular&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&amp;gt;());&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h1 id=&#34;summing-up&#34;&gt;Summing up&lt;/h1&gt;
+
+&lt;p&gt;Collectors are in fact a Java way of defining custom &lt;a href=&#34;https://en.wikipedia.org/wiki/Fold_(higher-order_function)&#34;&gt;folds&lt;/a&gt;. As it&amp;rsquo;s the Java way it has to
+be a little verbose ;) Anyway - folds are great thus collectors are great too! Thanks for reading!&lt;/p&gt;
+
+&lt;p&gt;You can view entire example code at my &lt;a href=&#34;https://github.com/marad/java8-custom-collector-example&#34;&gt;github&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

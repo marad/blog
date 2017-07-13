@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/cake-pattern/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/custom-java-8-collectors/</loc>
+    <lastmod>2015-07-31T08:20:10+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/mighty-monad/</loc>
+    <lastmod>2015-05-31T11:52:40+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/spanish-functions/</loc>
+    <lastmod>2015-04-26T15:07:45+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/java-optional/</loc>
+    <lastmod>2015-04-19T19:06:46+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/previous-blog/</loc>
+    <lastmod>2015-04-09T17:47:55+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/dont-use-vim/</loc>
+    <lastmod>2015-04-06T09:59:31+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/scala-pattern-matching/</loc>
+    <lastmod>2015-04-05T21:54:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/scalartemis/</loc>
+    <lastmod>2015-04-04T22:06:00+02:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/page/about/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/categories/blog/</loc>
+    <lastmod>2015-04-09T17:47:55+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/cake-pattern/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/collector/</loc>
+    <lastmod>2015-07-31T08:20:10+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/dependencies/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/dependency-injection/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/dependency-management/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/categories/editing/</loc>
+    <lastmod>2015-04-06T09:59:31+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/functional-programming/</loc>
+    <lastmod>2015-04-26T15:07:45+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/page/games/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/java-8/</loc>
+    <lastmod>2015-07-31T08:20:10+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/map/</loc>
+    <lastmod>2015-04-26T15:07:45+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/monad/</loc>
+    <lastmod>2015-05-31T11:52:40+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/page/music/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/optional/</loc>
+    <lastmod>2015-04-19T19:06:46+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/page/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/pattern-matching/</loc>
+    <lastmod>2015-04-05T21:54:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/post/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/programming/</loc>
+    <lastmod>2015-04-06T09:59:31+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/categories/programming/</loc>
+    <lastmod>2015-04-05T21:54:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/categories/programming-java/</loc>
+    <lastmod>2015-07-31T08:20:10+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/categories/programming-scala/</loc>
+    <lastmod>2015-11-10T12:17:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/page/programs/</loc>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/scala/</loc>
+    <lastmod>2015-04-05T21:54:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/scalartemis/</loc>
+    <lastmod>2015-04-04T22:06:00+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/seq/</loc>
+    <lastmod>2015-04-26T15:07:45+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/stream/</loc>
+    <lastmod>2015-07-31T08:20:10+02:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/vim/</loc>
+    <lastmod>2015-04-06T09:59:31+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.radoszewski.pl/tags/vim-jekyll-editing/</loc>
+    <lastmod>2015-04-09T17:47:55+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+</urlset>

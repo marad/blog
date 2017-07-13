@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+    <head>
+        <meta name="generator" content="Hugo 0.18.1" />
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>The Mighty Monad</title>
+
+        <link rel="icon" type="image/png" href="/images/favicon.png"/>
+
+
+        <link rel="stylesheet" href="/css/main.css"/>
+        <link rel="stylesheet" href="/css/monokai.css"/>
+
+        <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
+
+        <script src="/js/jquery-1.11.1.min.js" type="text/javascript"></script>
+
+        <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
+
+        <script src="/lightbox/js/lightbox.min.js" type="text/javascript"></script>
+        <script src="/js/links.js" type="text/javascript"></script>
+    </head>
+
+    <body>
+        <header class="site-header">
+            <div class="wrapper">
+                <a class="site-title" href="http://blog.radoszewski.pl/">
+                    <img alt="" src="/images/logo.svg" height="70"  class="logo"  alt="Logo"/>
+                    </a>
+
+                    <nav class="site-nav">
+                        <a class="menu-icon" href="#">
+                            <svg viewBox="0 0 18 15">
+                                <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+                                <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+                                <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+                                </svg>
+
+                                </a>
+
+                                <div class="trigger">
+                                    <a class="page-link" href="/">Home</a>
+                                    
+                                    <a class="page-link" href="http://blog.radoszewski.pl/page/about/">About</a>
+                                    
+                                    <a class="page-link" href="http://blog.radoszewski.pl/page/games/">Games</a>
+                                    
+                                    <a class="page-link" href="http://blog.radoszewski.pl/page/music/">Music</a>
+                                    
+                                    <a class="page-link" href="http://blog.radoszewski.pl/page/programs/">Programs</a>
+                                    
+                                </div>
+                    </nav>
+            </div>
+        </header>
+
+
+
+<div class="page-content">
+    <div class="wrapper">
+        <div class="post">
+            <div class="breadcrumb">
+                <a href="/">Home</a> » <a href="http://blog.radoszewski.pl/post/mighty-monad/">The Mighty Monad</a>
+            </div>
+            <header class="post-header">
+                <h1 class="post-title">The Mighty Monad</h1>
+                
+                <p class="post-meta">May 31, 2015 • marad</p>
+                
+            </header>
+            <article class="post-content">
+                
+
+<p>When you begin to learn functional programming everybody is telling you that pure functions with no
+side effects are the only way to go. This is fine up to the point. Sooner or later you will hear
+about monads. This post tries to explain what the monad is and why you should use it.</p>
+
+<h1 id="prerequisites">Prerequisites</h1>
+
+<p>To fully understand the examples here you should know at least basics of Scala language. You should
+also know <a href="http://www.tutorialspoint.com/scala/scala_options.htm">how to use <code>Option[T]</code></a> type in Scala or at least know the Java&rsquo;s <code>Optional&lt;T&gt;</code>
+which I described <a href="/programming/java/2015/04/19/java-optional.html">here</a>. In the section about pure functional languages I used a bit of
+Haskell, but I tried to make the examples as clear as I could for those who don&rsquo;t know it.</p>
+
+<h1 id="the-definition">The definition</h1>
+
+<p class="notice">This is raw definition of monad. Please note that you don't have to fully
+understand it to read the following sections. You can safely skip to the <em>Simpler definition</em>
+section. Having said that, I encourage you to face this definition. It may help you later on.</p>
+
+<p>Let&rsquo;s start with something not simple at all! The monad definition:</p>
+
+<p>We can say that <em>M</em> is a monad when:</p>
+
+<ul>
+<li>it is generic type <code>M[T]</code></li>
+<li>there is a <em>unit</em> function <code>T =&gt; M[T]</code></li>
+<li>there is a <em>flatMap</em> function <code>(M[T], T =&gt; M[T]) =&gt; M[T]</code></li>
+</ul>
+
+<p>To make things even worse, there are three monad laws:</p>
+
+<ul>
+<li>Left identity: <code>unit(x) flatMap f == f(x)</code></li>
+<li>Right identity: <code>m flatMap unit == m</code></li>
+<li>Associativity: <code>(m flatMap f) flatMap g == m flatMap (f flatMap g)</code></li>
+</ul>
+
+<p>Let me clarify this definition a bit. Leaving the laws for later let us jump back to the <em>M</em> type
+and the <em>unit</em> and <em>flatMap</em> functions.  Type <em>M</em> is just regular generic type like <code>Option[T]</code> or
+<code>Try[T]</code>.  The <em>unit</em> function takes the value of type <em>T</em> and wraps it with a monadic type. For
+<code>Option[T]</code> the <em>unit</em> operation is simple <code>Some(t: T)</code>.  Lastly - the <em>flatMap</em>. Literature refers
+to it as the <em>bind</em> operation. I decided to call it <em>flatMap</em> here so it sounds more familiar. It,
+of course, takes a monadic value <code>M[T]</code> and a function <code>T =&gt; M[T]</code> and returns another <code>M[T]</code>. This
+basically means that we can do some computation on value that is inside the monad and create a new
+monad with the result of that computation. Scala is object oriented so <code>flatMap</code> is just a method
+and takes one parameter (the function) the other being just <em>this object</em>.</p>
+
+<p>To sum this up with an example based on type <code>Option[T]</code>:</p>
+
+<ul>
+<li>we have got generic type <code>Option[T]</code></li>
+<li>we have <em>unit</em> function <code>Some(t: T)</code></li>
+<li>we have <em>bind/flatMap</em> method <code>Option.flatMap(f: T =&gt; Option[T]): Option[T]</code></li>
+</ul>
+
+<p>Going back to the monad laws. The first two laws are fairly simple and describe the relations
+between <em>unit</em> and <em>flatMap</em>. The <em>associativity</em> law tells us just that the order of the <em>flatMap</em>
+doesn&rsquo;t matter. We can write the laws for <code>Option[T]</code> as following:</p>
+
+<ul>
+<li><code>Some(t) flatMap f == f(t)</code></li>
+<li><code>opt flatMap Some[T] == opt</code></li>
+<li><code>(opt flatMap f) flatMap g == opt flatMap (t =&gt; f(t) flatMap g)</code></li>
+</ul>
+
+<p>To prove that the laws hold we should replace our methods with their implementations to see if we
+can end up with the other side of equation. This could be a topic for whole new post (and maybe will
+be) so I&rsquo;ll skip this for now.</p>
+
+<h1 id="simpler-definition">Simpler definition</h1>
+
+<p>The reality is that these monad laws are mainly important when you want to implement a monad
+yourself or you need to rely on one of these properties in your code. In fact when talking about
+monads most developers are thinking just about generic type <em>M[T]</em> with <em>unit</em> and <em>flatMap</em>
+operations.</p>
+
+<p>There is even more! There are types that we call a monads but they do not satisfy those laws! Let&rsquo;s
+take <code>Try[T]</code> for example. This monad is used to deal with possible exceptions that might occur
+while processing. If you have some operation <code>expr: T</code> that can throw some exception you
+may want to wrap it with <code>Try(expr)</code>. This will return <code>Success(t: T)</code> containing the result of the
+function or <code>Failure(ex: Throwable)</code> with the exception that was thrown by that function. If you
+closely examine all monad laws you can see that the <em>left identity</em> law does not hold.</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="n">unit</span><span class="o">(</span><span class="n">x</span><span class="o">)</span> <span class="n">flatMap</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+</code></pre></div>
+
+
+<p>This tells us that following should be true:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="nc">Try</span><span class="o">(</span><span class="n">expr</span><span class="o">)</span> <span class="n">flatMap</span> <span class="n">f</span> <span class="o">==</span> <span class="n">f</span><span class="o">(</span><span class="n">expr</span><span class="o">)</span>
+</code></pre></div>
+
+
+<p>The law works fine if everything goes smooth and no exception is thrown. The problem pops up when
+either <code>f</code> or <code>expr</code> throws an exception. The left hand side <code>Try(expr) flatMap f</code> never throws an
+exception and just returns <code>Failure(ex)</code>. The right hand side <code>f(expr)</code> will just throw the
+exception so the law does not hold thus <code>Try[T]</code> is not precisely a monad, but that is not a problem
+for us. We are not mathematicians (no offense ment!). We just want things to work :)</p>
+
+<h1 id="so-what-does-all-this-means-for-developers">So what does all this means for developers?</h1>
+
+<p>Monadic structure gives us, developers, a uniform way of defining a chain of transformations on
+virtually any type. Just look at this:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="nc">List</span><span class="o">(</span><span class="sc">&#39;a&#39;</span><span class="o">,</span> <span class="sc">&#39;a&#39;</span><span class="o">,</span> <span class="sc">&#39;b&#39;</span><span class="o">,</span> <span class="sc">&#39;c&#39;</span><span class="o">,</span> <span class="sc">&#39;c&#39;</span><span class="o">,</span> <span class="sc">&#39;c&#39;</span><span class="o">,</span> <span class="sc">&#39;c&#39;</span><span class="o">,</span> <span class="sc">&#39;d&#39;</span><span class="o">,</span> <span class="sc">&#39;d&#39;</span><span class="o">,</span> <span class="sc">&#39;e&#39;</span><span class="o">)</span>      <span class="c1">// List[Char]</span>
+    <span class="o">.</span><span class="n">groupBy</span><span class="o">(</span><span class="n">identity</span><span class="o">)</span>                                      <span class="c1">// Map[Char, List[Char]]</span>
+    <span class="o">.</span><span class="n">mapValues</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">size</span><span class="o">)</span>                                      <span class="c1">// Map[Char, Int]</span>
+    <span class="o">.</span><span class="n">reduceLeftOption</span><span class="o">((</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">if</span> <span class="o">(</span><span class="n">a</span><span class="o">.</span><span class="n">_2</span> <span class="o">&gt;</span> <span class="n">b</span><span class="o">.</span><span class="n">_2</span><span class="o">)</span> <span class="n">a</span> <span class="k">else</span> <span class="n">b</span><span class="o">)</span>   <span class="c1">// Option[(Char, Int)]</span>
+    <span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">_1</span><span class="o">)</span>                                              <span class="c1">// Option[Char]</span>
+    <span class="o">.</span><span class="n">foreach</span><span class="o">(</span><span class="n">println</span><span class="o">)</span>
+</code></pre></div>
+
+
+<p>The above code finds the most popular element in the list. In this example the most popular element
+is <code>c</code> because it appears 4 times. I&rsquo;ve defined a chain of transformations to find this value. The
+most interesting thing about that is that the type I&rsquo;m operating on changed three times, but the
+chain still looks uniform! We start with a <code>List[Char]</code> after calling <code>groupBy</code> method we have a
+<code>Map[Char, List[Char]]</code>. Then we replace the lists with just their sizes so after <code>mapValues</code> the
+type is <code>Map[Char, Int]</code>. With <code>reduceToOption</code> we find the element of the map that has the biggest
+value and create <code>Option[(Char, Int)]</code>. Then we just get the first element from the tuple (this is
+our most popular char) with <code>map</code> and the final type is <code>Option[Char]</code>. Last operation is just
+printing the value (if found) to the standard output.</p>
+
+<p>We used three different monads: List, Map, and Option. Every line of code changed the output type.
+Yet we still could invoke new transformations like we didn&rsquo;t care! I personally think that this is
+fantastic :)</p>
+
+<p>You may have noticed that I didn&rsquo;t use the <code>flatMap</code> method. In fact every method that I used above
+CAN be implemented using one or more <code>flatMap</code> calls. Let&rsquo;s take simple <code>map</code> for example:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="n">m</span> <span class="n">map</span> <span class="n">f</span> <span class="o">==</span> <span class="n">m</span> <span class="n">flatMap</span> <span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">unit</span><span class="o">(</span><span class="n">f</span><span class="o">(</span><span class="n">x</span><span class="o">)))</span>
+</code></pre></div>
+
+
+<p>These methods are just some combinations of <code>flatMap</code> that are useful and were given a name.  Of
+course they are not implemented with <code>flatMap</code> in Scala because it would hurt the performance, but
+the point is that they are the result of those types (List, Map, Option) being a monads.</p>
+
+<h1 id="word-about-functional-programming">Word about functional programming</h1>
+
+<p class="warning">This part contains dangerous amounts of Haskell.</p>
+
+<p>Scala is kind-of functional programming language. You can write some parts functionally and other
+imperatively. This is great because by mixing the styles we can end up with code that is both
+readable and concise. Monads have another side which is extremely important for pure functional
+languages like Haskell.</p>
+
+<h2 id="the-order">The order</h2>
+
+<p>You see, in pure functional languages you cannot define the order of operations. You can just define
+some equivalences. What do I mean? Take a look:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">a</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</code></pre></div>
+
+
+<p>We are used to call this a function definition but what really happens here? We just tell that the
+<code>add(x,y)</code> string can be replaced with <code>x + y</code> string on the code level. In fact we could evaluate
+pure functional code just by replacing strings!</p>
+
+<p>Going back to the monads. In pure functional languages to define the order of computation you would
+have to invoke a function on a call to function etc.:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="n">f</span><span class="o">(</span><span class="n">g</span><span class="o">(</span><span class="n">h</span><span class="o">(</span><span class="n">x</span><span class="o">)))</span>
+</code></pre></div>
+
+
+<p>You can see that here we have to evaluate <code>h(x)</code> then pass the value to <code>g</code> and finally to <code>f</code>. Try
+to imagine bigger program written like that. Well yes, it would be unreadable!</p>
+
+<p>Now we could scream: <em>Monads to the rescue!</em>. But let&rsquo;s not. If you look again at the code to find
+the most popular element in list you can see that we strictly defined the order for the operations.</p>
+
+<p>This is exactly what we use in Haskell to pretend that we are doing imperative code. Of course
+Haskell has some syntactic sugar on top of it so instead of writing <code>flatMap</code> (which in Haskell is
+<code>&gt;&gt;=</code>) you can write it imperatively-ish. The <code>do</code> notation:</p>
+
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span></span><span class="kr">do</span>
+  <span class="n">x</span> <span class="ow">&lt;-</span> <span class="n">thing1</span>
+  <span class="n">y</span> <span class="ow">&lt;-</span> <span class="n">func1</span> <span class="n">x</span>
+  <span class="n">thing2</span>
+  <span class="n">z</span> <span class="ow">&lt;-</span> <span class="n">func2</span> <span class="n">y</span>
+</code></pre></div>
+
+
+<p>What is going on here? The <code>thing1</code> and <code>thing2</code> are monadic values (we can call <code>flatMap</code> on them).
+The <code>func1</code> and <code>func2</code> returns a monadic values. What is going on here is that first we get the
+value form <code>thing1</code> and name it <code>x</code>. Then we pass it as a value to the <code>func1</code> which returns another
+monad. Then we take value from the monad and name it <code>y</code>&hellip; You see where this is going. This
+clearly defines the order of operations.</p>
+
+<p>Example above is exactly the same as:</p>
+
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span></span><span class="nf">thing1</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="ow">-&gt;</span> <span class="n">func1</span> <span class="n">x</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">y</span> <span class="ow">-&gt;</span> <span class="n">thing2</span>
+       <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="kr">_</span> <span class="ow">-&gt;</span> <span class="n">func2</span> <span class="n">y</span> <span class="o">&gt;&gt;=</span> <span class="p">(</span><span class="nf">\</span><span class="n">z</span> <span class="ow">-&gt;</span> <span class="n">return</span> <span class="n">z</span><span class="p">))))</span>
+</code></pre></div>
+
+
+<p>You see that the <code>do</code> notation is a bit more readable :) This example is taken from <a href="https://wiki.haskell.org/Monad">Haskell
+Wiki</a>.</p>
+
+<h2 id="the-state-and-side-effects">The state and side effects</h2>
+
+<p>Another thing is that in Scala we can talk about mutable and immutable state. In pure functional
+programming there is no state at all! There are only arguments passed to functions. That&rsquo;s the
+closest thing to state you can get.</p>
+
+<p>But there is state in the world. Our hard drives have state. Keyboard has state. There is a lot of
+state everywhere! How to deal with this in Haskell? You guessed it - monads. Lets look at this quick
+example:</p>
+
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span></span><span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="nf">main</span> <span class="ow">=</span> <span class="kr">do</span>
+         <span class="n">c</span> <span class="ow">&lt;-</span> <span class="n">getChar</span>
+         <span class="n">putChar</span> <span class="n">c</span>
+</code></pre></div>
+
+
+<p>This program, as you might suspect, reads one character from the standard input and writes it to
+standard output. To put it simply: awaits for keyboard button to be pressed and prints the letter to
+the console.</p>
+
+<p>Here you can see that <code>getChar</code> does have some kind of state as the value seems to materialize from
+nothing - it doesn&rsquo;t expect any arguments. So what happens here? Well - the input/output operations
+are wrapped with a monad which acts here as a gate between our stateful world and the world of pure
+functions.</p>
+
+<p>We can rewrite it using <code>flatMap</code> (which in Haskell is <code>&gt;&gt;=</code>):</p>
+
+<div class="highlight"><pre><code class="language-haskell" data-lang="haskell"><span></span><span class="nf">main</span> <span class="ow">::</span> <span class="kt">IO</span> <span class="nb">()</span>
+<span class="nf">main</span> <span class="ow">=</span> <span class="n">getChar</span> <span class="o">&gt;&gt;=</span> <span class="n">putChar</span>
+</code></pre></div>
+
+
+<p>In Scala it would look like:</p>
+
+<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">def</span> <span class="n">main</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">getChar</span><span class="o">.</span><span class="n">flatMap</span><span class="o">(</span><span class="n">putChar</span><span class="o">)</span>
+</code></pre></div>
+
+
+<p>The <code>getChar</code> function returns a monad. If we invoke <code>flatMap</code> on it gives us a key pressed on the keyboard as a
+parameter to our function. Our function here is <code>putChar</code>. It takes one char and returns a monad
+back. The returned monad is empty (like <code>Unit</code> in Scala) so the value is not interesting. The
+<code>putChar</code> function does something else behind the scenes. It writes the character to the standard
+output. This is side effect that we wanted. The ability to talk to stateful world.</p>
+
+<p>All this is thanks to humble <code>flatMap</code> :)</p>
+
+<h1 id="summary">Summary</h1>
+
+<p>Thanks for reading! I hope that you will not be frightened by the <em>monad</em> word anymore! These are
+useful little creatures. They are easy to use when you get the hang of them, but quite hard to learn
+(and explain!). I really hope that this post was helpful to you because when I wanted to learn
+monads the first time I couldn&rsquo;t understand a single thing about them. Then something just <em>clicked</em>
+and everything was clear. I hope that it just <em>clicked</em> for you today :)</p>
+
+<p>If you have any questions please leave a comment below!</p>
+
+            </article>
+            <div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost")
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'maradblog';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+                                    <footer class="site-footer">
+                                        <div class="wrapper">
+                                            <div class="footer-col-wrapper">
+                                                <div class="footer-col footer-col-1">
+                                                    <ul class="contact-list">
+                                                        <li>Marad Blog</li>
+                                                        <li>moriturius (at) gmail.com</li>
+                                                    </ul>
+                                                </div>
+
+                                                <div class="footer-col footer-col-2">
+                                                    <ul class="social-media-list">
+                                                        <li><a href="https://github.com/marad">
+                                                            <span class="icon icon--github">
+                                                                <svg viewBox="0 0 16 16">
+                                                                    <path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/>
+                                                                </svg>
+                                                            </span>
+                                                            <span class="username">marad</span>
+                                                        </a></li>
+                                                        <li><a href="http://twitter.com/moriturius">
+                                                            <span class="icon icon--twitter">
+                                                                <svg viewBox="0 0 16 16">
+                                                                    <path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809
+                                                                                c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/>
+                                                                </svg>
+
+                                                            </span>
+
+                                                            <span class="username">moriturius</span>
+                                                        </a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </footer>
+    </body>
+</html>
+

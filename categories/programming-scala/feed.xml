@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Programming Scala on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/categories/programming-scala/feed/index.xml</link>
+    <description>Recent content in Programming Scala on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://blog.radoszewski.pl/categories/programming-scala/feed/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>The Cake Pattern</title>
+      <link>http://blog.radoszewski.pl/post/cake-pattern/</link>
+      <pubDate>Tue, 10 Nov 2015 12:17:17 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/cake-pattern/</guid>
+      <description>
+
+&lt;p&gt;Let&amp;rsquo;s think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows.  Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us. If you know Java you pr/programming/scala/2015/11/10/cake-pattern.htmlobably have heard about Dependency Injection (DI) and Inversion of Control (IoC). This is one way to approach the problem. There is another one and it&amp;rsquo;s called &lt;em&gt;Cake Pattern&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;dependency-injection&#34;&gt;Dependency Injection&lt;/h1&gt;
+
+&lt;p&gt;I believe we should start with a paragraph or two highlighting some aspects of dependency injection. Before I learned about &lt;em&gt;Cake Pattern&lt;/em&gt; I thought that it was some kind of dependency injection. I was so wrong. In fact - this actually caused me some trouble understanding the &lt;em&gt;Cake Pattern&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Dependency Injection uses inversion of control to do it&amp;rsquo;s trick. This means that you only say what are your components and each component knows what other components it depends on. Later some container instantiates your components and their dependencies for you. You never have to write a single &lt;code&gt;new&lt;/code&gt;. This makes developing much easier. You can focus on what is it you want to do instead of how to wire everything up.&lt;/p&gt;
+
+&lt;h1 id=&#34;the-cake-pattern&#34;&gt;The Cake Pattern&lt;/h1&gt;
+
+&lt;p&gt;&lt;em&gt;Cake Pattern&lt;/em&gt; solves the same problem. It allows you to specify dependencies of your components, but it does this a little different. It never takes the control of the component creation. How is that possible? Well - by proper structuring your code. That&amp;rsquo;s the trick. Did you think that the &lt;em&gt;pattern&lt;/em&gt; part was a hoax?&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s take a look at an example. Assume that we want to create the &lt;code&gt;Bakery&lt;/code&gt; which bakes bread (duh!). There is also the &lt;code&gt;Mill&lt;/code&gt; which can supply some flour. Obviously the &lt;code&gt;Bakery&lt;/code&gt; is going to need the flour from the &lt;code&gt;Mill&lt;/code&gt; - thus creating dependency. Also let&amp;rsquo;s not dive to deep in this and assume that &lt;code&gt;Mill&lt;/code&gt; just produces flour out of thin air.&lt;/p&gt;
+
+&lt;p&gt;With dependency injection you would normally create the two components, and somehow tell the injector that &lt;code&gt;Bakery&lt;/code&gt; would like to have &lt;code&gt;Mill&lt;/code&gt; instance injected. The cake pattern is different because it uses interfaces to denote that the dependency will be available some time later. To do that we use a few scala &lt;code&gt;trait&lt;/code&gt;s that enable us to mix the implementation of that interfaces when creating the actual working instance of an object.&lt;/p&gt;
+
+&lt;p&gt;We can start by defining the component and interface for the &lt;code&gt;Mill&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Flour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MillComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mill&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Mill&lt;/span&gt;
+
+    &lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Mill&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;produceFlour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Flour&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We&amp;rsquo;ve created the &lt;code&gt;Flour&lt;/code&gt; class to represent the goods produced by the &lt;code&gt;Mill&lt;/code&gt;. Then you can see that we&amp;rsquo;ve declared &lt;code&gt;MillComponent&lt;/code&gt; which promises to us that it&amp;rsquo;s implementations will return the &lt;code&gt;Mill&lt;/code&gt; instance through &lt;code&gt;mill&lt;/code&gt; method. Also there is &lt;code&gt;Mill&lt;/code&gt; trait which is just interface telling us that it can &lt;code&gt;produceFlour&lt;/code&gt;. This construct is like the definition of our component.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s create the actual implementation for the component and the &lt;code&gt;Mill&lt;/code&gt; itself:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMillComponent&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MillComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mill&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Mill&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMill&lt;/span&gt;
+
+    &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMill&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Mill&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;produceFlour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Flour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This is quite simple. We create the component by extending its &lt;em&gt;definition&lt;/em&gt; we wrote above - note that this component is still a &lt;code&gt;trait&lt;/code&gt;. The &lt;code&gt;RegularMill&lt;/code&gt; implementation is, on the other hand, a class that simply implements the &lt;code&gt;Mill&lt;/code&gt; interface.&lt;/p&gt;
+
+&lt;p&gt;We&amp;rsquo;re done with this component. Note that its &lt;code&gt;mill&lt;/code&gt; field is &lt;code&gt;val&lt;/code&gt;. This means that we want only one instance of it. We could have left the &lt;code&gt;def&lt;/code&gt; there and then components would create new mill instance everytime they used the &lt;code&gt;mill&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;On to the bakery. To create the component we use the same template as before:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;flour&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Flour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;BakeryComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakery&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bakery&lt;/span&gt;
+
+    &lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bakery&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakeBread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bread&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The interesting bit is that this does not tell us anything about the dependency. At this level we don&amp;rsquo;t need any &lt;code&gt;Flour&lt;/code&gt; - we&amp;rsquo;re just declaring that the component provides &lt;code&gt;Bakery&lt;/code&gt; that can &lt;code&gt;bakeBread&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now let&amp;rsquo;s see how we can declare the dependency and use it to implement &lt;code&gt;RegularBakery&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakeryComponent&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;BakeryComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+    &lt;span class=&#34;k&#34;&gt;this:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;MillComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt;
+
+    &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakery&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bakery&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakery&lt;/span&gt;
+
+    &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakery&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bakery&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakeBread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bread&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mill&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;produceFlour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;())&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;By specifying &lt;code&gt;this: MillComponent =&amp;gt;&lt;/code&gt; at the beginning of the trait we are telling the compiler that this trait can be mixed in only with objects that also have &lt;code&gt;MillComponent&lt;/code&gt; trait mixed in. This allows us to use the &lt;code&gt;mill&lt;/code&gt; while implementing the &lt;code&gt;bakeBread()&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;Soooo&amp;hellip; one thing left. How to use this? It&amp;rsquo;s quite simple, just mix everything in one object:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;app&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Object&lt;/span&gt;
+          &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMillComponent&lt;/span&gt;
+          &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakeryComponent&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bread&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bakery&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bakeBread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now if you try to create an instance of &lt;code&gt;RegularBakeryComponent&lt;/code&gt; without some implementation of &lt;code&gt;MillComponent&lt;/code&gt; then the program will not compile at all. This means that if your program compiles all the dependencies are satisfied.&lt;/p&gt;
+
+&lt;h1 id=&#34;pros-cons&#34;&gt;Pros &amp;amp; Cons&lt;/h1&gt;
+
+&lt;p&gt;As you can see in cake pattern there is no &lt;em&gt;injection&lt;/em&gt; of dependencies. You simply declare the dependencies and then mix all the components in one &lt;em&gt;Object&lt;/em&gt;. Manual dependency management is a lot less &lt;em&gt;magical&lt;/em&gt; than the standard dependency injection. Sure it might be a little overwhelming with all those &lt;code&gt;trait&lt;/code&gt;s and mixing, but this is just using standard language features. Once you get this you&amp;rsquo;ll never have any problems with this type of dependency management again. Another great thing is that dependencies are checked at compile time so there are no long stack traces telling you that some dependency is missing.&lt;/p&gt;
+
+&lt;p&gt;On the sad part - you might have noticed that it&amp;rsquo;s a little verbose when compared to Spring&amp;rsquo;s &lt;code&gt;@Component&lt;/code&gt; and &lt;code&gt;@Autowire&lt;/code&gt;. Also it&amp;rsquo;s a bit less flexible than standard DI. Imagine that you want one of the components to use one implementation of some interface and another one want different implementation of the same interface. In Spring you would use &lt;code&gt;@Qualifier&lt;/code&gt; for this. Here it&amp;rsquo;s a bit more tricky and I could explore this a bit more in some future post.&lt;/p&gt;
+
+&lt;h1 id=&#34;summary&#34;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;Classical dependency injection with inversion of control gives us some nice features, as the container at runtime can decide which component it&amp;rsquo;s going to inject. With cake pattern everything is wired up at compile time so this mechanism is a bit more &lt;em&gt;low level&lt;/em&gt;. You can of course make your own logic for instantiating components - you never gave up control over that - but this means you have a bit more work to do :)&lt;/p&gt;
+
+&lt;p&gt;I hope that you&amp;rsquo;ve learned something new by reading this post. I definatelly did while writing it :)&lt;/p&gt;
+
+&lt;p&gt;You can view whole example code at my &lt;a href=&#34;https://github.com/marad/cake-pattern-example&#34;&gt;github&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>The Mighty Monad</title>
+      <link>http://blog.radoszewski.pl/post/mighty-monad/</link>
+      <pubDate>Sun, 31 May 2015 11:52:40 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/mighty-monad/</guid>
+      <description>
+
+&lt;p&gt;When you begin to learn functional programming everybody is telling you that pure functions with no
+side effects are the only way to go. This is fine up to the point. Sooner or later you will hear
+about monads. This post tries to explain what the monad is and why you should use it.&lt;/p&gt;
+
+&lt;h1 id=&#34;prerequisites&#34;&gt;Prerequisites&lt;/h1&gt;
+
+&lt;p&gt;To fully understand the examples here you should know at least basics of Scala language. You should
+also know &lt;a href=&#34;http://www.tutorialspoint.com/scala/scala_options.htm&#34;&gt;how to use &lt;code&gt;Option[T]&lt;/code&gt;&lt;/a&gt; type in Scala or at least know the Java&amp;rsquo;s &lt;code&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;
+which I described &lt;a href=&#34;http://blog.radoszewski.pl/programming/java/2015/04/19/java-optional.html&#34;&gt;here&lt;/a&gt;. In the section about pure functional languages I used a bit of
+Haskell, but I tried to make the examples as clear as I could for those who don&amp;rsquo;t know it.&lt;/p&gt;
+
+&lt;h1 id=&#34;the-definition&#34;&gt;The definition&lt;/h1&gt;
+
+&lt;p class=&#34;notice&#34;&gt;This is raw definition of monad. Please note that you don&#39;t have to fully
+understand it to read the following sections. You can safely skip to the &lt;em&gt;Simpler definition&lt;/em&gt;
+section. Having said that, I encourage you to face this definition. It may help you later on.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start with something not simple at all! The monad definition:&lt;/p&gt;
+
+&lt;p&gt;We can say that &lt;em&gt;M&lt;/em&gt; is a monad when:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;it is generic type &lt;code&gt;M[T]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;there is a &lt;em&gt;unit&lt;/em&gt; function &lt;code&gt;T =&amp;gt; M[T]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;there is a &lt;em&gt;flatMap&lt;/em&gt; function &lt;code&gt;(M[T], T =&amp;gt; M[T]) =&amp;gt; M[T]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To make things even worse, there are three monad laws:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Left identity: &lt;code&gt;unit(x) flatMap f == f(x)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Right identity: &lt;code&gt;m flatMap unit == m&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Associativity: &lt;code&gt;(m flatMap f) flatMap g == m flatMap (f flatMap g)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let me clarify this definition a bit. Leaving the laws for later let us jump back to the &lt;em&gt;M&lt;/em&gt; type
+and the &lt;em&gt;unit&lt;/em&gt; and &lt;em&gt;flatMap&lt;/em&gt; functions.  Type &lt;em&gt;M&lt;/em&gt; is just regular generic type like &lt;code&gt;Option[T]&lt;/code&gt; or
+&lt;code&gt;Try[T]&lt;/code&gt;.  The &lt;em&gt;unit&lt;/em&gt; function takes the value of type &lt;em&gt;T&lt;/em&gt; and wraps it with a monadic type. For
+&lt;code&gt;Option[T]&lt;/code&gt; the &lt;em&gt;unit&lt;/em&gt; operation is simple &lt;code&gt;Some(t: T)&lt;/code&gt;.  Lastly - the &lt;em&gt;flatMap&lt;/em&gt;. Literature refers
+to it as the &lt;em&gt;bind&lt;/em&gt; operation. I decided to call it &lt;em&gt;flatMap&lt;/em&gt; here so it sounds more familiar. It,
+of course, takes a monadic value &lt;code&gt;M[T]&lt;/code&gt; and a function &lt;code&gt;T =&amp;gt; M[T]&lt;/code&gt; and returns another &lt;code&gt;M[T]&lt;/code&gt;. This
+basically means that we can do some computation on value that is inside the monad and create a new
+monad with the result of that computation. Scala is object oriented so &lt;code&gt;flatMap&lt;/code&gt; is just a method
+and takes one parameter (the function) the other being just &lt;em&gt;this object&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;To sum this up with an example based on type &lt;code&gt;Option[T]&lt;/code&gt;:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;we have got generic type &lt;code&gt;Option[T]&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;we have &lt;em&gt;unit&lt;/em&gt; function &lt;code&gt;Some(t: T)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;we have &lt;em&gt;bind/flatMap&lt;/em&gt; method &lt;code&gt;Option.flatMap(f: T =&amp;gt; Option[T]): Option[T]&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Going back to the monad laws. The first two laws are fairly simple and describe the relations
+between &lt;em&gt;unit&lt;/em&gt; and &lt;em&gt;flatMap&lt;/em&gt;. The &lt;em&gt;associativity&lt;/em&gt; law tells us just that the order of the &lt;em&gt;flatMap&lt;/em&gt;
+doesn&amp;rsquo;t matter. We can write the laws for &lt;code&gt;Option[T]&lt;/code&gt; as following:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;Some(t) flatMap f == f(t)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;opt flatMap Some[T] == opt&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;(opt flatMap f) flatMap g == opt flatMap (t =&amp;gt; f(t) flatMap g)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;To prove that the laws hold we should replace our methods with their implementations to see if we
+can end up with the other side of equation. This could be a topic for whole new post (and maybe will
+be) so I&amp;rsquo;ll skip this for now.&lt;/p&gt;
+
+&lt;h1 id=&#34;simpler-definition&#34;&gt;Simpler definition&lt;/h1&gt;
+
+&lt;p&gt;The reality is that these monad laws are mainly important when you want to implement a monad
+yourself or you need to rely on one of these properties in your code. In fact when talking about
+monads most developers are thinking just about generic type &lt;em&gt;M[T]&lt;/em&gt; with &lt;em&gt;unit&lt;/em&gt; and &lt;em&gt;flatMap&lt;/em&gt;
+operations.&lt;/p&gt;
+
+&lt;p&gt;There is even more! There are types that we call a monads but they do not satisfy those laws! Let&amp;rsquo;s
+take &lt;code&gt;Try[T]&lt;/code&gt; for example. This monad is used to deal with possible exceptions that might occur
+while processing. If you have some operation &lt;code&gt;expr: T&lt;/code&gt; that can throw some exception you
+may want to wrap it with &lt;code&gt;Try(expr)&lt;/code&gt;. This will return &lt;code&gt;Success(t: T)&lt;/code&gt; containing the result of the
+function or &lt;code&gt;Failure(ex: Throwable)&lt;/code&gt; with the exception that was thrown by that function. If you
+closely examine all monad laws you can see that the &lt;em&gt;left identity&lt;/em&gt; law does not hold.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;unit&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;flatMap&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This tells us that following should be true:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Try&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;expr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;flatMap&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;expr&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The law works fine if everything goes smooth and no exception is thrown. The problem pops up when
+either &lt;code&gt;f&lt;/code&gt; or &lt;code&gt;expr&lt;/code&gt; throws an exception. The left hand side &lt;code&gt;Try(expr) flatMap f&lt;/code&gt; never throws an
+exception and just returns &lt;code&gt;Failure(ex)&lt;/code&gt;. The right hand side &lt;code&gt;f(expr)&lt;/code&gt; will just throw the
+exception so the law does not hold thus &lt;code&gt;Try[T]&lt;/code&gt; is not precisely a monad, but that is not a problem
+for us. We are not mathematicians (no offense ment!). We just want things to work :)&lt;/p&gt;
+
+&lt;h1 id=&#34;so-what-does-all-this-means-for-developers&#34;&gt;So what does all this means for developers?&lt;/h1&gt;
+
+&lt;p&gt;Monadic structure gives us, developers, a uniform way of defining a chain of transformations on
+virtually any type. Just look at this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;sc&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;a&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;b&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;c&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;d&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;d&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;e&amp;#39;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;      &lt;span class=&#34;c1&#34;&gt;// List[Char]&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;groupBy&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;identity&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                      &lt;span class=&#34;c1&#34;&gt;// Map[Char, List[Char]]&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mapValues&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                      &lt;span class=&#34;c1&#34;&gt;// Map[Char, Int]&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;reduceLeftOption&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;// Option[(Char, Int)]&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;_1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;                                              &lt;span class=&#34;c1&#34;&gt;// Option[Char]&lt;/span&gt;
+    &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;foreach&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;println&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The above code finds the most popular element in the list. In this example the most popular element
+is &lt;code&gt;c&lt;/code&gt; because it appears 4 times. I&amp;rsquo;ve defined a chain of transformations to find this value. The
+most interesting thing about that is that the type I&amp;rsquo;m operating on changed three times, but the
+chain still looks uniform! We start with a &lt;code&gt;List[Char]&lt;/code&gt; after calling &lt;code&gt;groupBy&lt;/code&gt; method we have a
+&lt;code&gt;Map[Char, List[Char]]&lt;/code&gt;. Then we replace the lists with just their sizes so after &lt;code&gt;mapValues&lt;/code&gt; the
+type is &lt;code&gt;Map[Char, Int]&lt;/code&gt;. With &lt;code&gt;reduceToOption&lt;/code&gt; we find the element of the map that has the biggest
+value and create &lt;code&gt;Option[(Char, Int)]&lt;/code&gt;. Then we just get the first element from the tuple (this is
+our most popular char) with &lt;code&gt;map&lt;/code&gt; and the final type is &lt;code&gt;Option[Char]&lt;/code&gt;. Last operation is just
+printing the value (if found) to the standard output.&lt;/p&gt;
+
+&lt;p&gt;We used three different monads: List, Map, and Option. Every line of code changed the output type.
+Yet we still could invoke new transformations like we didn&amp;rsquo;t care! I personally think that this is
+fantastic :)&lt;/p&gt;
+
+&lt;p&gt;You may have noticed that I didn&amp;rsquo;t use the &lt;code&gt;flatMap&lt;/code&gt; method. In fact every method that I used above
+CAN be implemented using one or more &lt;code&gt;flatMap&lt;/code&gt; calls. Let&amp;rsquo;s take simple &lt;code&gt;map&lt;/code&gt; for example:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;m&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;map&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;m&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;flatMap&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;unit&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;These methods are just some combinations of &lt;code&gt;flatMap&lt;/code&gt; that are useful and were given a name.  Of
+course they are not implemented with &lt;code&gt;flatMap&lt;/code&gt; in Scala because it would hurt the performance, but
+the point is that they are the result of those types (List, Map, Option) being a monads.&lt;/p&gt;
+
+&lt;h1 id=&#34;word-about-functional-programming&#34;&gt;Word about functional programming&lt;/h1&gt;
+
+&lt;p class=&#34;warning&#34;&gt;This part contains dangerous amounts of Haskell.&lt;/p&gt;
+
+&lt;p&gt;Scala is kind-of functional programming language. You can write some parts functionally and other
+imperatively. This is great because by mixing the styles we can end up with code that is both
+readable and concise. Monads have another side which is extremely important for pure functional
+languages like Haskell.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-order&#34;&gt;The order&lt;/h2&gt;
+
+&lt;p&gt;You see, in pure functional languages you cannot define the order of operations. You can just define
+some equivalences. What do I mean? Take a look:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;add&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;a&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;a&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;b&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We are used to call this a function definition but what really happens here? We just tell that the
+&lt;code&gt;add(x,y)&lt;/code&gt; string can be replaced with &lt;code&gt;x + y&lt;/code&gt; string on the code level. In fact we could evaluate
+pure functional code just by replacing strings!&lt;/p&gt;
+
+&lt;p&gt;Going back to the monads. In pure functional languages to define the order of computation you would
+have to invoke a function on a call to function etc.:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;g&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;h&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You can see that here we have to evaluate &lt;code&gt;h(x)&lt;/code&gt; then pass the value to &lt;code&gt;g&lt;/code&gt; and finally to &lt;code&gt;f&lt;/code&gt;. Try
+to imagine bigger program written like that. Well yes, it would be unreadable!&lt;/p&gt;
+
+&lt;p&gt;Now we could scream: &lt;em&gt;Monads to the rescue!&lt;/em&gt;. But let&amp;rsquo;s not. If you look again at the code to find
+the most popular element in list you can see that we strictly defined the order for the operations.&lt;/p&gt;
+
+&lt;p&gt;This is exactly what we use in Haskell to pretend that we are doing imperative code. Of course
+Haskell has some syntactic sugar on top of it so instead of writing &lt;code&gt;flatMap&lt;/code&gt; (which in Haskell is
+&lt;code&gt;&amp;gt;&amp;gt;=&lt;/code&gt;) you can write it imperatively-ish. The &lt;code&gt;do&lt;/code&gt; notation:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-haskell&#34; data-lang=&#34;haskell&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kr&#34;&gt;do&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;thing1&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;func1&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;thing2&lt;/span&gt;
+  &lt;span class=&#34;n&#34;&gt;z&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;func2&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;What is going on here? The &lt;code&gt;thing1&lt;/code&gt; and &lt;code&gt;thing2&lt;/code&gt; are monadic values (we can call &lt;code&gt;flatMap&lt;/code&gt; on them).
+The &lt;code&gt;func1&lt;/code&gt; and &lt;code&gt;func2&lt;/code&gt; returns a monadic values. What is going on here is that first we get the
+value form &lt;code&gt;thing1&lt;/code&gt; and name it &lt;code&gt;x&lt;/code&gt;. Then we pass it as a value to the &lt;code&gt;func1&lt;/code&gt; which returns another
+monad. Then we take value from the monad and name it &lt;code&gt;y&lt;/code&gt;&amp;hellip; You see where this is going. This
+clearly defines the order of operations.&lt;/p&gt;
+
+&lt;p&gt;Example above is exactly the same as:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-haskell&#34; data-lang=&#34;haskell&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;thing1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;func1&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;thing2&lt;/span&gt;
+       &lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;kr&#34;&gt;_&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;func2&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;\&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;z&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;z&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You see that the &lt;code&gt;do&lt;/code&gt; notation is a bit more readable :) This example is taken from &lt;a href=&#34;https://wiki.haskell.org/Monad&#34;&gt;Haskell
+Wiki&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;the-state-and-side-effects&#34;&gt;The state and side effects&lt;/h2&gt;
+
+&lt;p&gt;Another thing is that in Scala we can talk about mutable and immutable state. In pure functional
+programming there is no state at all! There are only arguments passed to functions. That&amp;rsquo;s the
+closest thing to state you can get.&lt;/p&gt;
+
+&lt;p&gt;But there is state in the world. Our hard drives have state. Keyboard has state. There is a lot of
+state everywhere! How to deal with this in Haskell? You guessed it - monads. Lets look at this quick
+example:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-haskell&#34; data-lang=&#34;haskell&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;::&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;IO&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kr&#34;&gt;do&lt;/span&gt;
+         &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;getChar&lt;/span&gt;
+         &lt;span class=&#34;n&#34;&gt;putChar&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;c&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This program, as you might suspect, reads one character from the standard input and writes it to
+standard output. To put it simply: awaits for keyboard button to be pressed and prints the letter to
+the console.&lt;/p&gt;
+
+&lt;p&gt;Here you can see that &lt;code&gt;getChar&lt;/code&gt; does have some kind of state as the value seems to materialize from
+nothing - it doesn&amp;rsquo;t expect any arguments. So what happens here? Well - the input/output operations
+are wrapped with a monad which acts here as a gate between our stateful world and the world of pure
+functions.&lt;/p&gt;
+
+&lt;p&gt;We can rewrite it using &lt;code&gt;flatMap&lt;/code&gt; (which in Haskell is &lt;code&gt;&amp;gt;&amp;gt;=&lt;/code&gt;):&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-haskell&#34; data-lang=&#34;haskell&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;::&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;IO&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;()&lt;/span&gt;
+&lt;span class=&#34;nf&#34;&gt;main&lt;/span&gt; &lt;span class=&#34;ow&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;getChar&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;gt;&amp;gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;putChar&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In Scala it would look like:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Unit&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;getChar&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;flatMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;putChar&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;getChar&lt;/code&gt; function returns a monad. If we invoke &lt;code&gt;flatMap&lt;/code&gt; on it gives us a key pressed on the keyboard as a
+parameter to our function. Our function here is &lt;code&gt;putChar&lt;/code&gt;. It takes one char and returns a monad
+back. The returned monad is empty (like &lt;code&gt;Unit&lt;/code&gt; in Scala) so the value is not interesting. The
+&lt;code&gt;putChar&lt;/code&gt; function does something else behind the scenes. It writes the character to the standard
+output. This is side effect that we wanted. The ability to talk to stateful world.&lt;/p&gt;
+
+&lt;p&gt;All this is thanks to humble &lt;code&gt;flatMap&lt;/code&gt; :)&lt;/p&gt;
+
+&lt;h1 id=&#34;summary&#34;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;Thanks for reading! I hope that you will not be frightened by the &lt;em&gt;monad&lt;/em&gt; word anymore! These are
+useful little creatures. They are easy to use when you get the hang of them, but quite hard to learn
+(and explain!). I really hope that this post was helpful to you because when I wanted to learn
+monads the first time I couldn&amp;rsquo;t understand a single thing about them. Then something just &lt;em&gt;clicked&lt;/em&gt;
+and everything was clear. I hope that it just &lt;em&gt;clicked&lt;/em&gt; for you today :)&lt;/p&gt;
+
+&lt;p&gt;If you have any questions please leave a comment below!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>No one expects the Spanish functions</title>
+      <link>http://blog.radoszewski.pl/post/spanish-functions/</link>
+      <pubDate>Sun, 26 Apr 2015 15:07:45 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/spanish-functions/</guid>
+      <description>
+
+&lt;p&gt;Scala, as a functional language, treats functions as first class citizens. Of course it&amp;rsquo;s also
+object oriented language. Those two paradigms can be seen as conflicting with each other. In this
+post I&amp;rsquo;d like to show you some different ways of creating a functions in Scala to show that these
+two worlds can coexist.&lt;/p&gt;
+
+&lt;h1 id=&#34;foreword&#34;&gt;Foreword&lt;/h1&gt;
+
+&lt;h2 id=&#34;function&#34;&gt;Function&lt;/h2&gt;
+
+&lt;p&gt;Let us start by defining what a function is. Wikipedia supplies us with this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;A function f from X to Y is a subset of the Cartesian product X × Y subject to the following
+condition: every element of X is the first component of one and only one ordered pair in the
+subset.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This is of course mathematical definition of a function. It says that given two sets &lt;code&gt;X&lt;/code&gt; and &lt;code&gt;Y&lt;/code&gt; we
+define &lt;code&gt;f&lt;/code&gt; as some kind of mapping from &lt;code&gt;X&lt;/code&gt; to &lt;code&gt;Y&lt;/code&gt;. Also we have to define such mapping for all
+elements from &lt;code&gt;X&lt;/code&gt;, and each element from &lt;code&gt;X&lt;/code&gt; have only one mapping to any element from &lt;code&gt;Y&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;So let&amp;rsquo;s get back to the programming world. We have functions here, but our functions are not quite
+like the definition says. We can make the function be non-deterministic which means that it can
+basically return different values when called with the same inputs twice. Those functions have some
+kind of side effect. Reading data from network with &lt;code&gt;receive&lt;/code&gt; function is a good example. We always
+call it with the same arguments, yet it always returns different data.&lt;/p&gt;
+
+&lt;p&gt;But as it turns out - if we create a function that operates &lt;strong&gt;only&lt;/strong&gt; on its arguments it&amp;rsquo;s
+impossible to make it return different values for the same arguments.&lt;/p&gt;
+
+&lt;p&gt;Functions that operate only on their arguments are called &lt;em&gt;pure functions&lt;/em&gt;. We all should always use
+pure functions, because they are easy to reason about.  Unfortunately sometimes we have to interact
+with outside world and this is mostly done through side effects.&lt;/p&gt;
+
+&lt;h2 id=&#34;partial-function&#34;&gt;Partial function&lt;/h2&gt;
+
+&lt;p&gt;Partial function is a function that is defined only for some elements of &lt;code&gt;X&lt;/code&gt;. This means that
+there are some elements of &lt;code&gt;X&lt;/code&gt; that cannot be supplied as an argument to our function - it would
+give us an error.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;partial&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;input&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;One&amp;quot;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This example function will work only for one argument: &lt;code&gt;1&lt;/code&gt;. Any other value would cause an error.&lt;/p&gt;
+
+&lt;h2 id=&#34;higher-order-function&#34;&gt;Higher order function&lt;/h2&gt;
+
+&lt;p&gt;One last thing we should know before going further is: what is higher order function? Well it&amp;rsquo;s just
+a function that operates on other functions. It can receive a function as an argument or it can
+create a function and return it as a value.&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;arg&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arg&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This simple higher order function just takes two parameters - a function and a number. Then it
+applies the &lt;code&gt;f&lt;/code&gt; function to the number.&lt;/p&gt;
+
+&lt;h1 id=&#34;define-a-function-in-scala&#34;&gt;Define a function in Scala&lt;/h1&gt;
+
+&lt;p&gt;To define a function or method in Scala we normally write:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;greet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;Hello &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$name&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Then we can use this function as a parameter to other function:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Bob&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;greet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Here &lt;code&gt;map&lt;/code&gt; is a higher order function which translates each &lt;code&gt;Seq&lt;/code&gt; element to new element using the
+function that was supplied as its argument. Result will be: &lt;code&gt;Seq(&amp;quot;Hello Bob&amp;quot;, &amp;quot;Hello Ben&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;In Scala there is a special method that we can implement in our class or object that gives it
+function-like invocation:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;Hello &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$name&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// will return &amp;quot;Hello Ben&amp;quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;So the &lt;code&gt;apply&lt;/code&gt; method gives us some syntactic sugar in Scala - nice! But if we can use it as a
+function, can we pass it to the higher order function like &lt;code&gt;map&lt;/code&gt;?&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Bob&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will unfortunately throw an error at compile time saying that it wanted a function &lt;code&gt;String =&amp;gt;
+String&lt;/code&gt; and got &lt;code&gt;Greeter&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;The good news is that we can fix this! We must tell the compiler that our object is also a function
+by extending it&amp;rsquo;s type signature:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;Hello &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$name&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now we can pass our &lt;code&gt;Greeter&lt;/code&gt; object to &lt;code&gt;map&lt;/code&gt; and everything works fine!&lt;/p&gt;
+
+&lt;p&gt;As you can see Scala merges the world of object oriented programming and the world of functional
+programming by allowing objects and classes to act like functions.&lt;/p&gt;
+
+&lt;h1 id=&#34;sequences-and-maps&#34;&gt;Sequences and Maps&lt;/h1&gt;
+
+&lt;p&gt;As I mentioned above - functions are mappings. This means that we could define a new function just
+by defining a mapping between two sets of data. This is why Scala&amp;rsquo;s &lt;code&gt;Map[A, B]&lt;/code&gt; extends the &lt;code&gt;A =&amp;gt; B&lt;/code&gt;
+type signature. It basically allows us to use any &lt;code&gt;Map&lt;/code&gt; as a function from type &lt;code&gt;A&lt;/code&gt; to type &lt;code&gt;B&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;numbers&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;one&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;two&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;three&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;numbers&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will give the &lt;code&gt;result&lt;/code&gt; a value of &lt;code&gt;Seq(&amp;quot;three&amp;quot;, &amp;quot;two&amp;quot;, &amp;quot;one&amp;quot;)&lt;/code&gt; so map acts exactly as partial
+function. It&amp;rsquo;s partial because it&amp;rsquo;s defined only for values 1, 2, and 3.&lt;/p&gt;
+
+&lt;p&gt;And what about other collections? Well, a sequence maps index to a value, doesn&amp;rsquo;t it?&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;letters&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;e&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;h&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;l&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;o&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;letters&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mkString&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The &lt;code&gt;result&lt;/code&gt; value will be &lt;em&gt;&amp;ldquo;hello&amp;rdquo;&lt;/em&gt;.&lt;/p&gt;
+
+&lt;h1 id=&#34;function-composition&#34;&gt;Function composition&lt;/h1&gt;
+
+&lt;p&gt;Mapping over some sequence is fine to show that lists and maps are functions but you may say that it
+doesn&amp;rsquo;t really give us much because after all we can write it like this:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;letters&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;The true fun begins when you want to operate on some functions. For example we would like to compose
+two functions. This means that we apply the first function to the argument and then apply the second
+to the value returned by the first: &lt;code&gt;f(g(x))&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;This can be also done with maps and sequences:&lt;/p&gt;
+
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToInteger&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;zero&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;one&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;two&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;three&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;integerToGerman&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;null&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;eins&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;zwei&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;drei&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToGerman&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToInteger&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;andThen&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;integerToGerman&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;zwei&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToGerman&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;two&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Of course value of &lt;code&gt;zwei&lt;/code&gt; will be a string &lt;em&gt;&amp;ldquo;zwei&amp;rdquo;&lt;/em&gt;. The &lt;code&gt;andThen&lt;/code&gt; is a method of
+&lt;a href=&#34;http://www.scala-lang.org/api/current/index.html#scala.Function1&#34;&gt;Function1&lt;/a&gt; class and it composes two functions. Here we create the function
+&lt;code&gt;englishToGerman&lt;/code&gt; by composing &lt;code&gt;englishToInteger&lt;/code&gt; with &lt;code&gt;integerToGerman&lt;/code&gt;. The argument flow is quite
+straightforward here - &lt;em&gt;&amp;ldquo;one&amp;rdquo;&lt;/em&gt; is passed to the &lt;code&gt;englishToInteger&lt;/code&gt; function (which is a Map!). This
+gives us an integer representing the number: &lt;code&gt;1&lt;/code&gt;. Then this integer is passed to &lt;code&gt;integerToGerman&lt;/code&gt;
+sequence which maps indexes to German numbers.&lt;/p&gt;
+
+&lt;h1 id=&#34;summary&#34;&gt;Summary&lt;/h1&gt;
+
+&lt;p&gt;Even though I&amp;rsquo;ve been using Scala for some time now I&amp;rsquo;ve discovered that maps and lists act as
+functions very recently. What is great here is that knowing that gives me a new perspective on those
+data structures. I hope that for you this is as much fun as it is for me.&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading!&lt;/p&gt;
+
+&lt;p&gt;If you are still wondering what&amp;rsquo;s with the title &lt;a href=&#34;https://www.youtube.com/watch?v=7WJXHY2OXGE&#34;&gt;watch this&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

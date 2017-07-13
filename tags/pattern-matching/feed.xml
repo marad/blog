@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pattern Matching on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/pattern-matching/feed/index.xml</link>
+    <description>Recent content in Pattern Matching on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://blog.radoszewski.pl/tags/pattern-matching/feed/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Pattern Matching in Scala</title>
+      <link>http://blog.radoszewski.pl/post/scala-pattern-matching/</link>
+      <pubDate>Sun, 05 Apr 2015 21:54:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/scala-pattern-matching/</guid>
+      <description>
+
+&lt;p&gt;Not so long ago I gave a presentation about Scala and ScalaTest to my co-workers. This was just
+basics as I wanted to give them a good and solid base for future researching this language. As it
+turned out - I probably learned a lot more than they did from this :)&lt;/p&gt;
+
+&lt;p&gt;Whenever there is &lt;em&gt;Scala&lt;/em&gt; mentioned there also is the phrase &lt;em&gt;pattern matching&lt;/em&gt;. Of course Scala
+does support pattern matching but I didn&amp;rsquo;t know how much fun one can have with this. In this post
+I&amp;rsquo;d like to show a few fun things we can do with this.&lt;/p&gt;
+
+&lt;h2 id=&#34;simple-matching&#34;&gt;Simple matching&lt;/h2&gt;
+
+&lt;p&gt;Let&amp;rsquo;s start with something simple:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;showcase&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;input&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;input&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;One&amp;quot;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Two&amp;quot;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Other!&amp;quot;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This is the simplest case - we have value of some concrete type and we want to execute some code
+depending on that value. This can be easily replaced with Java&amp;rsquo;s &lt;code&gt;switch&lt;/code&gt; instruction or bunch of
+&lt;code&gt;if-else&lt;/code&gt; instructions.&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re new to Scala then you can be wondering what means the &lt;code&gt;case _&lt;/code&gt; - this will match any other
+value than listed above it. In fact it is important that this is at the very bottom &lt;code&gt;case&lt;/code&gt; because
+values are matched from top. If the value didn&amp;rsquo;t match the first &lt;code&gt;case&lt;/code&gt; then next is checked. If the
+value doesn&amp;rsquo;t match any case then exception is thrown. Also - function that is not covering all
+possible inputs is called &lt;em&gt;partial function&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;OK, basic things are simple, but it&amp;rsquo;s not that we couldn&amp;rsquo;t write something like this easily in Java.
+Let us try something a bit different:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;sealed&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;abstract&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Base&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;First&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Base&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Second&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Base&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;showcase&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;input&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Base&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;input&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;First&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;First&amp;quot;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Second&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Second&amp;quot;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;First of all - we declare the &lt;em&gt;Base&lt;/em&gt; class. &lt;code&gt;sealed&lt;/code&gt; keyword means that all direct subclasses of
+this class are contained in the same file. Then we declare subclasses &lt;code&gt;First&lt;/code&gt; and &lt;code&gt;Second&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Having such class structure we can match the class of given &lt;code&gt;input&lt;/code&gt;. This is of course something we
+&lt;em&gt;CAN&lt;/em&gt; do in Java but it&amp;rsquo;s not that elegant. We would have to write bunch of &lt;code&gt;isInstanceOf&lt;/code&gt; and then
+cast our input to target class. Casting means that we can mix something up and generate some casting
+exceptions. Here - everything is taken care of and is type safe.&lt;/p&gt;
+
+&lt;p&gt;You may have noticed that I&amp;rsquo;ve not specified the &lt;code&gt;case _&lt;/code&gt;. You might think that this means that the
+&lt;code&gt;showcase&lt;/code&gt; function is &lt;em&gt;partial function&lt;/em&gt; but it is not. In fact by using keyword &lt;code&gt;sealed&lt;/code&gt; I made
+sure that I know &lt;em&gt;EVERY&lt;/em&gt; direct implementation of &lt;code&gt;Base&lt;/code&gt; class. So I know that input can only be
+either of type &lt;code&gt;First&lt;/code&gt; or &lt;code&gt;Second&lt;/code&gt;. There is just no other option!&lt;/p&gt;
+
+&lt;p&gt;Speaking of options - exactly this trick is used with &lt;code&gt;Option[T]&lt;/code&gt; type. It has two implementations -
+&lt;code&gt;Some()&lt;/code&gt; and &lt;code&gt;None&lt;/code&gt;. There is no third option.&lt;/p&gt;
+
+&lt;h2 id=&#34;matching-case-classes&#34;&gt;Matching case classes&lt;/h2&gt;
+
+&lt;p&gt;Assume that we have declared following class:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Defining class as &lt;code&gt;case class&lt;/code&gt; gives us some benefits for pattern matching:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;showcase&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;post with id = 1&amp;quot;&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see it&amp;rsquo;s quite different than matching the type. We get some &lt;code&gt;Post&lt;/code&gt; as the input and then
+test it with our matches.&lt;/p&gt;
+
+&lt;p&gt;On the second line we check if given post has &lt;code&gt;id == 1&lt;/code&gt; and if it does then returns some descriptive
+text. Note that we can tell the compiler that we don&amp;rsquo;t really care for other parameters with &lt;code&gt;_&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;If the post&amp;rsquo;s &lt;code&gt;id&lt;/code&gt; is not 1 then match it&amp;rsquo;s title to variable named &lt;code&gt;title&lt;/code&gt; and return that
+variable. Once again - we ignore inputs that we are not interested in.&lt;/p&gt;
+
+&lt;p&gt;But what if we want to check only certain parameter values and then have the whole object to play
+with? Don&amp;rsquo;t worry - Scala got you covered!&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;showcase&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;input&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;input&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;nd&#34;&gt;@Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;content&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Above example shows that we can match the value of &lt;code&gt;id&lt;/code&gt; and if the value matches 1 we want the whole
+object to be assigned to variable &lt;code&gt;post&lt;/code&gt;. We can later use this variable as a reference to our
+matching object. In this case we just return this post&amp;rsquo;s content.&lt;/p&gt;
+
+&lt;h2 id=&#34;matching-regular-expressions&#34;&gt;Matching regular expressions&lt;/h2&gt;
+
+&lt;p&gt;You can&amp;rsquo;t say &lt;em&gt;matching&lt;/em&gt; without saying &lt;em&gt;regular expressions&lt;/em&gt;, can you? Let&amp;rsquo;s consider this simple
+expression for matching dates:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;date&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;&amp;quot;&amp;quot;(\d\d\d\d)-(\d\d)-(\d\d)&amp;quot;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Having that you can already match any string you want with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;2015-04-05&amp;quot;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;date&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;year&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;month&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;day&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;It&amp;#39;s year &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$year&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;As you can see we use the variable name followed parentheses with all the matched groups from
+regular expressions. Then we can use this groups as normal variables. In this case we just want to
+match a year so maybe &lt;code&gt;month&lt;/code&gt; and &lt;code&gt;day&lt;/code&gt; could be replaced with &lt;code&gt;_&lt;/code&gt;? Sure!&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;2015-04-05&amp;quot;&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;date&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;year&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;It&amp;#39;s year &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$year&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;Whoah! What happend here? Well&amp;hellip; as we are not interested in all remaining groups we can ignore
+them all with this simple notation &lt;code&gt;_*&lt;/code&gt;. In this case it&amp;rsquo;s not that different but if you had ten
+matching groups you&amp;rsquo;d have to ignore them all explicitly. This way you can ignore them all together!&lt;/p&gt;
+
+&lt;h2 id=&#34;matching-in-for-loops&#34;&gt;Matching in &lt;code&gt;for&lt;/code&gt; loops&lt;/h2&gt;
+
+&lt;p&gt;Last thing I&amp;rsquo;d like to show you is that you can easily loop through lists of things that matches
+your criteria:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;posts&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;List&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;
+  &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Title 1&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Content 1&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;),&lt;/span&gt;
+  &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Title 2&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Content 2&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;),&lt;/span&gt;
+  &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Other Title&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Content 3&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;@&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;posts&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;// ...&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;This &lt;code&gt;for&lt;/code&gt; loop will only execute it&amp;rsquo;s body for the first post from the list. In this case we can
+match only one value because the 1 is passed statically. What if we could combine different matching
+styles to tell the compiler what we desire? Totally doable!&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pattern&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;^Title.*&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;r&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;@&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Post&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;pattern&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(),&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;_&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;&amp;lt;-&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;posts&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+  &lt;span class=&#34;c1&#34;&gt;// ...&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;What do we have here? We added simple regex pattern to match only titles that start with &amp;ldquo;Title&amp;rdquo;.
+Please note the parentheses after regex variable name. We haven&amp;rsquo;t specified any names for matched
+groups because our regular expression doesn&amp;rsquo;t capture any groups. Empty parentheses are still
+required. Otherwise scala would think that we want to catch the title and create varaible called
+&lt;code&gt;pattern&lt;/code&gt; with value of the whole title. Adding parentheses tell the compiler that this is regular
+expression and that it should be used for matching.&lt;/p&gt;
+
+&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;Pattern matching in Scala is a powerful tool. I&amp;rsquo;m certain that what is describe here is just the tip
+of an iceberg, but I hope it gives you some useful tips for working with &lt;code&gt;match&lt;/code&gt; keyword.&lt;/p&gt;
+
+&lt;p&gt;See you next time!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
