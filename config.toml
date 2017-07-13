@@ -10,6 +10,7 @@ pygmentsstyle = "tango"
 rssuri = "feed.xml"
 
 [params]
+  rssLink = "/feed.xml"
   dateFormat = "January 2, 2006"
   author = "marad"
   email = "moriturius (at) gmail.com"
