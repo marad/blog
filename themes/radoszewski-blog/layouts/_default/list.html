@@ -1,0 +1,18 @@
+{{ partial "header.html" . }}
+
+<div class="page-content">
+    <div class="wrapper">
+        {{ range .Data.Pages }}
+
+            {{ .Params.date }}
+        <p><a href="{{ .RelPermalink }}">
+            {{ .Title }}
+            {{ if not .Date.IsZero }}
+            <span class="post-meta">{{ dateFormat .Site.Params.dateFormat .Date }}</span>
+            {{ end }}
+        </a></p>
+        {{ end }}
+    </div>
+</div>
+
+{{ partial "footer.html" . }}

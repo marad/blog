@@ -1,0 +1,15 @@
+title = "Marad Blog"
+baseUrl = "http://blog.radoszewski.pl/"
+languageCode = "en-us"
+theme = "radoszewski-blog"
+disqusShortname = "maradblog"
+googleAnalytics = "UA-59276866-1"
+pygmentscodefences = true
+pygmentsuseclasses = true
+pygmentsstyle = "tango"
+rssuri = "feed.xml"
+
+[params]
+  dateFormat = "January 1, 2006"
+  author = "marad"
+  email = "moriturius (at) gmail.com"

@@ -1,0 +1,31 @@
+{{ partial "header" . }}
+
+<div class="page-content">
+    <div class="wrapper">
+        <div class="home">
+            <ul class="post-list">
+                {{ range where .Data.Pages "Section" "post" }}
+                <li>
+                    <h2><a class="post-link" href="{{ .RelPermalink }}">
+                        {{ .Title }}
+                        <span class="post-meta">{{ dateFormat .Site.Params.dateFormat .Date }}</span>
+                    </a></h2>
+                    <p>
+                        {{ .Summary }}
+                    </p>
+                    <a href="{{ .RelPermalink }}">Read more »</a>
+                </li>
+                {{ end }}
+            </ul>
+
+            <p class="rss-subscribe">
+                Subscribe <a href="{{ .Site.RSSLink }}">via RSS</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+{{ partial "footer" . }}
+
+{{ template "_internal/google_analytics_async.html" . }}
