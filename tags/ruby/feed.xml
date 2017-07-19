@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ruby on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/ruby/feed/index.xml</link>
+    <description>Recent content in Ruby on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="http://blog.radoszewski.pl/tags/ruby/feed/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Jekyll To Hugo Migration Notes</title>
+      <link>http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/</link>
+      <pubDate>Sat, 15 Jul 2017 10:50:54 +0200</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/</guid>
+      <description>
+
+&lt;p&gt;This blog is statically generated page hosted on my GitHub. Till recently the job of generating static files was handled by Jekyll. I didn&amp;rsquo;t do a lot of research before I first used it. I don&amp;rsquo;t think it would really help in my case. I used Jekyll because GitHub has support for it and it was convenient. I could store only the sources and GitHub will automatically compile the page when I push some changes. Jekyll was doing fine job. So the question arises&amp;hellip;&lt;/p&gt;
+
+&lt;h2 id=&#34;why-change-what-works&#34;&gt;Why change what works?&lt;/h2&gt;
+
+&lt;p&gt;It&amp;rsquo;s just painful to work with. I had a lot of problems with Ruby dependencies in wrong versions and it drove me crazy. Please don&amp;rsquo;t get me wrong, I don&amp;rsquo;t want to say that Ruby sucks or that Jekyll does. I really don&amp;rsquo;t care. The baseline here is that I had problems with this and I don&amp;rsquo;t want do deal with them anymore.&lt;/p&gt;
+
+&lt;p&gt;The death of my system SSD was really the trigger. New installation of Linux and all the tools was required. A flash of memories from previously installing Jekyll, and I decided to migrate to something else.&lt;/p&gt;
+
+&lt;h2 id=&#34;what-should-the-new-generator-provide&#34;&gt;What should the new generator provide?&lt;/h2&gt;
+
+&lt;p&gt;The problem I faced was that my page was already online for a while. I strongly believe that you should never break page URLs. Once the URL is available on the internet it should point to it&amp;rsquo;s content forever. I also didn&amp;rsquo;t want to rewrite all my content to new format so it should handle markdown formatted content with YAML metadata. So the absolute &amp;ldquo;must have&amp;rdquo; was to be able to publish my old content with old URLs and without many changes.&lt;/p&gt;
+
+&lt;p&gt;After some googling for static site generators I&amp;rsquo;ve decided to try &lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&#34;so-what-are-the-steps-to-migrate&#34;&gt;So what are the steps to migrate?&lt;/h2&gt;
+
+&lt;h3 id=&#34;the-theme&#34;&gt;The theme&lt;/h3&gt;
+
+&lt;p&gt;Jekyll has great support for &lt;a href=&#34;http://sass-lang.com/&#34;&gt;Sass&lt;/a&gt; which is a language that compiles to CSS. Hugo doesn&amp;rsquo;t support this at all, and there is little chance it ever will. It turns out that Sass compiler is written in Ruby. I didn&amp;rsquo;t see that coming&amp;hellip; I&amp;rsquo;ve decided that for now I&amp;rsquo;ll just use the compiled CSS version, and deal with Sass later. A little research on this showed that there is &lt;a href=&#34;http://sass-lang.org/libsass&#34;&gt;libsaas&lt;/a&gt; that can be used in any language. Other than that, there were no surprises and porting current theme went smoothly.&lt;/p&gt;
+
+&lt;h3 id=&#34;the-content&#34;&gt;The content&lt;/h3&gt;
+
+&lt;p&gt;All pages and posts required addition of &lt;a href=&#34;https://gohugo.io/extras/aliases/&#34;&gt;aliases&lt;/a&gt; to get old URLs to work. In posts containing code (so almost all of them) I needed to change the way syntax highlighter worked. Hugo uses the same syntax highlighter as Jekyll, which is &lt;a href=&#34;http://pygments.org/&#34;&gt;Pygments&lt;/a&gt;. Unfortunately in Jekyll marking section of code uses special syntax. In Hugo I was able to configure it to use popular three backtick formatting. Just like on &lt;a href=&#34;https://help.github.com/articles/creating-and-highlighting-code-blocks/&#34;&gt;GitHub&lt;/a&gt;. Of course then I had to modify all the posts with the new markups.&lt;/p&gt;
+
+&lt;h3 id=&#34;disqus-comments-and-google-analytics&#34;&gt;Disqus comments and Google Analytics&lt;/h3&gt;
+
+&lt;p&gt;Last step was to think about how Disqus comments and GA will behave with my changes. Disqus is linking comments to given URL so changing target URLs (which are different for Hugo) will cause the old comments do disappear under posts. Luckily it provides the tool for comment migration. It&amp;rsquo;s just simple CSV with two columns - old page URL, and new page URL. Works like a charm!&lt;/p&gt;
+
+&lt;p&gt;I thought about Google Analytics for a while and I don&amp;rsquo;t see anything that I should do. I don&amp;rsquo;t do much analyzing. After a short while it&amp;rsquo;ll simply show statistics for new URLs. Do you know if I should do anything with this?&lt;/p&gt;
+
+&lt;h3 id=&#34;deployment&#34;&gt;Deployment&lt;/h3&gt;
+
+&lt;p&gt;Hugo has great &lt;a href=&#34;https://gohugo.io/tutorials/github-pages-blog/&#34;&gt;instructions on deploying with GitHub Page&lt;/a&gt;. Last piece was to create a small publication script that will compile the page to the &lt;em&gt;gh-pages&lt;/em&gt; branch and push it to the origin:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;ch&#34;&gt;#!/bin/bash&lt;/span&gt;
+hugo
+&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; public &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; git add --all &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; git commit -m &lt;span class=&#34;s2&#34;&gt;&amp;quot;Publishing to gh-pages&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ..
+git push origin gh-pages
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2 id=&#34;enjoy&#34;&gt;Enjoy!&lt;/h2&gt;
+
+&lt;p&gt;That is all I needed to do in order to write this post 😄. I hope we&amp;rsquo;ll get along with Hugo pretty well. Thank you for reading and see you next time!&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
