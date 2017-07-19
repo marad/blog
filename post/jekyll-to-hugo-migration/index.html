@@ -7,12 +7,12 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title></title>
+        <title>Jekyll To Hugo Migration Notes</title>
 
         <link rel="icon" type="image/png" href="/images/favicon.png"/>
 
-        <link rel="feed" type="application/rss+xml" title="" href="/feed.xml"/>
-        <link rel="alternate" type="application/rss+xml" title="" href="/feed.xml"/>
+        <link rel="feed" type="application/rss+xml" title="Jekyll To Hugo Migration Notes" href="/feed.xml"/>
+        <link rel="alternate" type="application/rss+xml" title="Jekyll To Hugo Migration Notes" href="/feed.xml"/>
 
         <link rel="stylesheet" href="/css/main.css"/>
         <link rel="stylesheet" href="/css/monokai.css"/>
@@ -67,14 +67,59 @@
     <div class="wrapper">
         <div class="post">
             <div class="breadcrumb">
-                <a href="/">Home</a> » <a href="http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/"></a>
+                <a href="/">Home</a> » <a href="http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/">Jekyll To Hugo Migration Notes</a>
             </div>
             <header class="post-header">
-                <h1 class="post-title"></h1>
+                <h1 class="post-title">Jekyll To Hugo Migration Notes</h1>
+                
+                <p class="post-meta">July 19, 2017 • marad</p>
                 
             </header>
             <article class="post-content">
-                <p>This blog is statically generated page hosted on my GitHub. Till recently the job of generating static files was handled by Jekyll. I didn&rsquo;t do a lot of research before I first used it. I don&rsquo;t think it would really help in my case. I used Jekyll because GitHub has support for it and it was convenient. I could store only the sources and GitHub will automatically compile the page when I push some changes. Jekyll was doing fine job. So the question arises&hellip;</p>
+                
+
+<p>This blog is statically generated page hosted on my GitHub. Till recently the job of generating static files was handled by Jekyll. I didn&rsquo;t do a lot of research before I first used it. I don&rsquo;t think it would really help in my case. I used Jekyll because GitHub has support for it and it was convenient. I could store only the sources and GitHub will automatically compile the page when I push some changes. Jekyll was doing fine job. So the question arises&hellip;</p>
+
+<h2 id="why-change-what-works">Why change what works?</h2>
+
+<p>It&rsquo;s just painful to work with. I had a lot of problems with Ruby dependencies in wrong versions and it drove me crazy. Please don&rsquo;t get me wrong, I don&rsquo;t want to say that Ruby sucks or that Jekyll does. I really don&rsquo;t care. The baseline here is that I had problems with this and I don&rsquo;t want do deal with them anymore.</p>
+
+<p>The death of my system SSD was really the trigger. New installation of Linux and all the tools was required. A flash of memories from previously installing Jekyll, and I decided to migrate to something else.</p>
+
+<h2 id="what-should-the-new-generator-provide">What should the new generator provide?</h2>
+
+<p>The problem I faced was that my page was already online for a while. I strongly believe that you should never break page URLs. Once the URL is available on the internet it should point to it&rsquo;s content forever. I also didn&rsquo;t want to rewrite all my content to new format so it should handle markdown formatted content with YAML metadata. So the absolute &ldquo;must have&rdquo; was to be able to publish my old content with old URLs and without many changes.</p>
+
+<p>After some googling for static site generators I&rsquo;ve decided to try <a href="https://gohugo.io/">Hugo</a>.</p>
+
+<h2 id="so-what-are-the-steps-to-migrate">So what are the steps to migrate?</h2>
+
+<h3 id="the-theme">The theme</h3>
+
+<p>Jekyll has great support for <a href="http://sass-lang.com/">Sass</a> which is a language that compiles to CSS. Hugo doesn&rsquo;t support this at all, and there is little chance it ever will. It turns out that Sass compiler is written in Ruby. I didn&rsquo;t see that coming&hellip; I&rsquo;ve decided that for now I&rsquo;ll just use the compiled CSS version, and deal with Sass later. A little research on this showed that there is <a href="http://sass-lang.org/libsass">libsaas</a> that can be used in any language. Other than that, there were no surprises and porting current theme went smoothly.</p>
+
+<h3 id="the-content">The content</h3>
+
+<p>All pages and posts required addition of <a href="https://gohugo.io/extras/aliases/">aliases</a> to get old URLs to work. In posts containing code (so almost all of them) I needed to change the way syntax highlighter worked. Hugo uses the same syntax highlighter as Jekyll, which is <a href="http://pygments.org/">Pygments</a>. Unfortunately in Jekyll marking section of code uses special syntax. In Hugo I was able to configure it to use popular three backtick formatting. Just like on <a href="https://help.github.com/articles/creating-and-highlighting-code-blocks/">GitHub</a>. Of course then I had to modify all the posts with the new markups.</p>
+
+<h3 id="disqus-comments-and-google-analytics">Disqus comments and Google Analytics</h3>
+
+<p>Last step was to think about how Disqus comments and GA will behave with my changes. Disqus is linking comments to given URL so changing target URLs (which are different for Hugo) will cause the old comments do disappear under posts. Luckily it provides the tool for comment migration. It&rsquo;s just simple CSV with two columns - old page URL, and new page URL. Works like a charm!</p>
+
+<p>I thought about Google Analytics for a while and I don&rsquo;t see anything that I should do. I don&rsquo;t do much analyzing. After a short while it&rsquo;ll simply show statistics for new URLs. Do you know if I should do anything with this?</p>
+
+<h3 id="deployment">Deployment</h3>
+
+<p>Hugo has great <a href="https://gohugo.io/tutorials/github-pages-blog/">instructions on deploying with GitHub Page</a>. Last piece was to create a small publication script that will compile the page to the <em>gh-pages</em> branch and push it to the origin:</p>
+<div class="highlight"><pre><code class="language-bash" data-lang="bash"><span></span><span class="ch">#!/bin/bash</span>
+hugo
+<span class="nb">cd</span> public <span class="o">&amp;&amp;</span> git add --all <span class="o">&amp;&amp;</span> git commit -m <span class="s2">&quot;Publishing to gh-pages&quot;</span> <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ..
+git push origin gh-pages
+</code></pre></div>
+
+<h2 id="enjoy">Enjoy!</h2>
+
+<p>That is all I needed to do in order to write this post 😄. I hope we&rsquo;ll get along with Hugo pretty well. Thank you for reading and see you next time!</p>
 
             </article>
             <div id="disqus_thread"></div>
