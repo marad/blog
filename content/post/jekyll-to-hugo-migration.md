@@ -1,5 +1,5 @@
 ---
-date: 2017-07-19T05:30:54+02:00
+date: 2017-07-19T05:30:54
 title: Jekyll To Hugo Migration Notes
 tags: [blog, hugo, jekyll, ruby]
 ---
