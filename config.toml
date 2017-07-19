@@ -8,6 +8,8 @@ pygmentscodefences = true
 pygmentsuseclasses = true
 pygmentsstyle = "tango"
 rssuri = "feed.xml"
+metadataformat = "yaml"
+enableemoji = true
 
 [params]
   rssLink = "/feed.xml"
