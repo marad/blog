@@ -3,7 +3,14 @@
 body, h1, h2, h3, h4, h5, h6, p, blockquote, pre, hr, dl, dd, ol, ul, figure { margin: 0; padding: 0; }
 
 /** Basic styling */
-body { font-family: "Open Sans", Helvetica, Arial, sans-serif; font-size: 16px; line-height: 1.5; font-weight: 300; color: #111; background-color: #fdfdfd; -webkit-text-size-adjust: 100%; }
+body { 
+	font-family: "Quicksand", Helvetica, sans-serif; 
+	font-size: 18px; line-height: 1.30; 
+	font-weight: 300; 
+	font-kerning: normal;
+	color: #111; 
+	background-color: #fdfdfd;
+	 -webkit-text-size-adjust: 100%; }
 
 /** Set `margin-bottom` to maintain vertical rhythm */
 h1, h2, h3, h4, h5, h6, p, blockquote, pre, ul, ol, dl, figure { margin-bottom: 15px; }
@@ -97,7 +104,11 @@ pre > code > span.lineno::after { content: "  "; } */
   .footer-col-3 { width: -webkit-calc(100% - (30px / 2)); width: calc(100% - (30px / 2)); } }
 @media screen and (max-width: 600px) { .footer-col { float: none; width: -webkit-calc(100% - (30px / 2)); width: calc(100% - (30px / 2)); } }
 /** Page content */
-.page-content { padding: 30px 0; text-align: justify; }
+.page-content { 
+	padding: 30px 0; 
+	/*text-align: justify;
+	hyphens: auto;*/
+ }
 
 .page-heading { font-size: 20px; }
 
@@ -115,9 +126,9 @@ pre > code > span.lineno::after { content: "  "; } */
 @media screen and (max-width: 800px) { .post-title { font-size: 36px; } }
 
 .post-content { margin-bottom: 30px; }
-.post-content h1 { font-size: 32px; }
+.post-content h1 { font-size: 32px; margin-top: 40px; }
 @media screen and (max-width: 800px) { .post-content h1 { font-size: 28px; } }
-.post-content h2 { font-size: 26px; }
+.post-content h2 { font-size: 26px; margin-top: 40px; }
 @media screen and (max-width: 800px) { .post-content h2 { font-size: 22px; } }
 .post-content h3 { font-size: 20px; }
 @media screen and (max-width: 800px) { .post-content h3 { font-size: 18px; } }
