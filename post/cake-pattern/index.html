@@ -2,7 +2,7 @@
 <html lang="en-us">
 
     <head>
-        <meta name="generator" content="Hugo 0.18.1" />
+        <meta name="generator" content="Hugo 0.29" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,17 +15,11 @@
         <link rel="alternate" type="application/rss+xml" title="The Cake Pattern" href="/feed.xml"/>
 
         <link rel="stylesheet" href="/css/main.css"/>
-        <link rel="stylesheet" href="/css/monokai.css"/>
 
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet"> 
         <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
-
-        <script src="/js/jquery-1.11.1.min.js" type="text/javascript"></script>
 
         <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
-
-        <script src="/lightbox/js/lightbox.min.js" type="text/javascript"></script>
-        <script src="/js/links.js" type="text/javascript"></script>
     </head>
 
     <body>
@@ -48,13 +42,23 @@
                                 <div class="trigger">
                                     <a class="page-link" href="/">Home</a>
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/about/">About</a>
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/about/">About</a>
+                                        
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/games/">Games</a>
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/games/">Games</a>
+                                        
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/music/">Music</a>
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/music/">Music</a>
+                                        
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/programs/">Programs</a>
+                                        
+                                    
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/programs/">Programs</a>
+                                        
                                     
                                 </div>
                     </nav>
@@ -78,7 +82,7 @@
             <article class="post-content">
                 
 
-<p>Let&rsquo;s think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows.  Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us. If you know Java you pr/programming/scala/2015/11/10/cake-pattern.htmlobably have heard about Dependency Injection (DI) and Inversion of Control (IoC). This is one way to approach the problem. There is another one and it&rsquo;s called <em>Cake Pattern</em>.</p>
+<p>Let&rsquo;s think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows.  Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us. If you know Java you probably have heard about Dependency Injection (DI) and Inversion of Control (IoC). This is one way to approach the problem. There is another one and it&rsquo;s called <em>Cake Pattern</em>.</p>
 
 <h1 id="dependency-injection">Dependency Injection</h1>
 
@@ -96,31 +100,29 @@
 
 <p>We can start by defining the component and interface for the <code>Mill</code>:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">case</span> <span class="k">class</span> <span class="nc">Flour</span><span class="o">()</span>
-
-<span class="k">trait</span> <span class="nc">MillComponent</span> <span class="o">{</span>
-    <span class="k">def</span> <span class="n">mill</span><span class="k">:</span> <span class="kt">Mill</span>
-
-    <span class="k">trait</span> <span class="nc">Mill</span> <span class="o">{</span>
-        <span class="k">def</span> <span class="n">produceFlour</span><span class="o">()</span><span class="k">:</span> <span class="kt">Flour</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">Flour</span><span style="color:#f92672">()</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">trait</span><span style=""> </span><span style="color:#a6e22e">MillComponent</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">mill</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Mill</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">trait</span><span style=""> </span><span style="color:#a6e22e">Mill</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">produceFlour</span><span style="color:#f92672">()</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Flour</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">}</span><span style="">
+</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
+</div>
 
 <p>We&rsquo;ve created the <code>Flour</code> class to represent the goods produced by the <code>Mill</code>. Then you can see that we&rsquo;ve declared <code>MillComponent</code> which promises to us that it&rsquo;s implementations will return the <code>Mill</code> instance through <code>mill</code> method. Also there is <code>Mill</code> trait which is just interface telling us that it can <code>produceFlour</code>. This construct is like the definition of our component.</p>
 
 <p>Now let&rsquo;s create the actual implementation for the component and the <code>Mill</code> itself:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">trait</span> <span class="nc">RegularMillComponent</span> <span class="k">extends</span> <span class="nc">MillComponent</span> <span class="o">{</span>
-    <span class="k">val</span> <span class="n">mill</span><span class="k">:</span> <span class="kt">Mill</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">RegularMill</span>
-
-    <span class="k">class</span> <span class="nc">RegularMill</span> <span class="k">extends</span> <span class="nc">Mill</span> <span class="o">{</span>
-        <span class="k">def</span> <span class="n">produceFlour</span><span class="o">()</span> <span class="k">=</span> <span class="nc">Flour</span><span class="o">()</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">trait</span><span style=""> </span><span style="color:#a6e22e">RegularMillComponent</span><span style=""> </span><span style="color:#66d9ef">extends</span><span style=""> </span><span style="color:#a6e22e">MillComponent</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">val</span><span style=""> </span><span style="">mill</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Mill</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">new</span><span style=""> </span><span style="color:#a6e22e">RegularMill</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">RegularMill</span><span style=""> </span><span style="color:#66d9ef">extends</span><span style=""> </span><span style="color:#a6e22e">Mill</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">produceFlour</span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">Flour</span><span style="color:#f92672">()</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">}</span><span style="">
+</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
+</div>
 
 <p>This is quite simple. We create the component by extending its <em>definition</em> we wrote above - note that this component is still a <code>trait</code>. The <code>RegularMill</code> implementation is, on the other hand, a class that simply implements the <code>Mill</code> interface.</p>
 
@@ -128,45 +130,42 @@
 
 <p>On to the bakery. To create the component we use the same template as before:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">case</span> <span class="k">class</span> <span class="nc">Bread</span><span class="o">(</span><span class="n">flour</span><span class="k">:</span> <span class="kt">Flour</span><span class="o">)</span>
-
-<span class="k">trait</span> <span class="nc">BakeryComponent</span> <span class="o">{</span>
-    <span class="k">def</span> <span class="n">bakery</span><span class="k">:</span> <span class="kt">Bakery</span>
-
-    <span class="k">trait</span> <span class="nc">Bakery</span> <span class="o">{</span>
-        <span class="k">def</span> <span class="n">bakeBread</span><span class="o">()</span><span class="k">:</span> <span class="kt">Bread</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">Bread</span><span style="color:#f92672">(</span><span style="">flour</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Flour</span><span style="color:#f92672">)</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">trait</span><span style=""> </span><span style="color:#a6e22e">BakeryComponent</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">bakery</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Bakery</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">trait</span><span style=""> </span><span style="color:#a6e22e">Bakery</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">bakeBread</span><span style="color:#f92672">()</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Bread</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">}</span><span style="">
+</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
+</div>
 
 <p>The interesting bit is that this does not tell us anything about the dependency. At this level we don&rsquo;t need any <code>Flour</code> - we&rsquo;re just declaring that the component provides <code>Bakery</code> that can <code>bakeBread</code>.</p>
 
 <p>Now let&rsquo;s see how we can declare the dependency and use it to implement <code>RegularBakery</code>:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">trait</span> <span class="nc">RegularBakeryComponent</span> <span class="k">extends</span> <span class="nc">BakeryComponent</span> <span class="o">{</span>
-    <span class="k">this:</span> <span class="kt">MillComponent</span> <span class="o">=&gt;</span>
-
-    <span class="k">def</span> <span class="n">bakery</span><span class="k">:</span> <span class="kt">Bakery</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">RegularBakery</span>
-
-    <span class="k">class</span> <span class="nc">RegularBakery</span> <span class="k">extends</span> <span class="nc">Bakery</span> <span class="o">{</span>
-        <span class="k">def</span> <span class="n">bakeBread</span><span class="o">()</span><span class="k">:</span> <span class="kt">Bread</span> <span class="o">=</span> <span class="nc">Bread</span><span class="o">(</span><span class="n">mill</span><span class="o">.</span><span class="n">produceFlour</span><span class="o">())</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">trait</span><span style=""> </span><span style="color:#a6e22e">RegularBakeryComponent</span><span style=""> </span><span style="color:#66d9ef">extends</span><span style=""> </span><span style="color:#a6e22e">BakeryComponent</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">this:</span><span style=""> </span><span style="color:#66d9ef">MillComponent</span><span style=""> </span><span style="color:#f92672">=&gt;</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">bakery</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Bakery</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">new</span><span style=""> </span><span style="color:#a6e22e">RegularBakery</span><span style="">
+</span><span style="">
+</span><span style="">    </span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">RegularBakery</span><span style=""> </span><span style="color:#66d9ef">extends</span><span style=""> </span><span style="color:#a6e22e">Bakery</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">        </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">bakeBread</span><span style="color:#f92672">()</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Bread</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#a6e22e">Bread</span><span style="color:#f92672">(</span><span style="">mill</span><span style="color:#f92672">.</span><span style="">produceFlour</span><span style="color:#f92672">())</span><span style="">
+</span><span style="">    </span><span style="color:#f92672">}</span><span style="">
+</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
+</div>
 
 <p>By specifying <code>this: MillComponent =&gt;</code> at the beginning of the trait we are telling the compiler that this trait can be mixed in only with objects that also have <code>MillComponent</code> trait mixed in. This allows us to use the <code>mill</code> while implementing the <code>bakeBread()</code> method.</p>
 
 <p>Soooo&hellip; one thing left. How to use this? It&rsquo;s quite simple, just mix everything in one object:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">val</span> <span class="n">app</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Object</span>
-          <span class="k">with</span> <span class="nc">RegularMillComponent</span>
-          <span class="k">with</span> <span class="nc">RegularBakeryComponent</span>
-
-<span class="k">val</span> <span class="n">bread</span> <span class="k">=</span> <span class="n">app</span><span class="o">.</span><span class="n">bakery</span><span class="o">.</span><span class="n">bakeBread</span><span class="o">()</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span><span style=""> </span><span style="">app</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#66d9ef">new</span><span style=""> </span><span style="color:#a6e22e">Object</span><span style="">
+</span><span style="">          </span><span style="color:#66d9ef">with</span><span style=""> </span><span style="color:#a6e22e">RegularMillComponent</span><span style="">
+</span><span style="">          </span><span style="color:#66d9ef">with</span><span style=""> </span><span style="color:#a6e22e">RegularBakeryComponent</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">val</span><span style=""> </span><span style="">bread</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">app</span><span style="color:#f92672">.</span><span style="">bakery</span><span style="color:#f92672">.</span><span style="">bakeBread</span><span style="color:#f92672">()</span></code></pre>
+</div>
 
 <p>Now if you try to create an instance of <code>RegularBakeryComponent</code> without some implementation of <code>MillComponent</code> then the program will not compile at all. This means that if your program compiles all the dependencies are satisfied.</p>
 
@@ -246,6 +245,11 @@
                                             </div>
                                         </div>
                                     </footer>
+
+
+    <script src="/js/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="/lightbox/js/lightbox.min.js" type="text/javascript"></script>
+    <script src="/js/links.js" type="text/javascript"></script>
     </body>
 </html>
 

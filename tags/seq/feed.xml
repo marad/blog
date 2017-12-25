@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Seq on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/seq/feed/index.xml</link>
+    <link>http://blog.radoszewski.pl/tags/seq/</link>
     <description>Recent content in Seq on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://blog.radoszewski.pl/tags/seq/feed/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 26 Apr 2015 15:07:45 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/seq/feed.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>No one expects the Spanish functions</title>
@@ -14,184 +17,8 @@
       <pubDate>Sun, 26 Apr 2015 15:07:45 +0000</pubDate>
       
       <guid>http://blog.radoszewski.pl/post/spanish-functions/</guid>
-      <description>
-
-&lt;p&gt;Scala, as a functional language, treats functions as first class citizens. Of course it&amp;rsquo;s also
-object oriented language. Those two paradigms can be seen as conflicting with each other. In this
-post I&amp;rsquo;d like to show you some different ways of creating a functions in Scala to show that these
-two worlds can coexist.&lt;/p&gt;
-
-&lt;h1 id=&#34;foreword&#34;&gt;Foreword&lt;/h1&gt;
-
-&lt;h2 id=&#34;function&#34;&gt;Function&lt;/h2&gt;
-
-&lt;p&gt;Let us start by defining what a function is. Wikipedia supplies us with this:&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;A function f from X to Y is a subset of the Cartesian product X × Y subject to the following
-condition: every element of X is the first component of one and only one ordered pair in the
-subset.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This is of course mathematical definition of a function. It says that given two sets &lt;code&gt;X&lt;/code&gt; and &lt;code&gt;Y&lt;/code&gt; we
-define &lt;code&gt;f&lt;/code&gt; as some kind of mapping from &lt;code&gt;X&lt;/code&gt; to &lt;code&gt;Y&lt;/code&gt;. Also we have to define such mapping for all
-elements from &lt;code&gt;X&lt;/code&gt;, and each element from &lt;code&gt;X&lt;/code&gt; have only one mapping to any element from &lt;code&gt;Y&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;So let&amp;rsquo;s get back to the programming world. We have functions here, but our functions are not quite
-like the definition says. We can make the function be non-deterministic which means that it can
-basically return different values when called with the same inputs twice. Those functions have some
-kind of side effect. Reading data from network with &lt;code&gt;receive&lt;/code&gt; function is a good example. We always
-call it with the same arguments, yet it always returns different data.&lt;/p&gt;
-
-&lt;p&gt;But as it turns out - if we create a function that operates &lt;strong&gt;only&lt;/strong&gt; on its arguments it&amp;rsquo;s
-impossible to make it return different values for the same arguments.&lt;/p&gt;
-
-&lt;p&gt;Functions that operate only on their arguments are called &lt;em&gt;pure functions&lt;/em&gt;. We all should always use
-pure functions, because they are easy to reason about.  Unfortunately sometimes we have to interact
-with outside world and this is mostly done through side effects.&lt;/p&gt;
-
-&lt;h2 id=&#34;partial-function&#34;&gt;Partial function&lt;/h2&gt;
-
-&lt;p&gt;Partial function is a function that is defined only for some elements of &lt;code&gt;X&lt;/code&gt;. This means that
-there are some elements of &lt;code&gt;X&lt;/code&gt; that cannot be supplied as an argument to our function - it would
-give us an error.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;partial&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;input&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;One&amp;quot;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This example function will work only for one argument: &lt;code&gt;1&lt;/code&gt;. Any other value would cause an error.&lt;/p&gt;
-
-&lt;h2 id=&#34;higher-order-function&#34;&gt;Higher order function&lt;/h2&gt;
-
-&lt;p&gt;One last thing we should know before going further is: what is higher order function? Well it&amp;rsquo;s just
-a function that operates on other functions. It can receive a function as an argument or it can
-create a function and return it as a value.&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;arg&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;arg&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This simple higher order function just takes two parameters - a function and a number. Then it
-applies the &lt;code&gt;f&lt;/code&gt; function to the number.&lt;/p&gt;
-
-&lt;h1 id=&#34;define-a-function-in-scala&#34;&gt;Define a function in Scala&lt;/h1&gt;
-
-&lt;p&gt;To define a function or method in Scala we normally write:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;greet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;Hello &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$name&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Then we can use this function as a parameter to other function:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Bob&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;greet&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Here &lt;code&gt;map&lt;/code&gt; is a higher order function which translates each &lt;code&gt;Seq&lt;/code&gt; element to new element using the
-function that was supplied as its argument. Result will be: &lt;code&gt;Seq(&amp;quot;Hello Bob&amp;quot;, &amp;quot;Hello Ben&amp;quot;)&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In Scala there is a special method that we can implement in our class or object that gives it
-function-like invocation:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;Hello &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$name&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-
-&lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// will return &amp;quot;Hello Ben&amp;quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;So the &lt;code&gt;apply&lt;/code&gt; method gives us some syntactic sugar in Scala - nice! But if we can use it as a
-function, can we pass it to the higher order function like &lt;code&gt;map&lt;/code&gt;?&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Bob&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;Ben&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This will unfortunately throw an error at compile time saying that it wanted a function &lt;code&gt;String =&amp;gt;
-String&lt;/code&gt; and got &lt;code&gt;Greeter&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;The good news is that we can fix this! We must tell the compiler that our object is also a function
-by extending it&amp;rsquo;s type signature:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;object&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Greeter&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;apply&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;String&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;s&amp;quot;Hello &lt;/span&gt;&lt;span class=&#34;si&#34;&gt;$name&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Now we can pass our &lt;code&gt;Greeter&lt;/code&gt; object to &lt;code&gt;map&lt;/code&gt; and everything works fine!&lt;/p&gt;
-
-&lt;p&gt;As you can see Scala merges the world of object oriented programming and the world of functional
-programming by allowing objects and classes to act like functions.&lt;/p&gt;
-
-&lt;h1 id=&#34;sequences-and-maps&#34;&gt;Sequences and Maps&lt;/h1&gt;
-
-&lt;p&gt;As I mentioned above - functions are mappings. This means that we could define a new function just
-by defining a mapping between two sets of data. This is why Scala&amp;rsquo;s &lt;code&gt;Map[A, B]&lt;/code&gt; extends the &lt;code&gt;A =&amp;gt; B&lt;/code&gt;
-type signature. It basically allows us to use any &lt;code&gt;Map&lt;/code&gt; as a function from type &lt;code&gt;A&lt;/code&gt; to type &lt;code&gt;B&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;numbers&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;one&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;two&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;three&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;numbers&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This will give the &lt;code&gt;result&lt;/code&gt; a value of &lt;code&gt;Seq(&amp;quot;three&amp;quot;, &amp;quot;two&amp;quot;, &amp;quot;one&amp;quot;)&lt;/code&gt; so map acts exactly as partial
-function. It&amp;rsquo;s partial because it&amp;rsquo;s defined only for values 1, 2, and 3.&lt;/p&gt;
-
-&lt;p&gt;And what about other collections? Well, a sequence maps index to a value, doesn&amp;rsquo;t it?&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;letters&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;e&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;h&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;l&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;o&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;result&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;letters&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mkString&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The &lt;code&gt;result&lt;/code&gt; value will be &lt;em&gt;&amp;ldquo;hello&amp;rdquo;&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;function-composition&#34;&gt;Function composition&lt;/h1&gt;
-
-&lt;p&gt;Mapping over some sequence is fine to show that lists and maps are functions but you may say that it
-doesn&amp;rsquo;t really give us much because after all we can write it like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;letters&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The true fun begins when you want to operate on some functions. For example we would like to compose
-two functions. This means that we apply the first function to the argument and then apply the second
-to the value returned by the first: &lt;code&gt;f(g(x))&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;This can be also done with maps and sequences:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToInteger&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Map&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;zero&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;one&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;two&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;three&amp;quot;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;integerToGerman&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Seq&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;null&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;eins&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;zwei&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;quot;drei&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToGerman&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToInteger&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;andThen&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;integerToGerman&lt;/span&gt;
-
-&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;zwei&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;englishToGerman&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;two&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Of course value of &lt;code&gt;zwei&lt;/code&gt; will be a string &lt;em&gt;&amp;ldquo;zwei&amp;rdquo;&lt;/em&gt;. The &lt;code&gt;andThen&lt;/code&gt; is a method of
-&lt;a href=&#34;http://www.scala-lang.org/api/current/index.html#scala.Function1&#34;&gt;Function1&lt;/a&gt; class and it composes two functions. Here we create the function
-&lt;code&gt;englishToGerman&lt;/code&gt; by composing &lt;code&gt;englishToInteger&lt;/code&gt; with &lt;code&gt;integerToGerman&lt;/code&gt;. The argument flow is quite
-straightforward here - &lt;em&gt;&amp;ldquo;one&amp;rdquo;&lt;/em&gt; is passed to the &lt;code&gt;englishToInteger&lt;/code&gt; function (which is a Map!). This
-gives us an integer representing the number: &lt;code&gt;1&lt;/code&gt;. Then this integer is passed to &lt;code&gt;integerToGerman&lt;/code&gt;
-sequence which maps indexes to German numbers.&lt;/p&gt;
-
-&lt;h1 id=&#34;summary&#34;&gt;Summary&lt;/h1&gt;
-
-&lt;p&gt;Even though I&amp;rsquo;ve been using Scala for some time now I&amp;rsquo;ve discovered that maps and lists act as
-functions very recently. What is great here is that knowing that gives me a new perspective on those
-data structures. I hope that for you this is as much fun as it is for me.&lt;/p&gt;
-
-&lt;p&gt;Thanks for reading!&lt;/p&gt;
-
-&lt;p&gt;If you are still wondering what&amp;rsquo;s with the title &lt;a href=&#34;https://www.youtube.com/watch?v=7WJXHY2OXGE&#34;&gt;watch this&lt;/a&gt;.&lt;/p&gt;
-</description>
+      <description>Scala, as a functional language, treats functions as first class citizens. Of course it&amp;rsquo;s also object oriented language. Those two paradigms can be seen as conflicting with each other. In this post I&amp;rsquo;d like to show you some different ways of creating a functions in Scala to show that these two worlds can coexist.
+Foreword Function Let us start by defining what a function is. Wikipedia supplies us with this:</description>
     </item>
     
   </channel>

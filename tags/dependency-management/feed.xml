@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dependency Management on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/dependency-management/feed/index.xml</link>
+    <link>http://blog.radoszewski.pl/tags/dependency-management/</link>
     <description>Recent content in Dependency Management on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://blog.radoszewski.pl/tags/dependency-management/feed/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Nov 2015 12:17:17 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/dependency-management/feed.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>The Cake Pattern</title>
@@ -14,114 +17,7 @@
       <pubDate>Tue, 10 Nov 2015 12:17:17 +0000</pubDate>
       
       <guid>http://blog.radoszewski.pl/post/cake-pattern/</guid>
-      <description>
-
-&lt;p&gt;Let&amp;rsquo;s think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows.  Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us. If you know Java you pr/programming/scala/2015/11/10/cake-pattern.htmlobably have heard about Dependency Injection (DI) and Inversion of Control (IoC). This is one way to approach the problem. There is another one and it&amp;rsquo;s called &lt;em&gt;Cake Pattern&lt;/em&gt;.&lt;/p&gt;
-
-&lt;h1 id=&#34;dependency-injection&#34;&gt;Dependency Injection&lt;/h1&gt;
-
-&lt;p&gt;I believe we should start with a paragraph or two highlighting some aspects of dependency injection. Before I learned about &lt;em&gt;Cake Pattern&lt;/em&gt; I thought that it was some kind of dependency injection. I was so wrong. In fact - this actually caused me some trouble understanding the &lt;em&gt;Cake Pattern&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;Dependency Injection uses inversion of control to do it&amp;rsquo;s trick. This means that you only say what are your components and each component knows what other components it depends on. Later some container instantiates your components and their dependencies for you. You never have to write a single &lt;code&gt;new&lt;/code&gt;. This makes developing much easier. You can focus on what is it you want to do instead of how to wire everything up.&lt;/p&gt;
-
-&lt;h1 id=&#34;the-cake-pattern&#34;&gt;The Cake Pattern&lt;/h1&gt;
-
-&lt;p&gt;&lt;em&gt;Cake Pattern&lt;/em&gt; solves the same problem. It allows you to specify dependencies of your components, but it does this a little different. It never takes the control of the component creation. How is that possible? Well - by proper structuring your code. That&amp;rsquo;s the trick. Did you think that the &lt;em&gt;pattern&lt;/em&gt; part was a hoax?&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s take a look at an example. Assume that we want to create the &lt;code&gt;Bakery&lt;/code&gt; which bakes bread (duh!). There is also the &lt;code&gt;Mill&lt;/code&gt; which can supply some flour. Obviously the &lt;code&gt;Bakery&lt;/code&gt; is going to need the flour from the &lt;code&gt;Mill&lt;/code&gt; - thus creating dependency. Also let&amp;rsquo;s not dive to deep in this and assume that &lt;code&gt;Mill&lt;/code&gt; just produces flour out of thin air.&lt;/p&gt;
-
-&lt;p&gt;With dependency injection you would normally create the two components, and somehow tell the injector that &lt;code&gt;Bakery&lt;/code&gt; would like to have &lt;code&gt;Mill&lt;/code&gt; instance injected. The cake pattern is different because it uses interfaces to denote that the dependency will be available some time later. To do that we use a few scala &lt;code&gt;trait&lt;/code&gt;s that enable us to mix the implementation of that interfaces when creating the actual working instance of an object.&lt;/p&gt;
-
-&lt;p&gt;We can start by defining the component and interface for the &lt;code&gt;Mill&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Flour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
-
-&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MillComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mill&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Mill&lt;/span&gt;
-
-    &lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Mill&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;produceFlour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Flour&lt;/span&gt;
-    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;We&amp;rsquo;ve created the &lt;code&gt;Flour&lt;/code&gt; class to represent the goods produced by the &lt;code&gt;Mill&lt;/code&gt;. Then you can see that we&amp;rsquo;ve declared &lt;code&gt;MillComponent&lt;/code&gt; which promises to us that it&amp;rsquo;s implementations will return the &lt;code&gt;Mill&lt;/code&gt; instance through &lt;code&gt;mill&lt;/code&gt; method. Also there is &lt;code&gt;Mill&lt;/code&gt; trait which is just interface telling us that it can &lt;code&gt;produceFlour&lt;/code&gt;. This construct is like the definition of our component.&lt;/p&gt;
-
-&lt;p&gt;Now let&amp;rsquo;s create the actual implementation for the component and the &lt;code&gt;Mill&lt;/code&gt; itself:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMillComponent&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;MillComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;mill&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Mill&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMill&lt;/span&gt;
-
-    &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMill&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Mill&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;produceFlour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Flour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
-    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;This is quite simple. We create the component by extending its &lt;em&gt;definition&lt;/em&gt; we wrote above - note that this component is still a &lt;code&gt;trait&lt;/code&gt;. The &lt;code&gt;RegularMill&lt;/code&gt; implementation is, on the other hand, a class that simply implements the &lt;code&gt;Mill&lt;/code&gt; interface.&lt;/p&gt;
-
-&lt;p&gt;We&amp;rsquo;re done with this component. Note that its &lt;code&gt;mill&lt;/code&gt; field is &lt;code&gt;val&lt;/code&gt;. This means that we want only one instance of it. We could have left the &lt;code&gt;def&lt;/code&gt; there and then components would create new mill instance everytime they used the &lt;code&gt;mill&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;On to the bakery. To create the component we use the same template as before:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;flour&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Flour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-
-&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;BakeryComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakery&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bakery&lt;/span&gt;
-
-    &lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bakery&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakeBread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bread&lt;/span&gt;
-    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;The interesting bit is that this does not tell us anything about the dependency. At this level we don&amp;rsquo;t need any &lt;code&gt;Flour&lt;/code&gt; - we&amp;rsquo;re just declaring that the component provides &lt;code&gt;Bakery&lt;/code&gt; that can &lt;code&gt;bakeBread&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Now let&amp;rsquo;s see how we can declare the dependency and use it to implement &lt;code&gt;RegularBakery&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;trait&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakeryComponent&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;BakeryComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;this:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;MillComponent&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&amp;gt;&lt;/span&gt;
-
-    &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakery&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bakery&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakery&lt;/span&gt;
-
-    &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakery&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bakery&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-        &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bakeBread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Bread&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Bread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;mill&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;produceFlour&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;())&lt;/span&gt;
-    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;By specifying &lt;code&gt;this: MillComponent =&amp;gt;&lt;/code&gt; at the beginning of the trait we are telling the compiler that this trait can be mixed in only with objects that also have &lt;code&gt;MillComponent&lt;/code&gt; trait mixed in. This allows us to use the &lt;code&gt;mill&lt;/code&gt; while implementing the &lt;code&gt;bakeBread()&lt;/code&gt; method.&lt;/p&gt;
-
-&lt;p&gt;Soooo&amp;hellip; one thing left. How to use this? It&amp;rsquo;s quite simple, just mix everything in one object:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;app&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Object&lt;/span&gt;
-          &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularMillComponent&lt;/span&gt;
-          &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;RegularBakeryComponent&lt;/span&gt;
-
-&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;bread&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bakery&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;bakeBread&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Now if you try to create an instance of &lt;code&gt;RegularBakeryComponent&lt;/code&gt; without some implementation of &lt;code&gt;MillComponent&lt;/code&gt; then the program will not compile at all. This means that if your program compiles all the dependencies are satisfied.&lt;/p&gt;
-
-&lt;h1 id=&#34;pros-cons&#34;&gt;Pros &amp;amp; Cons&lt;/h1&gt;
-
-&lt;p&gt;As you can see in cake pattern there is no &lt;em&gt;injection&lt;/em&gt; of dependencies. You simply declare the dependencies and then mix all the components in one &lt;em&gt;Object&lt;/em&gt;. Manual dependency management is a lot less &lt;em&gt;magical&lt;/em&gt; than the standard dependency injection. Sure it might be a little overwhelming with all those &lt;code&gt;trait&lt;/code&gt;s and mixing, but this is just using standard language features. Once you get this you&amp;rsquo;ll never have any problems with this type of dependency management again. Another great thing is that dependencies are checked at compile time so there are no long stack traces telling you that some dependency is missing.&lt;/p&gt;
-
-&lt;p&gt;On the sad part - you might have noticed that it&amp;rsquo;s a little verbose when compared to Spring&amp;rsquo;s &lt;code&gt;@Component&lt;/code&gt; and &lt;code&gt;@Autowire&lt;/code&gt;. Also it&amp;rsquo;s a bit less flexible than standard DI. Imagine that you want one of the components to use one implementation of some interface and another one want different implementation of the same interface. In Spring you would use &lt;code&gt;@Qualifier&lt;/code&gt; for this. Here it&amp;rsquo;s a bit more tricky and I could explore this a bit more in some future post.&lt;/p&gt;
-
-&lt;h1 id=&#34;summary&#34;&gt;Summary&lt;/h1&gt;
-
-&lt;p&gt;Classical dependency injection with inversion of control gives us some nice features, as the container at runtime can decide which component it&amp;rsquo;s going to inject. With cake pattern everything is wired up at compile time so this mechanism is a bit more &lt;em&gt;low level&lt;/em&gt;. You can of course make your own logic for instantiating components - you never gave up control over that - but this means you have a bit more work to do :)&lt;/p&gt;
-
-&lt;p&gt;I hope that you&amp;rsquo;ve learned something new by reading this post. I definatelly did while writing it :)&lt;/p&gt;
-
-&lt;p&gt;You can view whole example code at my &lt;a href=&#34;https://github.com/marad/cake-pattern-example&#34;&gt;github&lt;/a&gt;.&lt;/p&gt;
-</description>
+      <description>Let&amp;rsquo;s think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows. Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us.</description>
     </item>
     
   </channel>

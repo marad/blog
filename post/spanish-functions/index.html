@@ -2,7 +2,7 @@
 <html lang="en-us">
 
     <head>
-        <meta name="generator" content="Hugo 0.18.1" />
+        <meta name="generator" content="Hugo 0.29" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,17 +15,11 @@
         <link rel="alternate" type="application/rss+xml" title="No one expects the Spanish functions" href="/feed.xml"/>
 
         <link rel="stylesheet" href="/css/main.css"/>
-        <link rel="stylesheet" href="/css/monokai.css"/>
 
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet"> 
         <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,600' rel='stylesheet' type='text/css'>
-
-        <script src="/js/jquery-1.11.1.min.js" type="text/javascript"></script>
 
         <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
-
-        <script src="/lightbox/js/lightbox.min.js" type="text/javascript"></script>
-        <script src="/js/links.js" type="text/javascript"></script>
     </head>
 
     <body>
@@ -48,13 +42,23 @@
                                 <div class="trigger">
                                     <a class="page-link" href="/">Home</a>
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/about/">About</a>
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/about/">About</a>
+                                        
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/games/">Games</a>
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/games/">Games</a>
+                                        
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/music/">Music</a>
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/music/">Music</a>
+                                        
                                     
-                                    <a class="page-link" href="http://blog.radoszewski.pl/page/programs/">Programs</a>
+                                        
+                                    
+                                        
+                                        <a class="page-link" href="http://blog.radoszewski.pl/page/programs/">Programs</a>
+                                        
                                     
                                 </div>
                     </nav>
@@ -118,11 +122,10 @@ with outside world and this is mostly done through side effects.</p>
 there are some elements of <code>X</code> that cannot be supplied as an argument to our function - it would
 give us an error.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">def</span> <span class="n">partial</span><span class="o">(</span><span class="n">input</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="k">match</span> <span class="o">{</span>
-  <span class="k">case</span> <span class="mi">1</span> <span class="k">=&gt;</span> <span class="s">&quot;One&quot;</span>
-<span class="o">}</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">partial</span><span style="color:#f92672">(</span><span style="">input</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Int</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#66d9ef">match</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;One&#34;</span><span style="">
+</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
+</div>
 
 <p>This example function will work only for one argument: <code>1</code>. Any other value would cause an error.</p>
 
@@ -132,9 +135,8 @@ give us an error.</p>
 a function that operates on other functions. It can receive a function as an argument or it can
 create a function and return it as a value.</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">String</span><span class="o">,</span> <span class="n">arg</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">f</span><span class="o">(</span><span class="n">arg</span><span class="o">)</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">apply</span><span style="color:#f92672">(</span><span style="">f</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Int</span><span style=""> </span><span style="color:#f92672">=&gt;</span><span style=""> </span><span style="color:#a6e22e">String</span><span style="color:#f92672">,</span><span style=""> </span><span style="">arg</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Int</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">f</span><span style="color:#f92672">(</span><span style="">arg</span><span style="color:#f92672">)</span></code></pre>
+</div>
 
 <p>This simple higher order function just takes two parameters - a function and a number. Then it
 applies the <code>f</code> function to the number.</p>
@@ -143,15 +145,13 @@ applies the <code>f</code> function to the number.</p>
 
 <p>To define a function or method in Scala we normally write:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">def</span> <span class="n">greet</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">s&quot;Hello </span><span class="si">$name</span><span class="s">&quot;</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">greet</span><span style="color:#f92672">(</span><span style="">name</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">String</span><span style="color:#f92672">)</span><span style=""></span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">String</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#e6db74">s&#34;Hello </span><span style="color:#e6db74">$name</span><span style="color:#e6db74">&#34;</span></code></pre>
+</div>
 
 <p>Then we can use this function as a parameter to other function:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="nc">Seq</span><span class="o">(</span><span class="s">&quot;Bob&quot;</span><span class="o">,</span> <span class="s">&quot;Ben&quot;</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">greet</span><span class="o">)</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#a6e22e">Seq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Bob&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Ben&#34;</span><span style="color:#f92672">).</span><span style="">map</span><span style="color:#f92672">(</span><span style="">greet</span><span style="color:#f92672">)</span></code></pre>
+</div>
 
 <p>Here <code>map</code> is a higher order function which translates each <code>Seq</code> element to new element using the
 function that was supplied as its argument. Result will be: <code>Seq(&quot;Hello Bob&quot;, &quot;Hello Ben&quot;)</code>.</p>
@@ -159,20 +159,18 @@ function that was supplied as its argument. Result will be: <code>Seq(&quot;Hell
 <p>In Scala there is a special method that we can implement in our class or object that gives it
 function-like invocation:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">object</span> <span class="nc">Greeter</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="s">s&quot;Hello </span><span class="si">$name</span><span class="s">&quot;</span>
-<span class="o">}</span>
-
-<span class="nc">Greeter</span><span class="o">(</span><span class="s">&quot;Ben&quot;</span><span class="o">)</span> <span class="c1">// will return &quot;Hello Ben&quot;</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">object</span><span style=""> </span><span style="color:#a6e22e">Greeter</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">apply</span><span style="color:#f92672">(</span><span style="">name</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">String</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#e6db74">s&#34;Hello </span><span style="color:#e6db74">$name</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style=""></span><span style="color:#f92672">}</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#a6e22e">Greeter</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Ben&#34;</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">//</span><span style=""> </span><span style="">will</span><span style=""> </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#e6db74">&#34;Hello Ben&#34;</span></code></pre>
+</div>
 
 <p>So the <code>apply</code> method gives us some syntactic sugar in Scala - nice! But if we can use it as a
 function, can we pass it to the higher order function like <code>map</code>?</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="nc">Seq</span><span class="o">(</span><span class="s">&quot;Bob&quot;</span><span class="o">,</span> <span class="s">&quot;Ben&quot;</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="nc">Greeter</span><span class="o">)</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#a6e22e">Seq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Bob&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Ben&#34;</span><span style="color:#f92672">).</span><span style="">map</span><span style="color:#f92672">(</span><span style="color:#a6e22e">Greeter</span><span style="color:#f92672">)</span></code></pre>
+</div>
 
 <p>This will unfortunately throw an error at compile time saying that it wanted a function <code>String =&gt;
 String</code> and got <code>Greeter</code>.</p>
@@ -180,11 +178,10 @@ String</code> and got <code>Greeter</code>.</p>
 <p>The good news is that we can fix this! We must tell the compiler that our object is also a function
 by extending it&rsquo;s type signature:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">object</span> <span class="nc">Greeter</span> <span class="k">extends</span> <span class="o">(</span><span class="nc">String</span> <span class="k">=&gt;</span> <span class="nc">String</span><span class="o">)</span> <span class="o">{</span>
-  <span class="k">def</span> <span class="n">apply</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="s">s&quot;Hello </span><span class="si">$name</span><span class="s">&quot;</span>
-<span class="o">}</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">object</span><span style=""> </span><span style="color:#a6e22e">Greeter</span><span style=""> </span><span style="color:#66d9ef">extends</span><span style=""> </span><span style="color:#f92672">(</span><span style="color:#a6e22e">String</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#a6e22e">String</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
+</span><span style="">  </span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">apply</span><span style="color:#f92672">(</span><span style="">name</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">String</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#e6db74">s&#34;Hello </span><span style="color:#e6db74">$name</span><span style="color:#e6db74">&#34;</span><span style="">
+</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
+</div>
 
 <p>Now we can pass our <code>Greeter</code> object to <code>map</code> and everything works fine!</p>
 
@@ -197,20 +194,18 @@ programming by allowing objects and classes to act like functions.</p>
 by defining a mapping between two sets of data. This is why Scala&rsquo;s <code>Map[A, B]</code> extends the <code>A =&gt; B</code>
 type signature. It basically allows us to use any <code>Map</code> as a function from type <code>A</code> to type <code>B</code>:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">val</span> <span class="n">numbers</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span><span class="mi">1</span> <span class="o">-&gt;</span> <span class="s">&quot;one&quot;</span><span class="o">,</span> <span class="mi">2</span> <span class="o">-&gt;</span> <span class="s">&quot;two&quot;</span><span class="o">,</span> <span class="mi">3</span> <span class="o">-&gt;</span> <span class="s">&quot;three&quot;</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="mi">3</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">1</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">numbers</span><span class="o">)</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span><span style=""> </span><span style="">numbers</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">Map</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;one&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">2</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;two&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">3</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;three&#34;</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">val</span><span style=""> </span><span style="">result</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">Seq</span><span style="color:#f92672">(</span><span style="color:#ae81ff">3</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="color:#f92672">).</span><span style="">map</span><span style="color:#f92672">(</span><span style="">numbers</span><span style="color:#f92672">)</span></code></pre>
+</div>
 
 <p>This will give the <code>result</code> a value of <code>Seq(&quot;three&quot;, &quot;two&quot;, &quot;one&quot;)</code> so map acts exactly as partial
 function. It&rsquo;s partial because it&rsquo;s defined only for values 1, 2, and 3.</p>
 
 <p>And what about other collections? Well, a sequence maps index to a value, doesn&rsquo;t it?</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">val</span> <span class="n">letters</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&quot;e&quot;</span><span class="o">,</span> <span class="s">&quot;h&quot;</span><span class="o">,</span> <span class="s">&quot;l&quot;</span><span class="o">,</span> <span class="s">&quot;o&quot;</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">letters</span><span class="o">).</span><span class="n">mkString</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span><span style=""> </span><span style="">letters</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">Seq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;e&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;h&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;l&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;o&#34;</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">val</span><span style=""> </span><span style="">result</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">Seq</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="color:#f92672">).</span><span style="">map</span><span style="color:#f92672">(</span><span style="">letters</span><span style="color:#f92672">).</span><span style="">mkString</span></code></pre>
+</div>
 
 <p>The <code>result</code> value will be <em>&ldquo;hello&rdquo;</em>.</p>
 
@@ -219,9 +214,8 @@ function. It&rsquo;s partial because it&rsquo;s defined only for values 1, 2, an
 <p>Mapping over some sequence is fine to show that lists and maps are functions but you may say that it
 doesn&rsquo;t really give us much because after all we can write it like this:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="nc">Seq</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">).</span><span class="n">map</span><span class="o">(</span><span class="n">num</span> <span class="k">=&gt;</span> <span class="n">letters</span><span class="o">(</span><span class="n">num</span><span class="o">))</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#a6e22e">Seq</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="color:#f92672">).</span><span style="">map</span><span style="color:#f92672">(</span><span style="">num</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="">letters</span><span style="color:#f92672">(</span><span style="">num</span><span style="color:#f92672">))</span></code></pre>
+</div>
 
 <p>The true fun begins when you want to operate on some functions. For example we would like to compose
 two functions. This means that we apply the first function to the argument and then apply the second
@@ -229,13 +223,12 @@ to the value returned by the first: <code>f(g(x))</code>.</p>
 
 <p>This can be also done with maps and sequences:</p>
 
-<div class="highlight"><pre><code class="language-scala" data-lang="scala"><span></span><span class="k">val</span> <span class="n">englishToInteger</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">(</span><span class="s">&quot;zero&quot;</span> <span class="o">-&gt;</span> <span class="mi">0</span><span class="o">,</span> <span class="s">&quot;one&quot;</span> <span class="o">-&gt;</span> <span class="mi">1</span><span class="o">,</span> <span class="s">&quot;two&quot;</span> <span class="o">-&gt;</span> <span class="mi">2</span><span class="o">,</span> <span class="s">&quot;three&quot;</span> <span class="o">-&gt;</span> <span class="mi">3</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">integerToGerman</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&quot;null&quot;</span><span class="o">,</span> <span class="s">&quot;eins&quot;</span><span class="o">,</span> <span class="s">&quot;zwei&quot;</span><span class="o">,</span> <span class="s">&quot;drei&quot;</span><span class="o">)</span>
-<span class="k">val</span> <span class="n">englishToGerman</span> <span class="k">=</span> <span class="n">englishToInteger</span> <span class="n">andThen</span> <span class="n">integerToGerman</span>
-
-<span class="k">val</span> <span class="n">zwei</span> <span class="k">=</span> <span class="n">englishToGerman</span><span class="o">(</span><span class="s">&quot;two&quot;</span><span class="o">)</span>
-</code></pre></div>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span><span style=""> </span><span style="">englishToInteger</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">Map</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;zero&#34;</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#ae81ff">0</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;one&#34;</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;two&#34;</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;three&#34;</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#ae81ff">3</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">val</span><span style=""> </span><span style="">integerToGerman</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">Seq</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;null&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;eins&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;zwei&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;drei&#34;</span><span style="color:#f92672">)</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">val</span><span style=""> </span><span style="">englishToGerman</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">englishToInteger</span><span style=""> </span><span style="">andThen</span><span style=""> </span><span style="">integerToGerman</span><span style="">
+</span><span style="">
+</span><span style=""></span><span style="color:#66d9ef">val</span><span style=""> </span><span style="">zwei</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">englishToGerman</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;two&#34;</span><span style="color:#f92672">)</span></code></pre>
+</div>
 
 <p>Of course value of <code>zwei</code> will be a string <em>&ldquo;zwei&rdquo;</em>. The <code>andThen</code> is a method of
 <a href="http://www.scala-lang.org/api/current/index.html#scala.Function1">Function1</a> class and it composes two functions. Here we create the function
@@ -316,6 +309,11 @@ data structures. I hope that for you this is as much fun as it is for me.</p>
                                             </div>
                                         </div>
                                     </footer>
+
+
+    <script src="/js/jquery-1.11.1.min.js" type="text/javascript"></script>
+    <script src="/lightbox/js/lightbox.min.js" type="text/javascript"></script>
+    <script src="/js/links.js" type="text/javascript"></script>
     </body>
 </html>
 

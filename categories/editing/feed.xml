@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Editing on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/categories/editing/feed/index.xml</link>
+    <link>http://blog.radoszewski.pl/categories/editing/</link>
     <description>Recent content in Editing on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://blog.radoszewski.pl/categories/editing/feed/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 06 Apr 2015 09:59:31 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/categories/editing/feed.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Don&#39;t Use Vim if you like your job!</title>
@@ -14,57 +17,8 @@
       <pubDate>Mon, 06 Apr 2015 09:59:31 +0000</pubDate>
       
       <guid>http://blog.radoszewski.pl/post/dont-use-vim/</guid>
-      <description>
-
-&lt;p&gt;If you&amp;rsquo;re like me you probably like to make your life easier wherever and whenever it is possible. I
-also like to pick up the gauntlet and try something new and challenging. This is why I started to
-use Vim.&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;m a professional programmer. I&amp;rsquo;m paid to edit code. No wonder why I wanted my editing to be
-quicker and easier.  I knew that Vim has it&amp;rsquo;s worshipers even though it&amp;rsquo;s &lt;em&gt;very&lt;/em&gt; old so I thought
-there must be something great about it.  I&amp;rsquo;ve started to learn the Vim ways.&lt;/p&gt;
-
-&lt;p&gt;Now - about a year later I can tell you &lt;strong&gt;don&amp;rsquo;t use Vim if you like your job!&lt;/strong&gt; Assuming, of course,
-that your job has something to do with computers and editing text ;) You can ask me&amp;hellip;&lt;/p&gt;
-
-&lt;h2 id=&#34;why&#34;&gt;Why?&lt;/h2&gt;
-
-&lt;p&gt;I&amp;rsquo;ve been using Vim for a year now I can edit text quickly and easily. I rarely have to reach out
-with my hands even for the cursor keys - not to mention grabbing a mouse.&lt;/p&gt;
-
-&lt;p&gt;What is wrong then? Well&amp;hellip; I can&amp;rsquo;t edit text or code with anything other than Vim now. Literally
-&lt;strong&gt;every&lt;/strong&gt; other editor is just simple useless notepad to me! Thankfully vast majority of editors
-support Vim-Mode editing. Honestly I was surprised with how many programs allow you to edit content
-like Vim. The only problem is that Vim is huge.  It has hundreds of functions waiting for you to use
-them. Vim-Mode in most programs allows you to do only basic things.&lt;/p&gt;
-
-&lt;p&gt;For my job I use IntelliJ IDEA which (thanks to havens) have a plugin that enables Vim-like editing,
-and it&amp;rsquo;s actually quite good. It&amp;rsquo;s a whole lot slower than real Vim but I believe it&amp;rsquo;s a fair trade
-for features it provides.  Actually I use IntelliJ IDEA for only three reasons:&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;auto completion,&lt;/li&gt;
-&lt;li&gt;organizing imports,&lt;/li&gt;
-&lt;li&gt;refactoring variable/method/class names.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;In fact I could live without the refactoring, but it&amp;rsquo;s hard to give up auto completion&amp;hellip; Trust me,
-I&amp;rsquo;ve tried&amp;hellip;&lt;/p&gt;
-
-&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
-
-&lt;p&gt;To sum up. I&amp;rsquo;d recommend using Vim to everyone if only all editors had great support for it. Only
-problem is that if you get used to editing text the Vim-way you&amp;rsquo;ll never look at any other editor
-ever again. To be honest Vim was one of the reasons I&amp;rsquo;ve stopped writing on my previous blog. I just
-didn&amp;rsquo;t want to use this Wordpress&amp;rsquo;s online editor.  I could never make the post look like I desired
-and it was just plain simple notepad. Believe me that I had to remove a lot of things like &lt;code&gt;jjcip&lt;/code&gt;
-from the text&amp;hellip;&lt;/p&gt;
-
-&lt;p&gt;TL;DR: If you are working with text - try Vim on your own responsibility. Vim will spoil you and you
-will never want to use any other editor!&lt;/p&gt;
-
-&lt;p&gt;See you! (and yes - I wrote this in Vim)&lt;/p&gt;
-</description>
+      <description>If you&amp;rsquo;re like me you probably like to make your life easier wherever and whenever it is possible. I also like to pick up the gauntlet and try something new and challenging. This is why I started to use Vim.
+I&amp;rsquo;m a professional programmer. I&amp;rsquo;m paid to edit code. No wonder why I wanted my editing to be quicker and easier. I knew that Vim has it&amp;rsquo;s worshipers even though it&amp;rsquo;s very old so I thought there must be something great about it.</description>
     </item>
     
   </channel>

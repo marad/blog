@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Optional on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/optional/feed/index.xml</link>
+    <link>http://blog.radoszewski.pl/tags/optional/</link>
     <description>Recent content in Optional on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://blog.radoszewski.pl/tags/optional/feed/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 19 Apr 2015 19:06:46 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/optional/feed.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Optional in Java 8</title>
@@ -14,126 +17,7 @@
       <pubDate>Sun, 19 Apr 2015 19:06:46 +0000</pubDate>
       
       <guid>http://blog.radoszewski.pl/post/java-optional/</guid>
-      <description>&lt;p&gt;Recently I&amp;rsquo;ve been a part of self-educating team. My workmates and I decided to learn Java 8
-features so we could use it at work. Each of us have one or two topics to cover and we had to teach
-each other about the cool new features like streams or better type inference. My part was to
-cover the &lt;code&gt;Optional&lt;/code&gt; class, and today I&amp;rsquo;d like to show and explain how and why you should use it.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;Optional&lt;/code&gt; class is a very underestimated addition in Java 8. &lt;a href=&#34;http://huguesjohnson.com/programming/java/java8optional.html&#34;&gt;Some people may have a feeling
-that &lt;code&gt;Optional&lt;/code&gt; is pointless&lt;/a&gt;. In fact if you have function that may or may not
-produce some result you should use &lt;code&gt;Optional&lt;/code&gt;. Even using it as shown in linked post gives you some
-benefit. Method signature tells you that when called it may return a value or nothing. No need to
-read the docs to find out where your &lt;code&gt;NullPointerException&lt;/code&gt; is coming from.&lt;/p&gt;
-
-&lt;p&gt;Author of the post tries to understand why &lt;code&gt;Optional&lt;/code&gt; fixes the problem with &lt;code&gt;NullPointerException&lt;/code&gt;
-while giving the examples that it causes more problems than it solves. This is mostly because he&amp;rsquo;s
-using this class in a way he used to work with &lt;code&gt;null&lt;/code&gt;s - treating &lt;code&gt;Optional&lt;/code&gt; as a value. You should
-treat &lt;code&gt;Optional&lt;/code&gt; more as a container for value and &lt;strong&gt;NEVER&lt;/strong&gt; make a method that returns &lt;code&gt;Optional&lt;/code&gt;
-that is &lt;code&gt;null&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Doing this already fixes most NPEx&amp;rsquo;es but why stop here? By properly using optionals we can achieve
-cleaner and more readable code.&lt;/p&gt;
-
-&lt;p&gt;Assume we&amp;rsquo;ve got a library. Library has books, and each book should have an author. We know for a
-fact though that some books in our library doesn&amp;rsquo;t have an author assigned. So we&amp;rsquo;ve got structure
-along the lines of:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Author&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
-  &lt;span class=&#34;c1&#34;&gt;// ...&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-
-&lt;span class=&#34;kd&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Book&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
-  &lt;span class=&#34;kd&#34;&gt;private&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Author&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;author&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;;&lt;/span&gt;
-
-  &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Optional&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Author&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;getAuthor&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Optional&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;ofNullable&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;author&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-  &lt;span class=&#34;c1&#34;&gt;// ...&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-
-&lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Library&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;kd&#34;&gt;public&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Optional&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Book&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;findBook&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;String&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Now that we have our model defined let&amp;rsquo;s think about finding author by book&amp;rsquo;s title. Normally we
-would have to find book by title, and then check if it&amp;rsquo;s not null and then get the author and get
-check if that is not null. Finally we could do what we want with the author object. So without
-optionals it would look like this:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Book&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;book&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;findBook&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;book&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;n&#34;&gt;Author&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;author&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;book&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getAuthor&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
-  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;author&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;!=&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;doStuff&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;author&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;With optionals we can&amp;rsquo;t get the &lt;code&gt;null&lt;/code&gt; so that&amp;rsquo;s already a gain. Well - we could but one should
-really have no idea about programming to achieve this in real life. But the code isn&amp;rsquo;t that great at
-all. I&amp;rsquo;d say that it looks even worse:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Optional&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Book&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;book&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;findBook&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;book&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;isPresent&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;())&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-  &lt;span class=&#34;n&#34;&gt;Optional&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Author&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;author&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;book&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getAuthor&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;();&lt;/span&gt;
-  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;author&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;isPresent&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;())&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;doStuff&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;author&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;get&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;());&lt;/span&gt;
-  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;Still needs some improvement. There is a method in &lt;code&gt;Optional&lt;/code&gt; called &lt;code&gt;ifPresent()&lt;/code&gt; that takes a
-function and invokes it on the inner object if the object is, well, present. Using this method we
-could make it a bit better:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;findBook&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-  &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;ifPresent&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;book&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-    &lt;span class=&#34;n&#34;&gt;book&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;getAuthor&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;ifPresent&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;doStuff&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-  &lt;span class=&#34;o&#34;&gt;});&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;But as Hugues states - this is still not entirely readable. What he didn&amp;rsquo;t mention is the fact that
-&lt;code&gt;Optional&lt;/code&gt; has also another method that give it it&amp;rsquo;s awesomeness. Meet the &lt;code&gt;flatMap&lt;/code&gt;:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;library&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;findBook&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;quot;Some Title&amp;quot;&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-  &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;flatMap&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;Book&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;getAuthor&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-  &lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;ifPresent&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;doStuff&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;);&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;What does the &lt;code&gt;flatMap&lt;/code&gt; do? If the value of &lt;code&gt;Optional&lt;/code&gt; is present then it invokes the function
-passed as parameter on that value. If value is not present - &lt;code&gt;flatMap&lt;/code&gt; returns empty &lt;code&gt;Optional&lt;/code&gt;. The
-function must return an &lt;code&gt;Optional&lt;/code&gt; which is in later returned by the &lt;code&gt;flatMap&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;In this case we pass the &lt;code&gt;Book::getAuthor&lt;/code&gt; which is a short for &lt;code&gt;book -&amp;gt; book.getAuthor()&lt;/code&gt;. The
-&lt;code&gt;getAuthor()&lt;/code&gt; method returns &lt;code&gt;Optional&amp;lt;Author&amp;gt;&lt;/code&gt; which is returned further by the &lt;code&gt;flatMap&lt;/code&gt; so we can
-invoke &lt;code&gt;ifPresent()&lt;/code&gt; method to operate on &lt;code&gt;Author&lt;/code&gt; object - if it&amp;rsquo;s present.&lt;/p&gt;
-
-&lt;p&gt;Please note how this notation hides all implementation details from us. We don&amp;rsquo;t really care if
-something is &lt;code&gt;null&lt;/code&gt; or if something has gone wrong. We only care that if everything is fine we
-just want to invoke some operation on the &lt;code&gt;Author&lt;/code&gt; object.&lt;/p&gt;
-
-&lt;p&gt;You may be saying now: &amp;ldquo;This is not more readable at all!&amp;rdquo;. You&amp;rsquo;re right but your statement is
-false. What do I mean? Well &lt;code&gt;flatMap&lt;/code&gt; is something that one should get used to when playing with
-functional programming because it&amp;rsquo;s one of the most used functions there. Lambdas, method
-references, functional interfaces and better type inference (which still needs some love) introduced
-in Java 8 is nothing more than inserting functional language properties into Java.&lt;/p&gt;
-
-&lt;p&gt;I mean that when you get the hang of it, it&amp;rsquo;ll be more readable to you.&lt;/p&gt;
-
-&lt;p&gt;In fact &lt;code&gt;flatMap&lt;/code&gt; is something that has it&amp;rsquo;s origins in category theory as the part of &lt;em&gt;monad&lt;/em&gt;
-disguised under the name of &lt;code&gt;bind&lt;/code&gt; operation. The category theory isn&amp;rsquo;t required to use monads or
-&lt;code&gt;flatMaps&lt;/code&gt;. You don&amp;rsquo;t really have to know how the engine works to drive a car, do you?&lt;/p&gt;
-
-&lt;p&gt;What are monads? I believe that is something to cover in following posts. Thanks for reading!&lt;/p&gt;
-</description>
+      <description>Recently I&amp;rsquo;ve been a part of self-educating team. My workmates and I decided to learn Java 8 features so we could use it at work. Each of us have one or two topics to cover and we had to teach each other about the cool new features like streams or better type inference. My part was to cover the Optional class, and today I&amp;rsquo;d like to show and explain how and why you should use it.</description>
     </item>
     
   </channel>

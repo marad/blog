@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blog on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/categories/blog/feed/index.xml</link>
+    <link>http://blog.radoszewski.pl/categories/blog/</link>
     <description>Recent content in Blog on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://blog.radoszewski.pl/categories/blog/feed/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 09 Apr 2015 17:47:55 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/categories/blog/feed.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Why I abandoned my old blog?</title>
@@ -14,51 +17,8 @@
       <pubDate>Thu, 09 Apr 2015 17:47:55 +0000</pubDate>
       
       <guid>http://blog.radoszewski.pl/post/previous-blog/</guid>
-      <description>
-
-&lt;p&gt;This blog has very little content, but I&amp;rsquo;m not new to blogging at all.  In fact &lt;a href=&#34;https://moriturius.wordpress.com/&#34;&gt;I&amp;rsquo;ve been
-publishing my thoughts and ideas online for a few years now&lt;/a&gt;. The only problem is that I&amp;rsquo;ve
-got tired of it. I don&amp;rsquo;t mean blogging.  I mean &lt;em&gt;writing&lt;/em&gt; posts.&lt;/p&gt;
-
-&lt;p&gt;I can hear you ask &amp;ldquo;What is the difference?&amp;rdquo;. Well&amp;hellip; I was using &lt;a href=&#34;http://wordpress.com&#34;&gt;Wordpress&lt;/a&gt;. This
-software is great for blogging, but sometimes I wanted more. I wanted to insert my code into pages,
-create custom themes and extensions etc.  Of course with tools like &lt;a href=&#34;http://heroku.org&#34;&gt;Heroku&lt;/a&gt; I could host my
-own instance of Wordpress and create themes or extensions myself, but I don&amp;rsquo;t really like PHP and
-Wordpress theming is not something I wanted to learn.&lt;/p&gt;
-
-&lt;p&gt;Then there is also Vim. After I started using it I really didn&amp;rsquo;t want to edit text in the browser
-ever again. Creating content with online editor wasn&amp;rsquo;t (and still isn&amp;rsquo;t) the best way to spend your
-evenings - especially if you hit &lt;code&gt;Esc&lt;/code&gt; key all the time&amp;hellip;&lt;/p&gt;
-
-&lt;p&gt;So I stopped blogging. I liked to share the ideas and get feedback from readers, but I needed some
-motivation to get that going again - and Wordpress wasn&amp;rsquo;t helping with that ;)&lt;/p&gt;
-
-&lt;h2 id=&#34;the-repair-program&#34;&gt;The repair program&lt;/h2&gt;
-
-&lt;p&gt;I&amp;rsquo;ve started developing my own blog with Scala and &lt;a href=&#34;http://playframework.com/&#34;&gt;Play Framework&lt;/a&gt;. You can view
-it&amp;rsquo;s &lt;a href=&#34;https://github.com/marad/blog&#34;&gt;source code on my GitHub&lt;/a&gt;. While doing that I&amp;rsquo;ve learned a lot of Scala. It was
-great experience and I&amp;rsquo;m very happy that I did that! But when the page was up and running - I still
-didn&amp;rsquo;t want to write posts because the editor was even worse! Posts had to be written in Markdown so
-I could edit them locally (using Vim) and then copy the text to the page. I wasn&amp;rsquo;t happy with that
-solution either.&lt;/p&gt;
-
-&lt;h2 id=&#34;salvation&#34;&gt;Salvation&lt;/h2&gt;
-
-&lt;p&gt;Lately I&amp;rsquo;ve decided to check out what are &lt;a href=&#34;https://pages.github.com/&#34;&gt;GitHub Pages&lt;/a&gt;. This was the best idea I&amp;rsquo;ve had
-for a while :) Through that I discovered &lt;a href=&#34;http://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;. I wasn&amp;rsquo;t aware that there exists
-  something like &lt;em&gt;static page generator&lt;/em&gt;. It turned out to be perfect solution for me!&lt;/p&gt;
-
-&lt;p&gt;Now I can create my posts and pages using any editor I want and any markup language I like. Content
-is versioned in git repository. Pages are hosted by GitHub and deployment is as easy as pushing
-changes to remote branch. That&amp;rsquo;s just perfect :)&lt;/p&gt;
-
-&lt;h2 id=&#34;the-language&#34;&gt;The language&lt;/h2&gt;
-
-&lt;p&gt;If you checked out &lt;a href=&#34;https://moriturius.wordpress.com/&#34;&gt;my previous blog&lt;/a&gt; you may have noticed that I used my native language
-there. I decided to change that because English has just bigger audience. Watching page statistics
-I&amp;rsquo;ve discovered that some Google searches got foreign people to my page and the content could
-probably help&amp;hellip; if they could read them :)&lt;/p&gt;
-</description>
+      <description>This blog has very little content, but I&amp;rsquo;m not new to blogging at all. In fact I&amp;rsquo;ve been publishing my thoughts and ideas online for a few years now. The only problem is that I&amp;rsquo;ve got tired of it. I don&amp;rsquo;t mean blogging. I mean writing posts.
+I can hear you ask &amp;ldquo;What is the difference?&amp;rdquo;. Well&amp;hellip; I was using Wordpress. This software is great for blogging, but sometimes I wanted more.</description>
     </item>
     
   </channel>

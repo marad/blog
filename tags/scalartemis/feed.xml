@@ -2,11 +2,14 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Scalartemis on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/scalartemis/feed/index.xml</link>
+    <link>http://blog.radoszewski.pl/tags/scalartemis/</link>
     <description>Recent content in Scalartemis on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <atom:link href="http://blog.radoszewski.pl/tags/scalartemis/feed/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 04 Apr 2015 22:06:00 +0200</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/scalartemis/feed.xml" rel="self" type="application/rss+xml" />
+    
     
     <item>
       <title>Scalartemis</title>
@@ -14,71 +17,8 @@
       <pubDate>Sat, 04 Apr 2015 22:06:00 +0200</pubDate>
       
       <guid>http://blog.radoszewski.pl/post/scalartemis/</guid>
-      <description>
-
-&lt;p&gt;Recently I&amp;rsquo;ve been creating entity component framework which I named &lt;em&gt;Scalartemis&lt;/em&gt;. Name is direct descendant of two words. First (surprisingly) is &lt;em&gt;Scala&lt;/em&gt; - the language it&amp;rsquo;s written in. Second is &lt;em&gt;Artemis&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;http://gamadu.com/artemis/&#34;&gt;Artemis&lt;/a&gt; is entity component framework that I wanted to port to Scala. During the process of porting I started to change things a bit to achieve better performance/api/usability. At some point I decided that this is pointless and I should start from scratch using the knowledge I&amp;rsquo;ve gained. This is exactly what I&amp;rsquo;ve done.&lt;/p&gt;
-
-&lt;p&gt;I&amp;rsquo;ve found &lt;a href=&#34;http://entity-systems.wikidot.com/fast-entity-component-system&#34;&gt;document&lt;/a&gt; which was the base for Artemis. Unfortunately its creators had not followed it closely. I think that there is room for improvements so I decided to give it a shot.&lt;/p&gt;
-
-&lt;h3 id=&#34;what-it-is-all-about&#34;&gt;What it is all about?&lt;/h3&gt;
-
-&lt;p&gt;If you&amp;rsquo;ve ever tried to make a game you must have noticed that you should manage your game objects. You should be able to draw the elements that can be drawn but there could be also entities without graphic representation like some special areas. The entities differ from one another. Hero, bullet, and a gun are all entities but are entirely different. Hero does have stats like &lt;em&gt;health&lt;/em&gt; or &lt;em&gt;stamina&lt;/em&gt; but this is totally not applicable to his gun.&lt;/p&gt;
-
-&lt;p&gt;Component Entity Frameworks are one way of dealing with this problem. They try to make entity as abstract as it can be and then add multiple components describing its properties. I&amp;rsquo;ve seen many implementations which tried to represent the &lt;em&gt;entity&lt;/em&gt; as a class which had list of components. One of the problems with this approach is performance. Implementing this you would probably say &lt;em&gt;&amp;lsquo;RenderComponent is so common that I should make it special and available from the entity class without searching in the component list.&amp;rsquo;&lt;/em&gt;. At least this is what I ended up with every time I tried to approach component entity systems.&lt;/p&gt;
-
-&lt;h3 id=&#34;what-is-different-from-artemis&#34;&gt;What is different from Artemis?&lt;/h3&gt;
-
-&lt;p&gt;While I liked the overall concept I didn&amp;rsquo;t like the code that was written to satisfy it. The more I read the Artemis code base the more I wanted to rewrite it from scratch. Starting from the beginning I&amp;rsquo;ve reimplemented almost completely (no entity tagging yet) Artemis and I believe I&amp;rsquo;ve cut number of classes in a half. We all know that the less code we have the less code can break ;)&lt;/p&gt;
-
-&lt;p&gt;Also I&amp;rsquo;ve implemented everything using TDD so every functionality has it&amp;rsquo;s unit test. This of course gives me very good indication whether my changes break something somewhere or not :)&lt;/p&gt;
-
-&lt;h3 id=&#34;enough-talking-show-me-the-code&#34;&gt;Enough talking, show me the code!&lt;/h3&gt;
-
-&lt;p&gt;Sure, sure. I wanted to keep the API very similar to Artemis&amp;rsquo;s:&lt;/p&gt;
-
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre&gt;&lt;code class=&#34;language-scala&#34; data-lang=&#34;scala&#34;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&#34;lineno&#34;&gt; 1 &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Position&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;x&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;var&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;y&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Int&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Component&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 2 &lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 3 &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;class&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;PositionUpdateSystem&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;world&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;World&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 4 &lt;/span&gt;      &lt;span class=&#34;k&#34;&gt;extends&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;SequentialProcessingSystem&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Aspect&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;forAll&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Position&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;])&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 5 &lt;/span&gt;      &lt;span class=&#34;k&#34;&gt;with&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;ComponentMapping&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 6 &lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 7 &lt;/span&gt;  &lt;span class=&#34;k&#34;&gt;override&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;def&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;process&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;entity&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Entity&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;delta&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Float&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;Unit&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 8 &lt;/span&gt;    &lt;span class=&#34;n&#34;&gt;component&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;Position&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;](&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;entity&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;match&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt; 9 &lt;/span&gt;      &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;Some&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;position&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;10 &lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;position&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;x&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;11 &lt;/span&gt;        &lt;span class=&#34;n&#34;&gt;position&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;y&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;12 &lt;/span&gt;      &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;None&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&amp;gt;&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;13 &lt;/span&gt;    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;14 &lt;/span&gt;  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;15 &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;16 &lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;17 &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;val&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;world&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;World&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;18 &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;world&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;registerSystem&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nc&#34;&gt;PositionUpdateSystem&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;world&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;19 &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;world&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;createEntity&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;Position&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
-&lt;span class=&#34;lineno&#34;&gt;20 &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;world&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;update&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-
-
-&lt;p&gt;On the first line we declare new component class &lt;code&gt;Position&lt;/code&gt;. Next up is declaration of entity processing system. In this case we extend &lt;code&gt;SequentialProcessingSystem&lt;/code&gt; which just give us all entities one by one. The interesting thing here is that every entity system has to has an &lt;code&gt;Aspect&lt;/code&gt;. Aspects define which entities can be processed by the system. Here we want all entities with &lt;code&gt;Position&lt;/code&gt; component.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;process&lt;/code&gt; method of entity system is the one that does the job. In this case we just get the component of type &lt;code&gt;Position&lt;/code&gt; for processed entity and increase its &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt; values by 1.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code&gt;component[T](entity: Entity)&lt;/code&gt; method is provided by &lt;code&gt;ComponentMapping&lt;/code&gt; trait. This trait requires that the class has the &lt;code&gt;world: World&lt;/code&gt; field so it can fetch the entity components.&lt;/p&gt;
-
-&lt;p&gt;Starting from line 17 we create new World, register our entity processing system and create single entity with component &lt;code&gt;Position(1, 2)&lt;/code&gt;. This four lines causes a lot of events under the hood. First of all when the system is registered &lt;em&gt;world&lt;/em&gt; creates a set of entities with matching aspect required by the system. If set for such aspect already exists it&amp;rsquo;s only passed to the system. Of course in this case we don&amp;rsquo;t have any entities yet, but empty set is created and is updated when entity with required aspect is created.&lt;/p&gt;
-
-&lt;p&gt;Then when the entity is created it&amp;rsquo;s automatically added to the right entity sets and is instantly available to all the system that are interested in it (based on component set).&lt;/p&gt;
-
-&lt;p&gt;Last line - 20 - is where everything comes to life. We perform one update of all systems. Here we have only one system with one entity and the logic is not very spectacular but hey, it&amp;rsquo;s something! After this call to &lt;code&gt;update&lt;/code&gt; method the entity position is going to be &lt;code&gt;Position(2, 3)&lt;/code&gt; of course .&lt;/p&gt;
-
-&lt;h3 id=&#34;that-s-all&#34;&gt;That&amp;rsquo;s all!&lt;/h3&gt;
-
-&lt;p&gt;OK, I think this post is already too long. I just wanted to present the implementation of component entity framework I&amp;rsquo;m working on. If you&amp;rsquo;d like to dive into the code you could view it on &lt;a href=&#34;https://github.com/marad/scalartemis&#34;&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Cheers!&lt;/p&gt;
-</description>
+      <description>Recently I&amp;rsquo;ve been creating entity component framework which I named Scalartemis. Name is direct descendant of two words. First (surprisingly) is Scala - the language it&amp;rsquo;s written in. Second is Artemis.
+Artemis is entity component framework that I wanted to port to Scala. During the process of porting I started to change things a bit to achieve better performance/api/usability. At some point I decided that this is pointless and I should start from scratch using the knowledge I&amp;rsquo;ve gained.</description>
     </item>
     
   </channel>
