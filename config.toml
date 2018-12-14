@@ -1,5 +1,5 @@
 title = "Marad Blog"
-baseUrl = "http://blog.radoszewski.pl/"
+baseUrl = "https://blog.radoszewski.pl/"
 languageCode = "en-us"
 theme = "radoszewski-blog"
 disqusShortname = "maradblog"
