@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jekyll on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/jekyll/</link>
+    <description>Recent content in Jekyll on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 19 Jul 2017 05:30:54 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/jekyll/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Jekyll To Hugo Migration Notes</title>
+      <link>http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/</link>
+      <pubDate>Wed, 19 Jul 2017 05:30:54 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/</guid>
+      <description>This blog is statically generated page hosted on my GitHub. Till recently the job of generating static files was handled by Jekyll. I didn&amp;rsquo;t do a lot of research before I first used it. I don&amp;rsquo;t think it would really help in my case. I used Jekyll because GitHub has support for it and it was convenient. I could store only the sources and GitHub will automatically compile the page when I push some changes.</description>
+    </item>
+    
+  </channel>
+</rss>

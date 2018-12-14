@@ -2,7 +2,7 @@
 <html lang="en-us">
 
     <head>
-        <meta name="generator" content="Hugo 0.29" />
+        <meta name="generator" content="Hugo 0.52" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,8 +16,8 @@
 
         <link rel="stylesheet" href="/css/main.css"/>
 
-        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet"> 
-        <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
 
         <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
     </head>
@@ -93,12 +93,11 @@ I&rsquo;d like to show a few fun things we can do with this.</p>
 <h2 id="simple-matching">Simple matching</h2>
 
 <p>Let&rsquo;s start with something simple:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">showcase</span><span style="color:#f92672">(</span><span style="">input</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Int</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">input</span><span style=""> </span><span style="color:#66d9ef">match</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#ae81ff">1</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;One&#34;</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#ae81ff">2</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;Two&#34;</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#66d9ef">_</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;Other!&#34;</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span> showcase<span style="color:#f92672">(</span>input<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Int</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=</span> input <span style="color:#66d9ef">match</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">1</span> <span style="color:#66d9ef">=&gt;</span> <span style="color:#e6db74">&#34;One&#34;</span>
+  <span style="color:#66d9ef">case</span> <span style="color:#ae81ff">2</span> <span style="color:#66d9ef">=&gt;</span> <span style="color:#e6db74">&#34;Two&#34;</span>
+  <span style="color:#66d9ef">case</span> <span style="color:#66d9ef">_</span> <span style="color:#66d9ef">=&gt;</span> <span style="color:#e6db74">&#34;Other!&#34;</span>
+<span style="color:#f92672">}</span></code></pre></div>
 <p>This is the simplest case - we have value of some concrete type and we want to execute some code
 depending on that value. This can be easily replaced with Java&rsquo;s <code>switch</code> instruction or bunch of
 <code>if-else</code> instructions.</p>
@@ -111,15 +110,14 @@ possible inputs is called <em>partial function</em>.</p>
 
 <p>OK, basic things are simple, but it&rsquo;s not that we couldn&rsquo;t write something like this easily in Java.
 Let us try something a bit different:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">sealed</span><span style=""> </span><span style="color:#66d9ef">abstract</span><span style=""> </span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">Base</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">First</span><span style=""> </span><span style="color:#66d9ef">extends</span><span style=""> </span><span style="color:#a6e22e">Base</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">Second</span><span style=""> </span><span style="color:#66d9ef">extends</span><span style=""> </span><span style="color:#a6e22e">Base</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">def</span><span style=""> </span><span style="">showcase</span><span style="color:#f92672">(</span><span style="">input</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Base</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">input</span><span style=""> </span><span style="color:#66d9ef">match</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">f</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">First</span><span style=""> </span><span style="color:#f92672">=&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;First&#34;</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">s</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Second</span><span style=""> </span><span style="color:#f92672">=&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;Second&#34;</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">sealed</span> <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Base</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">First</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Base</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Second</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Base</span>
+
+<span style="color:#66d9ef">def</span> showcase<span style="color:#f92672">(</span>input<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Base</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=</span> input <span style="color:#66d9ef">match</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">case</span> f<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">First</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;First&#34;</span>
+  <span style="color:#66d9ef">case</span> s<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Second</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#34;Second&#34;</span>
+<span style="color:#f92672">}</span></code></pre></div>
 <p>First of all - we declare the <em>Base</em> class. <code>sealed</code> keyword means that all direct subclasses of
 this class are contained in the same file. Then we declare subclasses <code>First</code> and <code>Second</code>.</p>
 
@@ -139,14 +137,12 @@ either of type <code>First</code> or <code>Second</code>. There is just no other
 <h2 id="matching-case-classes">Matching case classes</h2>
 
 <p>Assume that we have declared following class:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="">id</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Int</span><span style="color:#f92672">,</span><span style=""> </span><span style="">title</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">String</span><span style="color:#f92672">,</span><span style=""> </span><span style="">content</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">String</span><span style="color:#f92672">)</span><span style=""></span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">case</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span>id<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Int</span><span style="color:#f92672">,</span> title<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">String</span><span style="color:#f92672">,</span> content<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">String</span><span style="color:#f92672">)</span></code></pre></div>
 <p>Defining class as <code>case class</code> gives us some benefits for pattern matching:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">showcase</span><span style="color:#f92672">(</span><span style="">post</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Post</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">post</span><span style=""> </span><span style="color:#66d9ef">match</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#e6db74">&#34;post with id = 1&#34;</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span><span style=""> </span><span style="">title</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="">title</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span> showcase<span style="color:#f92672">(</span>post<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Post</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=</span> post <span style="color:#66d9ef">match</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=&gt;</span> <span style="color:#e6db74">&#34;post with id = 1&#34;</span>
+  <span style="color:#66d9ef">case</span> <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span> title<span style="color:#f92672">,</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=&gt;</span> title
+<span style="color:#f92672">}</span></code></pre></div>
 <p>As you can see it&rsquo;s quite different than matching the type. We get some <code>Post</code> as the input and then
 test it with our matches.</p>
 
@@ -158,10 +154,9 @@ variable. Once again - we ignore inputs that we are not interested in.</p>
 
 <p>But what if we want to check only certain parameter values and then have the whole object to play
 with? Don&rsquo;t worry - Scala got you covered!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">showcase</span><span style="color:#f92672">(</span><span style="">input</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Post</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">input</span><span style=""> </span><span style="color:#66d9ef">match</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">post</span><span style="color:#a6e22e">@Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="">post</span><span style="color:#f92672">.</span><span style="">content</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span> showcase<span style="color:#f92672">(</span>input<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Post</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=</span> input <span style="color:#66d9ef">match</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">case</span> post<span style="color:#a6e22e">@Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=&gt;</span> post<span style="color:#f92672">.</span>content
+<span style="color:#f92672">}</span></code></pre></div>
 <p>Above example shows that we can match the value of <code>id</code> and if the value matches 1 we want the whole
 object to be assigned to variable <code>post</code>. We can later use this variable as a reference to our
 matching object. In this case we just return this post&rsquo;s content.</p>
@@ -170,20 +165,17 @@ matching object. In this case we just return this post&rsquo;s content.</p>
 
 <p>You can&rsquo;t say <em>matching</em> without saying <em>regular expressions</em>, can you? Let&rsquo;s consider this simple
 expression for matching dates:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span><span style=""> </span><span style="">date</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#e6db74">&#34;&#34;&#34;(\d\d\d\d)-(\d\d)-(\d\d)&#34;&#34;&#34;</span><span style="color:#f92672">.</span><span style="">r</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span> date <span style="color:#66d9ef">=</span> <span style="color:#e6db74">&#34;&#34;&#34;(\d\d\d\d)-(\d\d)-(\d\d)&#34;&#34;&#34;</span><span style="color:#f92672">.</span>r</code></pre></div>
 <p>Having that you can already match any string you want with:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#e6db74">&#34;2015-04-05&#34;</span><span style=""> </span><span style="color:#66d9ef">match</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">date</span><span style="color:#f92672">(</span><span style="">year</span><span style="color:#f92672">,</span><span style=""> </span><span style="">month</span><span style="color:#f92672">,</span><span style=""> </span><span style="">day</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#e6db74">s&#34;It&#39;s year </span><span style="color:#e6db74">$year</span><span style="color:#e6db74">&#34;</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#e6db74">&#34;2015-04-05&#34;</span> <span style="color:#66d9ef">match</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">case</span> date<span style="color:#f92672">(</span>year<span style="color:#f92672">,</span> month<span style="color:#f92672">,</span> day<span style="color:#f92672">)</span> <span style="color:#66d9ef">=&gt;</span> <span style="color:#e6db74">s&#34;It&#39;s year </span><span style="color:#e6db74">$year</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#f92672">}</span></code></pre></div>
 <p>As you can see we use the variable name followed parentheses with all the matched groups from
 regular expressions. Then we can use this groups as normal variables. In this case we just want to
 match a year so maybe <code>month</code> and <code>day</code> could be replaced with <code>_</code>? Sure!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#e6db74">&#34;2015-04-05&#34;</span><span style=""> </span><span style="color:#66d9ef">match</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">case</span><span style=""> </span><span style="">date</span><span style="color:#f92672">(</span><span style="">year</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">*)</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#e6db74">s&#34;It&#39;s year </span><span style="color:#e6db74">$year</span><span style="color:#e6db74">&#34;</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#e6db74">&#34;2015-04-05&#34;</span> <span style="color:#66d9ef">match</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">case</span> date<span style="color:#f92672">(</span>year<span style="color:#f92672">,</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">*)</span> <span style="color:#66d9ef">=&gt;</span> <span style="color:#e6db74">s&#34;It&#39;s year </span><span style="color:#e6db74">$year</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#f92672">}</span></code></pre></div>
 <p>Whoah! What happend here? Well&hellip; as we are not interested in all remaining groups we can ignore
 them all with this simple notation <code>_*</code>. In this case it&rsquo;s not that different but if you had ten
 matching groups you&rsquo;d have to ignore them all explicitly. This way you can ignore them all together!</p>
@@ -192,23 +184,21 @@ matching groups you&rsquo;d have to ignore them all explicitly. This way you can
 
 <p>Last thing I&rsquo;d like to show you is that you can easily loop through lists of things that matches
 your criteria:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span><span style=""> </span><span style="">posts</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#a6e22e">List</span><span style="color:#f92672">(</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Title 1&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Content 1&#34;</span><span style="color:#f92672">),</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Title 2&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Content 2&#34;</span><span style="color:#f92672">),</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">3</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Other Title&#34;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#34;Content 3&#34;</span><span style="color:#f92672">))</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style=""> </span><span style="">p</span><span style=""> </span><span style="color:#66d9ef">@</span><span style=""> </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">*)</span><span style=""> </span><span style="color:#66d9ef">&lt;-</span><span style=""> </span><span style="">posts</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span> posts <span style="color:#66d9ef">=</span> <span style="color:#a6e22e">List</span><span style="color:#f92672">(</span>
+  <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Title 1&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Content 1&#34;</span><span style="color:#f92672">),</span>
+  <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">2</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Title 2&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Content 2&#34;</span><span style="color:#f92672">),</span>
+  <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">3</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Other Title&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;Content 3&#34;</span><span style="color:#f92672">))</span>
+
+<span style="color:#66d9ef">for</span><span style="color:#f92672">(</span> p <span style="color:#66d9ef">@</span> <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#ae81ff">1</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">*)</span> <span style="color:#66d9ef">&lt;-</span> posts<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span></code></pre></div>
 <p>This <code>for</code> loop will only execute it&rsquo;s body for the first post from the list. In this case we can
 match only one value because the 1 is passed statically. What if we could combine different matching
 styles to tell the compiler what we desire? Totally doable!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span><span style=""> </span><span style="">pattern</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="color:#e6db74">&#34;^Title.*&#34;</span><span style="color:#f92672">.</span><span style="">r</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">for</span><span style="color:#f92672">(</span><span style=""> </span><span style="">p</span><span style=""> </span><span style="color:#66d9ef">@</span><span style=""> </span><span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span><span style=""> </span><span style="">pattern</span><span style="color:#f92672">(),</span><span style=""> </span><span style="color:#66d9ef">_</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">&lt;-</span><span style=""> </span><span style="">posts</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">val</span> pattern <span style="color:#66d9ef">=</span> <span style="color:#e6db74">&#34;^Title.*&#34;</span><span style="color:#f92672">.</span>r
+<span style="color:#66d9ef">for</span><span style="color:#f92672">(</span> p <span style="color:#66d9ef">@</span> <span style="color:#a6e22e">Post</span><span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">,</span> pattern<span style="color:#f92672">(),</span> <span style="color:#66d9ef">_</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">&lt;-</span> posts<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span></code></pre></div>
 <p>What do we have here? We added simple regex pattern to match only titles that start with &ldquo;Title&rdquo;.
 Please note the parentheses after regex variable name. We haven&rsquo;t specified any names for matched
 groups because our regular expression doesn&rsquo;t capture any groups. Empty parentheses are still

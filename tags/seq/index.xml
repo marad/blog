@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Seq on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/seq/</link>
+    <description>Recent content in Seq on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 26 Apr 2015 15:07:45 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/seq/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>No one expects the Spanish functions</title>
+      <link>http://blog.radoszewski.pl/post/spanish-functions/</link>
+      <pubDate>Sun, 26 Apr 2015 15:07:45 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/spanish-functions/</guid>
+      <description>Scala, as a functional language, treats functions as first class citizens. Of course it&amp;rsquo;s also object oriented language. Those two paradigms can be seen as conflicting with each other. In this post I&amp;rsquo;d like to show you some different ways of creating a functions in Scala to show that these two worlds can coexist.
+Foreword Function Let us start by defining what a function is. Wikipedia supplies us with this:</description>
+    </item>
+    
+  </channel>
+</rss>

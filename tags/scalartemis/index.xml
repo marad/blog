@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scalartemis on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/scalartemis/</link>
+    <description>Recent content in Scalartemis on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 04 Apr 2015 22:06:00 +0200</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/scalartemis/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Scalartemis</title>
+      <link>http://blog.radoszewski.pl/post/scalartemis/</link>
+      <pubDate>Sat, 04 Apr 2015 22:06:00 +0200</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/scalartemis/</guid>
+      <description>Recently I&amp;rsquo;ve been creating entity component framework which I named Scalartemis. Name is direct descendant of two words. First (surprisingly) is Scala - the language it&amp;rsquo;s written in. Second is Artemis.
+Artemis is entity component framework that I wanted to port to Scala. During the process of porting I started to change things a bit to achieve better performance/api/usability. At some point I decided that this is pointless and I should start from scratch using the knowledge I&amp;rsquo;ve gained.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pages on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/page/</link>
+    <description>Recent content in Pages on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://blog.radoszewski.pl/page/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About</title>
+      <link>http://blog.radoszewski.pl/page/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/about/</guid>
+      <description>Professional Experience I&amp;rsquo;m working professionally as Java developer since 2011. Currently I work for Allegro Group. It&amp;rsquo;s the biggest online auctioning website in Poland. Previously I worked for smaller company named AIS.PL.
+Interests I like to do a lot of things, but the most fun for me are two below:
+ programming - I&amp;rsquo;ve started programming with C++ in 2002. Back then I was super excited about making games. Now, few years later - I&amp;rsquo;m still super excited about making games!</description>
+    </item>
+    
+    <item>
+      <title>Games</title>
+      <link>http://blog.radoszewski.pl/page/games/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/games/</guid>
+      <description>img.small { max-width: 200px; max-height: 100px; float: left; margin: 5px; }  I&amp;rsquo;ve started creating a lot of games in my life. Few of them were playable. There wasn&amp;rsquo;t to many games I actually finished. It is the path that was important - not the destination :)
+Money Soccer  Inspired with a game that we were playing at school desks I&amp;rsquo;ve created something like that in the virtual world.</description>
+    </item>
+    
+    <item>
+      <title>Music</title>
+      <link>http://blog.radoszewski.pl/page/music/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/music/</guid>
+      <description>This is the place for all the music I&amp;rsquo;ve decided to share with the world. Please don&amp;rsquo;t expect it to be very large collection. I don&amp;rsquo;t usually record my guitar sessions but when I do I think that they&amp;rsquo;re mostly not good enough for the world.
+Zegarmistrz Światła This one I&amp;rsquo;ve recorded years ago. It&amp;rsquo;s rather 5-minute solo with MIDI backing track but I think it&amp;rsquo;s pretty nice :) (except the MIDI part)</description>
+    </item>
+    
+    <item>
+      <title>Programs</title>
+      <link>http://blog.radoszewski.pl/page/programs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/programs/</guid>
+      <description>img.small { max-width: 200px; max-height: 100px; float: left; margin: 5px; }  All this programs are very old! For my current creations please visit my GitHub page! I&amp;rsquo;ve created tons of programs during my coding adventures. Unfortunately most of them wasn&amp;rsquo;t finished or wasn&amp;rsquo;t good enough to show it. In this section I&amp;rsquo;d like to present only a few of my programs.
+Windows Manifest Utility  Little program that I made to create Windows manifest files and embedding them in the executable files.</description>
+    </item>
+    
+  </channel>
+</rss>

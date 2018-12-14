@@ -2,7 +2,7 @@
 <html lang="en-us">
 
     <head>
-        <meta name="generator" content="Hugo 0.29" />
+        <meta name="generator" content="Hugo 0.52" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,8 +16,8 @@
 
         <link rel="stylesheet" href="/css/main.css"/>
 
-        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet"> 
-        <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
 
         <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
     </head>
@@ -116,10 +116,9 @@
 
 <p>Hugo has great <a href="https://gohugo.io/tutorials/github-pages-blog/">instructions on deploying with GitHub Page</a>. Last piece was to create a small publication script that will compile the page to the <em>gh-pages</em> branch and push it to the origin:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
-</span><span style="color:#75715e"></span><span style="">hugo
-</span><span style=""></span><span style="">cd</span><span style=""> public </span><span style="color:#f92672">&amp;&amp;</span><span style=""> git add --all </span><span style="color:#f92672">&amp;&amp;</span><span style=""> git commit -m </span><span style="color:#e6db74">&#34;Publishing to gh-pages&#34;</span><span style=""> </span><span style="color:#f92672">&amp;&amp;</span><span style=""> </span><span style="">cd</span><span style=""> ..
-</span><span style="">git push origin gh-pages</span></code></pre>
-</div>
+</span><span style="color:#75715e"></span>hugo
+cd public <span style="color:#f92672">&amp;&amp;</span> git add --all <span style="color:#f92672">&amp;&amp;</span> git commit -m <span style="color:#e6db74">&#34;Publishing to gh-pages&#34;</span> <span style="color:#f92672">&amp;&amp;</span> cd ..
+git push origin gh-pages</code></pre></div>
 <h2 id="enjoy">Enjoy!</h2>
 
 <p>That is all I needed to do in order to write this post 😄. I hope we&rsquo;ll get along with Hugo pretty well. Thank you for reading and see you next time!</p>

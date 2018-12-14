@@ -2,7 +2,7 @@
 <html lang="en-us">
 
     <head>
-        <meta name="generator" content="Hugo 0.29" />
+        <meta name="generator" content="Hugo 0.52" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,8 +16,8 @@
 
         <link rel="stylesheet" href="/css/main.css"/>
 
-        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet"> 
-        <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
 
         <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
     </head>
@@ -103,14 +103,13 @@ collector returns.</p>
 
 <p>Let&rsquo;s see the collector interface:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">interface</span><span style=""> </span><span style="color:#a6e22e">Collector</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">,</span><span style="">A</span><span style="color:#f92672">,</span><span style="">R</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">    </span><span style="">Supplier</span><span style="color:#f92672">&lt;</span><span style="">A</span><span style="color:#f92672">&gt;</span><span style="">          </span><span style="color:#a6e22e">supplier</span><span style=""></span><span style="color:#f92672">()</span><span style="">
-</span><span style="">    </span><span style="">BiConsumer</span><span style="color:#f92672">&lt;</span><span style="">A</span><span style="color:#f92672">,</span><span style="">T</span><span style="color:#f92672">&gt;</span><span style="">      </span><span style="color:#a6e22e">accumulator</span><span style=""></span><span style="color:#f92672">()</span><span style="">
-</span><span style="">    </span><span style="">BinaryOperator</span><span style="color:#f92672">&lt;</span><span style="">A</span><span style="color:#f92672">&gt;</span><span style="">    </span><span style="color:#a6e22e">combiner</span><span style=""></span><span style="color:#f92672">()</span><span style="">
-</span><span style="">    </span><span style="">Function</span><span style="color:#f92672">&lt;</span><span style="">A</span><span style="color:#f92672">,</span><span style="">R</span><span style="color:#f92672">&gt;</span><span style="">        </span><span style="color:#a6e22e">finisher</span><span style=""></span><span style="color:#f92672">()</span><span style="">
-</span><span style="">    </span><span style="">Set</span><span style="color:#f92672">&lt;</span><span style="">Characteristics</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#a6e22e">characteristics</span><span style=""></span><span style="color:#f92672">()</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Collector</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span>A<span style="color:#f92672">,</span>R<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+    Supplier<span style="color:#f92672">&lt;</span>A<span style="color:#f92672">&gt;</span>          <span style="color:#a6e22e">supplier</span><span style="color:#f92672">()</span>
+    BiConsumer<span style="color:#f92672">&lt;</span>A<span style="color:#f92672">,</span>T<span style="color:#f92672">&gt;</span>      <span style="color:#a6e22e">accumulator</span><span style="color:#f92672">()</span>
+    BinaryOperator<span style="color:#f92672">&lt;</span>A<span style="color:#f92672">&gt;</span>    <span style="color:#a6e22e">combiner</span><span style="color:#f92672">()</span>
+    Function<span style="color:#f92672">&lt;</span>A<span style="color:#f92672">,</span>R<span style="color:#f92672">&gt;</span>        <span style="color:#a6e22e">finisher</span><span style="color:#f92672">()</span>
+    Set<span style="color:#f92672">&lt;</span>Characteristics<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">characteristics</span><span style="color:#f92672">()</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>As you can see the collector is a generic type that has type parameters named <em>T</em>, <em>A</em>, and <em>R</em>.
 First one (<em>T</em>) is the type of a stream we want to collect. For example for <code>Stream&lt;String&gt;</code>
@@ -166,29 +165,26 @@ So the collector generic parameters should be <code>Collector&lt;X, Map&lt;X,Int
 
 <p>To implement the collector we can simply implement the interface:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span><span style=""> </span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">MostPopular</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#66d9ef">implements</span><span style=""> </span><span style="">Collector</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">,</span><span style=""> </span><span style="">Map</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">,</span><span style=""> </span><span style="">Integer</span><span style="color:#f92672">&gt;,</span><span style=""> </span><span style="">Optional</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">&gt;&gt;</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#75715e">// all the methods listed for collector above
-</span><span style="color:#75715e"></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MostPopular</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> Collector<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> Map<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> Integer<span style="color:#f92672">&gt;,</span> Optional<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span> <span style="color:#f92672">{</span>
+  <span style="color:#75715e">// all the methods listed for collector above
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span></code></pre></div>
 
 <p>Now we can just implement the functions. Let&rsquo;s start with simple accumulator supplier:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">public</span><span style=""> </span><span style="">Supplier</span><span style="color:#f92672">&lt;</span><span style="">Map</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">,</span><span style=""> </span><span style="">Integer</span><span style="color:#f92672">&gt;&gt;</span><span style=""> </span><span style="color:#a6e22e">supplier</span><span style=""></span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">HashMap:</span><span style="color:#f92672">:</span><span style="color:#66d9ef">new</span><span style="color:#f92672">;</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span>
+<span style="color:#66d9ef">public</span> Supplier<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> Integer<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">supplier</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">return</span> HashMap:<span style="color:#f92672">:</span><span style="color:#66d9ef">new</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>Here we simply return the reference to the <code>HashMap</code> constructor as the supplier. Whenever the
 supplier method is called new <code>HashMap</code> will be created.</p>
 
 <p>Moving on, to the accumulator:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">public</span><span style=""> </span><span style="">BiConsumer</span><span style="color:#f92672">&lt;</span><span style="">Map</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">,</span><span style=""> </span><span style="">Integer</span><span style="color:#f92672">&gt;,</span><span style=""> </span><span style="">T</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#a6e22e">accumulator</span><span style=""></span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">(</span><span style="">acc</span><span style="color:#f92672">,</span><span style=""> </span><span style="">elem</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="">acc</span><span style="color:#f92672">.</span><span style="color:#a6e22e">merge</span><span style="color:#f92672">(</span><span style="">elem</span><span style="color:#f92672">,</span><span style=""> </span><span style="">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#f92672">(</span><span style="">old</span><span style="color:#f92672">,</span><span style=""> </span><span style="">v</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="">old</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">v</span><span style="color:#f92672">);</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span>
+<span style="color:#66d9ef">public</span> BiConsumer<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> Integer<span style="color:#f92672">&gt;,</span> T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">accumulator</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>acc<span style="color:#f92672">,</span> elem<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> acc<span style="color:#f92672">.</span><span style="color:#a6e22e">merge</span><span style="color:#f92672">(</span>elem<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> <span style="color:#f92672">(</span>old<span style="color:#f92672">,</span> v<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> old <span style="color:#f92672">+</span> v<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>This method should be used to add another element to our accumulator. In this implementation we
 simply fetch the occurrence count for this element from the map. If the value is <code>null</code> then this is
@@ -201,13 +197,12 @@ times.</p>
 
 <p>Next on the list is the combiner method:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">public</span><span style=""> </span><span style="">BinaryOperator</span><span style="color:#f92672">&lt;</span><span style="">Map</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">,</span><span style=""> </span><span style="">Integer</span><span style="color:#f92672">&gt;&gt;</span><span style=""> </span><span style="color:#a6e22e">combiner</span><span style=""></span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">(</span><span style="">acc1</span><span style="color:#f92672">,</span><span style=""> </span><span style="">acc2</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">throw</span><span style=""> </span><span style="color:#66d9ef">new</span><span style=""> </span><span style="">UnsupportedOperationException</span><span style="color:#f92672">();</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">};</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span>
+<span style="color:#66d9ef">public</span> BinaryOperator<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> Integer<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">combiner</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>acc1<span style="color:#f92672">,</span> acc2<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> UnsupportedOperationException<span style="color:#f92672">();</span>
+  <span style="color:#f92672">};</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>Well&hellip; this is not what you expected at all. I can tell! Let me explain myself. The combiner method
 is used when the process can be parallelized. This method is here to merge processing results from
@@ -221,13 +216,12 @@ collection.</p>
 
 <p>Let&rsquo;s almost finish with finisher method implementation:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">public</span><span style=""> </span><span style="">Function</span><span style="color:#f92672">&lt;</span><span style="">Map</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">,</span><span style=""> </span><span style="">Integer</span><span style="color:#f92672">&gt;,</span><span style=""> </span><span style="">Optional</span><span style="color:#f92672">&lt;</span><span style="">T</span><span style="color:#f92672">&gt;&gt;</span><span style=""> </span><span style="color:#a6e22e">finisher</span><span style=""></span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="color:#f92672">(</span><span style="">acc</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="">acc</span><span style="color:#f92672">.</span><span style="color:#a6e22e">entrySet</span><span style="color:#f92672">().</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span><span style="">
-</span><span style="">    </span><span style="color:#f92672">.</span><span style="color:#a6e22e">reduce</span><span style="color:#f92672">((</span><span style="">a</span><span style="color:#f92672">,</span><span style=""> </span><span style="">b</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="">a</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">b</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">?</span><span style=""> </span><span style="">a</span><span style=""> </span><span style="color:#f92672">:</span><span style=""> </span><span style="">b</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">    </span><span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span><span style="">Map</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">::</span><span style="">getKey</span><span style="color:#f92672">);</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span>
+<span style="color:#66d9ef">public</span> Function<span style="color:#f92672">&lt;</span>Map<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">,</span> Integer<span style="color:#f92672">&gt;,</span> Optional<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;&gt;</span> <span style="color:#a6e22e">finisher</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>acc<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> acc<span style="color:#f92672">.</span><span style="color:#a6e22e">entrySet</span><span style="color:#f92672">().</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+    <span style="color:#f92672">.</span><span style="color:#a6e22e">reduce</span><span style="color:#f92672">((</span>a<span style="color:#f92672">,</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> a<span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">()</span> <span style="color:#f92672">&gt;</span> b<span style="color:#f92672">.</span><span style="color:#a6e22e">getValue</span><span style="color:#f92672">()</span> <span style="color:#f92672">?</span> a <span style="color:#f92672">:</span> b<span style="color:#f92672">)</span>
+    <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>Map<span style="color:#f92672">.</span><span style="color:#a6e22e">Entry</span><span style="color:#f92672">::</span>getKey<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>Here we want to extract the final result from accumulator.
 This implementation is pretty straight forward if you are used to the stream-way of processing data.
@@ -241,23 +235,21 @@ with the most popular value.</p>
 
 <p>Last method that we have to implement is the <code>characteristics()</code> method:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">public</span><span style=""> </span><span style="">Set</span><span style="color:#f92672">&lt;</span><span style="">Characteristics</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#a6e22e">characteristics</span><span style=""></span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">Collections</span><span style="color:#f92672">.</span><span style="color:#a6e22e">emptySet</span><span style="color:#f92672">();</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Override</span>
+<span style="color:#66d9ef">public</span> Set<span style="color:#f92672">&lt;</span>Characteristics<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">characteristics</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">return</span> Collections<span style="color:#f92672">.</span><span style="color:#a6e22e">emptySet</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>Not very exciting but does the job. I guess we could use <code>UNORDERED</code> here as well.</p>
 
 <p>Finally you can see whole implementation <a href="https://github.com/marad/java8-custom-collector-example">here</a>. Having this collector we can simply use it to
 find the most popular element in collection of any type:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="">Lists</span><span style="color:#f92672">.</span><span style="color:#a6e22e">newArrayList</span><span style="color:#f92672">(</span><span style="">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="">1</span><span style="color:#f92672">,</span><span style=""> </span><span style="">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="">2</span><span style="color:#f92672">,</span><span style=""> </span><span style="">3</span><span style="color:#f92672">,</span><span style=""> </span><span style="">4</span><span style="color:#f92672">,</span><span style=""> </span><span style="">5</span><span style="color:#f92672">,</span><span style=""> </span><span style="">5</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span><span style=""> </span><span style="">MostPopular</span><span style="color:#f92672">&lt;&gt;());</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="">Lists</span><span style="color:#f92672">.</span><span style="color:#a6e22e">newArrayList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;d&#39;</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span><span style=""> </span><span style="">MostPopular</span><span style="color:#f92672">&lt;&gt;());</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Lists<span style="color:#f92672">.</span><span style="color:#a6e22e">newArrayList</span><span style="color:#f92672">(</span>1<span style="color:#f92672">,</span> 1<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 2<span style="color:#f92672">,</span> 3<span style="color:#f92672">,</span> 4<span style="color:#f92672">,</span> 5<span style="color:#f92672">,</span> 5<span style="color:#f92672">)</span>
+  <span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> MostPopular<span style="color:#f92672">&lt;&gt;());</span>
+
+Lists<span style="color:#f92672">.</span><span style="color:#a6e22e">newArrayList</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;d&#39;</span><span style="color:#f92672">)</span>
+  <span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> MostPopular<span style="color:#f92672">&lt;&gt;());</span></code></pre></div>
 
 <h1 id="summing-up">Summing up</h1>
 

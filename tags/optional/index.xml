@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Optional on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/optional/</link>
+    <description>Recent content in Optional on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 19 Apr 2015 19:06:46 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/optional/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Optional in Java 8</title>
+      <link>http://blog.radoszewski.pl/post/java-optional/</link>
+      <pubDate>Sun, 19 Apr 2015 19:06:46 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/java-optional/</guid>
+      <description>Recently I&amp;rsquo;ve been a part of self-educating team. My workmates and I decided to learn Java 8 features so we could use it at work. Each of us have one or two topics to cover and we had to teach each other about the cool new features like streams or better type inference. My part was to cover the Optional class, and today I&amp;rsquo;d like to show and explain how and why you should use it.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -2,7 +2,7 @@
 <html lang="en-us">
 
     <head>
-        <meta name="generator" content="Hugo 0.29" />
+        <meta name="generator" content="Hugo 0.52" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,8 +16,8 @@
 
         <link rel="stylesheet" href="/css/main.css"/>
 
-        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet"> 
-        <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
 
         <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
     </head>
@@ -163,13 +163,11 @@ may want to wrap it with <code>Try(expr)</code>. This will return <code>Success(
 function or <code>Failure(ex: Throwable)</code> with the exception that was thrown by that function. If you
 closely examine all monad laws you can see that the <em>left identity</em> law does not hold.</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="">unit</span><span style="color:#f92672">(</span><span style="">x</span><span style="color:#f92672">)</span><span style=""> </span><span style="">flatMap</span><span style=""> </span><span style="">f</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">f</span><span style="color:#f92672">(</span><span style="">x</span><span style="color:#f92672">)</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala">unit<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span> flatMap f <span style="color:#f92672">==</span> f<span style="color:#f92672">(</span>x<span style="color:#f92672">)</span></code></pre></div>
 
 <p>This tells us that following should be true:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#a6e22e">Try</span><span style="color:#f92672">(</span><span style="">expr</span><span style="color:#f92672">)</span><span style=""> </span><span style="">flatMap</span><span style=""> </span><span style="">f</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">f</span><span style="color:#f92672">(</span><span style="">expr</span><span style="color:#f92672">)</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#a6e22e">Try</span><span style="color:#f92672">(</span>expr<span style="color:#f92672">)</span> flatMap f <span style="color:#f92672">==</span> f<span style="color:#f92672">(</span>expr<span style="color:#f92672">)</span></code></pre></div>
 
 <p>The law works fine if everything goes smooth and no exception is thrown. The problem pops up when
 either <code>f</code> or <code>expr</code> throws an exception. The left hand side <code>Try(expr) flatMap f</code> never throws an
@@ -182,13 +180,12 @@ for us. We are not mathematicians (no offense ment!). We just want things to wor
 <p>Monadic structure gives us, developers, a uniform way of defining a chain of transformations on
 virtually any type. Just look at this:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#a6e22e">List</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;d&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;d&#39;</span><span style="color:#f92672">,</span><span style=""> </span><span style="color:#e6db74">&#39;e&#39;</span><span style="color:#f92672">)</span><span style="">      </span><span style="color:#75715e">// List[Char]
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#f92672">.</span><span style="">groupBy</span><span style="color:#f92672">(</span><span style="">identity</span><span style="color:#f92672">)</span><span style="">                                      </span><span style="color:#75715e">// Map[Char, List[Char]]
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#f92672">.</span><span style="">mapValues</span><span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">.</span><span style="">size</span><span style="color:#f92672">)</span><span style="">                                      </span><span style="color:#75715e">// Map[Char, Int]
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#f92672">.</span><span style="">reduceLeftOption</span><span style="color:#f92672">((</span><span style="">a</span><span style="color:#f92672">,</span><span style="">b</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#f92672">(</span><span style="">a</span><span style="color:#f92672">.</span><span style="">_2</span><span style=""> </span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">b</span><span style="color:#f92672">.</span><span style="">_2</span><span style="color:#f92672">)</span><span style=""> </span><span style="">a</span><span style=""> </span><span style="color:#66d9ef">else</span><span style=""> </span><span style="">b</span><span style="color:#f92672">)</span><span style="">   </span><span style="color:#75715e">// Option[(Char, Int)]
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#f92672">.</span><span style="">map</span><span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">.</span><span style="">_1</span><span style="color:#f92672">)</span><span style="">                                              </span><span style="color:#75715e">// Option[Char]
-</span><span style="color:#75715e"></span><span style="">    </span><span style="color:#f92672">.</span><span style="">foreach</span><span style="color:#f92672">(</span><span style="">println</span><span style="color:#f92672">)</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#a6e22e">List</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;a&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;b&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;c&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;d&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;d&#39;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#39;e&#39;</span><span style="color:#f92672">)</span>      <span style="color:#75715e">// List[Char]
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span>groupBy<span style="color:#f92672">(</span>identity<span style="color:#f92672">)</span>                                      <span style="color:#75715e">// Map[Char, List[Char]]
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span>mapValues<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">.</span>size<span style="color:#f92672">)</span>                                      <span style="color:#75715e">// Map[Char, Int]
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span>reduceLeftOption<span style="color:#f92672">((</span>a<span style="color:#f92672">,</span>b<span style="color:#f92672">)</span> <span style="color:#66d9ef">=&gt;</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>a<span style="color:#f92672">.</span>_2 <span style="color:#f92672">&gt;</span> b<span style="color:#f92672">.</span>_2<span style="color:#f92672">)</span> a <span style="color:#66d9ef">else</span> b<span style="color:#f92672">)</span>   <span style="color:#75715e">// Option[(Char, Int)]
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span>map<span style="color:#f92672">(</span><span style="color:#66d9ef">_</span><span style="color:#f92672">.</span>_1<span style="color:#f92672">)</span>                                              <span style="color:#75715e">// Option[Char]
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">.</span>foreach<span style="color:#f92672">(</span>println<span style="color:#f92672">)</span></code></pre></div>
 
 <p>The above code finds the most popular element in the list. In this example the most popular element
 is <code>c</code> because it appears 4 times. I&rsquo;ve defined a chain of transformations to find this value. The
@@ -207,8 +204,7 @@ fantastic :)</p>
 <p>You may have noticed that I didn&rsquo;t use the <code>flatMap</code> method. In fact every method that I used above
 CAN be implemented using one or more <code>flatMap</code> calls. Let&rsquo;s take simple <code>map</code> for example:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="">m</span><span style=""> </span><span style="">map</span><span style=""> </span><span style="">f</span><span style=""> </span><span style="color:#f92672">==</span><span style=""> </span><span style="">m</span><span style=""> </span><span style="">flatMap</span><span style=""> </span><span style="color:#f92672">(</span><span style="">x</span><span style=""> </span><span style="color:#66d9ef">=&gt;</span><span style=""> </span><span style="">unit</span><span style="color:#f92672">(</span><span style="">f</span><span style="color:#f92672">(</span><span style="">x</span><span style="color:#f92672">)))</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala">m map f <span style="color:#f92672">==</span> m flatMap <span style="color:#f92672">(</span>x <span style="color:#66d9ef">=&gt;</span> unit<span style="color:#f92672">(</span>f<span style="color:#f92672">(</span>x<span style="color:#f92672">)))</span></code></pre></div>
 
 <p>These methods are just some combinations of <code>flatMap</code> that are useful and were given a name.  Of
 course they are not implemented with <code>flatMap</code> in Scala because it would hurt the performance, but
@@ -228,8 +224,7 @@ languages like Haskell.</p>
 <p>You see, in pure functional languages you cannot define the order of operations. You can just define
 some equivalences. What do I mean? Take a look:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">add</span><span style="color:#f92672">(</span><span style="">a</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Int</span><span style="color:#f92672">,</span><span style=""> </span><span style="">b</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Int</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#66d9ef">=</span><span style=""> </span><span style="">a</span><span style=""> </span><span style="color:#f92672">+</span><span style=""> </span><span style="">b</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span> add<span style="color:#f92672">(</span>a<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Int</span><span style="color:#f92672">,</span> b<span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Int</span><span style="color:#f92672">)</span> <span style="color:#66d9ef">=</span> a <span style="color:#f92672">+</span> b</code></pre></div>
 
 <p>We are used to call this a function definition but what really happens here? We just tell that the
 <code>add(x,y)</code> string can be replaced with <code>x + y</code> string on the code level. In fact we could evaluate
@@ -238,8 +233,7 @@ pure functional code just by replacing strings!</p>
 <p>Going back to the monads. In pure functional languages to define the order of computation you would
 have to invoke a function on a call to function etc.:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="">f</span><span style="color:#f92672">(</span><span style="">g</span><span style="color:#f92672">(</span><span style="">h</span><span style="color:#f92672">(</span><span style="">x</span><span style="color:#f92672">)))</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala">f<span style="color:#f92672">(</span>g<span style="color:#f92672">(</span>h<span style="color:#f92672">(</span>x<span style="color:#f92672">)))</span></code></pre></div>
 
 <p>You can see that here we have to evaluate <code>h(x)</code> then pass the value to <code>g</code> and finally to <code>f</code>. Try
 to imagine bigger program written like that. Well yes, it would be unreadable!</p>
@@ -251,12 +245,11 @@ the most popular element in list you can see that we strictly defined the order 
 Haskell has some syntactic sugar on top of it so instead of writing <code>flatMap</code> (which in Haskell is
 <code>&gt;&gt;=</code>) you can write it imperatively-ish. The <code>do</code> notation:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#66d9ef">do</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">x</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style=""> </span><span style="color:#a6e22e">thing1</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">y</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style=""> </span><span style="color:#a6e22e">func1</span><span style=""> </span><span style="color:#a6e22e">x</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">thing2</span><span style="">
-</span><span style="">  </span><span style="color:#a6e22e">z</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style=""> </span><span style="color:#a6e22e">func2</span><span style=""> </span><span style="color:#a6e22e">y</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#66d9ef">do</span>
+  <span style="color:#a6e22e">x</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">thing1</span>
+  <span style="color:#a6e22e">y</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">func1</span> <span style="color:#a6e22e">x</span>
+  <span style="color:#a6e22e">thing2</span>
+  <span style="color:#a6e22e">z</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">func2</span> <span style="color:#a6e22e">y</span></code></pre></div>
 
 <p>What is going on here? The <code>thing1</code> and <code>thing2</code> are monadic values (we can call <code>flatMap</code> on them).
 The <code>func1</code> and <code>func2</code> returns a monadic values. What is going on here is that first we get the
@@ -266,9 +259,8 @@ clearly defines the order of operations.</p>
 
 <p>Example above is exactly the same as:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">thing1</span><span style=""> </span><span style="color:#f92672">&gt;&gt;=</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">\x</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#a6e22e">func1</span><span style=""> </span><span style="color:#a6e22e">x</span><span style=""> </span><span style="color:#f92672">&gt;&gt;=</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">\y</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#a6e22e">thing2</span><span style="">
-</span><span style="">       </span><span style="color:#f92672">&gt;&gt;=</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">\</span><span style="color:#66d9ef">_</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#a6e22e">func2</span><span style=""> </span><span style="color:#a6e22e">y</span><span style=""> </span><span style="color:#f92672">&gt;&gt;=</span><span style=""> </span><span style="">(</span><span style="color:#a6e22e">\z</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#a6e22e">return</span><span style=""> </span><span style="color:#a6e22e">z</span><span style="">))))</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">thing1</span> <span style="color:#f92672">&gt;&gt;=</span> (<span style="color:#a6e22e">\x</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">func1</span> <span style="color:#a6e22e">x</span> <span style="color:#f92672">&gt;&gt;=</span> (<span style="color:#a6e22e">\y</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">thing2</span>
+       <span style="color:#f92672">&gt;&gt;=</span> (<span style="color:#a6e22e">\</span><span style="color:#66d9ef">_</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">func2</span> <span style="color:#a6e22e">y</span> <span style="color:#f92672">&gt;&gt;=</span> (<span style="color:#a6e22e">\z</span> <span style="color:#f92672">-&gt;</span> <span style="color:#a6e22e">return</span> <span style="color:#a6e22e">z</span>))))</code></pre></div>
 
 <p>You see that the <code>do</code> notation is a bit more readable :) This example is taken from <a href="https://wiki.haskell.org/Monad">Haskell
 Wiki</a>.</p>
@@ -283,11 +275,10 @@ closest thing to state you can get.</p>
 state everywhere! How to deal with this in Haskell? You guessed it - monads. Lets look at this quick
 example:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">main</span><span style=""> </span><span style="color:#f92672">::</span><span style=""> </span><span style="color:#66d9ef">IO</span><span style=""> </span><span style="">()</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">main</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#66d9ef">do</span><span style="">
-</span><span style="">         </span><span style="color:#a6e22e">c</span><span style=""> </span><span style="color:#f92672">&lt;-</span><span style=""> </span><span style="color:#a6e22e">getChar</span><span style="">
-</span><span style="">         </span><span style="color:#a6e22e">putChar</span><span style=""> </span><span style="color:#a6e22e">c</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">main</span> <span style="color:#f92672">::</span> <span style="color:#66d9ef">IO</span> ()
+<span style="color:#a6e22e">main</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">do</span>
+         <span style="color:#a6e22e">c</span> <span style="color:#f92672">&lt;-</span> <span style="color:#a6e22e">getChar</span>
+         <span style="color:#a6e22e">putChar</span> <span style="color:#a6e22e">c</span></code></pre></div>
 
 <p>This program, as you might suspect, reads one character from the standard input and writes it to
 standard output. To put it simply: awaits for keyboard button to be pressed and prints the letter to
@@ -300,14 +291,12 @@ functions.</p>
 
 <p>We can rewrite it using <code>flatMap</code> (which in Haskell is <code>&gt;&gt;=</code>):</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">main</span><span style=""> </span><span style="color:#f92672">::</span><span style=""> </span><span style="color:#66d9ef">IO</span><span style=""> </span><span style="">()</span><span style="">
-</span><span style=""></span><span style="color:#a6e22e">main</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="color:#a6e22e">getChar</span><span style=""> </span><span style="color:#f92672">&gt;&gt;=</span><span style=""> </span><span style="color:#a6e22e">putChar</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-haskell" data-lang="haskell"><span style="color:#a6e22e">main</span> <span style="color:#f92672">::</span> <span style="color:#66d9ef">IO</span> ()
+<span style="color:#a6e22e">main</span> <span style="color:#f92672">=</span> <span style="color:#a6e22e">getChar</span> <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#a6e22e">putChar</span></code></pre></div>
 
 <p>In Scala it would look like:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span><span style=""> </span><span style="">main</span><span style="color:#f92672">()</span><span style="color:#66d9ef">:</span><span style=""> </span><span style="color:#66d9ef">Unit</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">getChar</span><span style="color:#f92672">.</span><span style="">flatMap</span><span style="color:#f92672">(</span><span style="">putChar</span><span style="color:#f92672">)</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-scala" data-lang="scala"><span style="color:#66d9ef">def</span> main<span style="color:#f92672">()</span><span style="color:#66d9ef">:</span> <span style="color:#66d9ef">Unit</span> <span style="color:#f92672">=</span> getChar<span style="color:#f92672">.</span>flatMap<span style="color:#f92672">(</span>putChar<span style="color:#f92672">)</span></code></pre></div>
 
 <p>The <code>getChar</code> function returns a monad. If we invoke <code>flatMap</code> on it gives us a key pressed on the keyboard as a
 parameter to our function. Our function here is <code>putChar</code>. It takes one char and returns a monad

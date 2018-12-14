@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/categories/</link>
+    <description>Recent content in Categories on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 09 Apr 2015 17:47:55 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/categories/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Blog</title>
+      <link>http://blog.radoszewski.pl/categories/blog/</link>
+      <pubDate>Thu, 09 Apr 2015 17:47:55 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/categories/blog/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Editing</title>
+      <link>http://blog.radoszewski.pl/categories/editing/</link>
+      <pubDate>Mon, 06 Apr 2015 09:59:31 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/categories/editing/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Programming</title>
+      <link>http://blog.radoszewski.pl/categories/programming/</link>
+      <pubDate>Sun, 05 Apr 2015 21:54:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/categories/programming/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Programming Java</title>
+      <link>http://blog.radoszewski.pl/categories/programming-java/</link>
+      <pubDate>Fri, 31 Jul 2015 08:20:10 +0200</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/categories/programming-java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Programming Scala</title>
+      <link>http://blog.radoszewski.pl/categories/programming-scala/</link>
+      <pubDate>Tue, 10 Nov 2015 12:17:17 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/categories/programming-scala/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

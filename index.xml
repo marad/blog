@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Marad Blog</title>
+    <link>http://blog.radoszewski.pl/</link>
+    <description>Recent content on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 19 Jul 2017 05:30:54 +0000</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Jekyll To Hugo Migration Notes</title>
+      <link>http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/</link>
+      <pubDate>Wed, 19 Jul 2017 05:30:54 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/jekyll-to-hugo-migration/</guid>
+      <description>This blog is statically generated page hosted on my GitHub. Till recently the job of generating static files was handled by Jekyll. I didn&amp;rsquo;t do a lot of research before I first used it. I don&amp;rsquo;t think it would really help in my case. I used Jekyll because GitHub has support for it and it was convenient. I could store only the sources and GitHub will automatically compile the page when I push some changes.</description>
+    </item>
+    
+    <item>
+      <title>The Cake Pattern</title>
+      <link>http://blog.radoszewski.pl/post/cake-pattern/</link>
+      <pubDate>Tue, 10 Nov 2015 12:17:17 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/cake-pattern/</guid>
+      <description>Let&amp;rsquo;s think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows. Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us.</description>
+    </item>
+    
+    <item>
+      <title>Custom Collectors in Java 8</title>
+      <link>http://blog.radoszewski.pl/post/custom-java-8-collectors/</link>
+      <pubDate>Fri, 31 Jul 2015 08:20:10 +0200</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/custom-java-8-collectors/</guid>
+      <description>Java 8 sure did bring a few interesting features. One of them are definitely the streams. Internet is full of the instructions on how to create and use them. Today I&amp;rsquo;d like to talk about something a little bit different - collectors.
+What is a collector? Streams can be used to process collections. The way it works is that we first define all transformations on the collection with non-terminal operations like map, flatMap, filter, etc.</description>
+    </item>
+    
+    <item>
+      <title>The Mighty Monad</title>
+      <link>http://blog.radoszewski.pl/post/mighty-monad/</link>
+      <pubDate>Sun, 31 May 2015 11:52:40 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/mighty-monad/</guid>
+      <description>When you begin to learn functional programming everybody is telling you that pure functions with no side effects are the only way to go. This is fine up to the point. Sooner or later you will hear about monads. This post tries to explain what the monad is and why you should use it.
+Prerequisites To fully understand the examples here you should know at least basics of Scala language.</description>
+    </item>
+    
+    <item>
+      <title>No one expects the Spanish functions</title>
+      <link>http://blog.radoszewski.pl/post/spanish-functions/</link>
+      <pubDate>Sun, 26 Apr 2015 15:07:45 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/spanish-functions/</guid>
+      <description>Scala, as a functional language, treats functions as first class citizens. Of course it&amp;rsquo;s also object oriented language. Those two paradigms can be seen as conflicting with each other. In this post I&amp;rsquo;d like to show you some different ways of creating a functions in Scala to show that these two worlds can coexist.
+Foreword Function Let us start by defining what a function is. Wikipedia supplies us with this:</description>
+    </item>
+    
+    <item>
+      <title>Optional in Java 8</title>
+      <link>http://blog.radoszewski.pl/post/java-optional/</link>
+      <pubDate>Sun, 19 Apr 2015 19:06:46 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/java-optional/</guid>
+      <description>Recently I&amp;rsquo;ve been a part of self-educating team. My workmates and I decided to learn Java 8 features so we could use it at work. Each of us have one or two topics to cover and we had to teach each other about the cool new features like streams or better type inference. My part was to cover the Optional class, and today I&amp;rsquo;d like to show and explain how and why you should use it.</description>
+    </item>
+    
+    <item>
+      <title>Why I abandoned my old blog?</title>
+      <link>http://blog.radoszewski.pl/post/previous-blog/</link>
+      <pubDate>Thu, 09 Apr 2015 17:47:55 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/previous-blog/</guid>
+      <description>This blog has very little content, but I&amp;rsquo;m not new to blogging at all. In fact I&amp;rsquo;ve been publishing my thoughts and ideas online for a few years now. The only problem is that I&amp;rsquo;ve got tired of it. I don&amp;rsquo;t mean blogging. I mean writing posts.
+I can hear you ask &amp;ldquo;What is the difference?&amp;rdquo;. Well&amp;hellip; I was using Wordpress. This software is great for blogging, but sometimes I wanted more.</description>
+    </item>
+    
+    <item>
+      <title>Don&#39;t Use Vim if you like your job!</title>
+      <link>http://blog.radoszewski.pl/post/dont-use-vim/</link>
+      <pubDate>Mon, 06 Apr 2015 09:59:31 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/dont-use-vim/</guid>
+      <description>If you&amp;rsquo;re like me you probably like to make your life easier wherever and whenever it is possible. I also like to pick up the gauntlet and try something new and challenging. This is why I started to use Vim.
+I&amp;rsquo;m a professional programmer. I&amp;rsquo;m paid to edit code. No wonder why I wanted my editing to be quicker and easier. I knew that Vim has it&amp;rsquo;s worshipers even though it&amp;rsquo;s very old so I thought there must be something great about it.</description>
+    </item>
+    
+    <item>
+      <title>Pattern Matching in Scala</title>
+      <link>http://blog.radoszewski.pl/post/scala-pattern-matching/</link>
+      <pubDate>Sun, 05 Apr 2015 21:54:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/scala-pattern-matching/</guid>
+      <description>Not so long ago I gave a presentation about Scala and ScalaTest to my co-workers. This was just basics as I wanted to give them a good and solid base for future researching this language. As it turned out - I probably learned a lot more than they did from this :)
+Whenever there is Scala mentioned there also is the phrase pattern matching. Of course Scala does support pattern matching but I didn&amp;rsquo;t know how much fun one can have with this.</description>
+    </item>
+    
+    <item>
+      <title>Scalartemis</title>
+      <link>http://blog.radoszewski.pl/post/scalartemis/</link>
+      <pubDate>Sat, 04 Apr 2015 22:06:00 +0200</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/scalartemis/</guid>
+      <description>Recently I&amp;rsquo;ve been creating entity component framework which I named Scalartemis. Name is direct descendant of two words. First (surprisingly) is Scala - the language it&amp;rsquo;s written in. Second is Artemis.
+Artemis is entity component framework that I wanted to port to Scala. During the process of porting I started to change things a bit to achieve better performance/api/usability. At some point I decided that this is pointless and I should start from scratch using the knowledge I&amp;rsquo;ve gained.</description>
+    </item>
+    
+    <item>
+      <title>About</title>
+      <link>http://blog.radoszewski.pl/page/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/about/</guid>
+      <description>Professional Experience I&amp;rsquo;m working professionally as Java developer since 2011. Currently I work for Allegro Group. It&amp;rsquo;s the biggest online auctioning website in Poland. Previously I worked for smaller company named AIS.PL.
+Interests I like to do a lot of things, but the most fun for me are two below:
+ programming - I&amp;rsquo;ve started programming with C++ in 2002. Back then I was super excited about making games. Now, few years later - I&amp;rsquo;m still super excited about making games!</description>
+    </item>
+    
+    <item>
+      <title>Games</title>
+      <link>http://blog.radoszewski.pl/page/games/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/games/</guid>
+      <description>img.small { max-width: 200px; max-height: 100px; float: left; margin: 5px; }  I&amp;rsquo;ve started creating a lot of games in my life. Few of them were playable. There wasn&amp;rsquo;t to many games I actually finished. It is the path that was important - not the destination :)
+Money Soccer  Inspired with a game that we were playing at school desks I&amp;rsquo;ve created something like that in the virtual world.</description>
+    </item>
+    
+    <item>
+      <title>Music</title>
+      <link>http://blog.radoszewski.pl/page/music/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/music/</guid>
+      <description>This is the place for all the music I&amp;rsquo;ve decided to share with the world. Please don&amp;rsquo;t expect it to be very large collection. I don&amp;rsquo;t usually record my guitar sessions but when I do I think that they&amp;rsquo;re mostly not good enough for the world.
+Zegarmistrz Światła This one I&amp;rsquo;ve recorded years ago. It&amp;rsquo;s rather 5-minute solo with MIDI backing track but I think it&amp;rsquo;s pretty nice :) (except the MIDI part)</description>
+    </item>
+    
+    <item>
+      <title>Programs</title>
+      <link>http://blog.radoszewski.pl/page/programs/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/page/programs/</guid>
+      <description>img.small { max-width: 200px; max-height: 100px; float: left; margin: 5px; }  All this programs are very old! For my current creations please visit my GitHub page! I&amp;rsquo;ve created tons of programs during my coding adventures. Unfortunately most of them wasn&amp;rsquo;t finished or wasn&amp;rsquo;t good enough to show it. In this section I&amp;rsquo;d like to present only a few of my programs.
+Windows Manifest Utility  Little program that I made to create Windows manifest files and embedding them in the executable files.</description>
+    </item>
+    
+  </channel>
+</rss>

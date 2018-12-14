@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Collector on Marad Blog</title>
+    <link>http://blog.radoszewski.pl/tags/collector/</link>
+    <description>Recent content in Collector on Marad Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 31 Jul 2015 08:20:10 +0200</lastBuildDate>
+    
+	<atom:link href="http://blog.radoszewski.pl/tags/collector/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Custom Collectors in Java 8</title>
+      <link>http://blog.radoszewski.pl/post/custom-java-8-collectors/</link>
+      <pubDate>Fri, 31 Jul 2015 08:20:10 +0200</pubDate>
+      
+      <guid>http://blog.radoszewski.pl/post/custom-java-8-collectors/</guid>
+      <description>Java 8 sure did bring a few interesting features. One of them are definitely the streams. Internet is full of the instructions on how to create and use them. Today I&amp;rsquo;d like to talk about something a little bit different - collectors.
+What is a collector? Streams can be used to process collections. The way it works is that we first define all transformations on the collection with non-terminal operations like map, flatMap, filter, etc.</description>
+    </item>
+    
+  </channel>
+</rss>

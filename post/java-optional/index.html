@@ -2,7 +2,7 @@
 <html lang="en-us">
 
     <head>
-        <meta name="generator" content="Hugo 0.29" />
+        <meta name="generator" content="Hugo 0.52" />
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,8 +16,8 @@
 
         <link rel="stylesheet" href="/css/main.css"/>
 
-        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet"> 
-        <link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400" rel="stylesheet">
+        <link href='https://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
 
         <link rel="stylesheet" media="screen" href="/lightbox/css/lightbox.css">
     </head>
@@ -104,70 +104,65 @@ cleaner and more readable code.</p>
 fact though that some books in our library doesn&rsquo;t have an author assigned. So we&rsquo;ve got structure
 along the lines of:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">Author</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">private</span><span style=""> </span><span style="">String</span><span style=""> </span><span style="">name</span><span style="color:#f92672">;</span><span style="">
-</span><span style="">  </span><span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span><span style="color:#f92672">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">class</span><span style=""> </span><span style="color:#a6e22e">Book</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">private</span><span style=""> </span><span style="">String</span><span style=""> </span><span style="">title</span><span style="color:#f92672">;</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">private</span><span style=""> </span><span style="">Author</span><span style=""> </span><span style="">author</span><span style="color:#f92672">;</span><span style="">
-</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">public</span><span style=""> </span><span style="">Optional</span><span style="color:#f92672">&lt;</span><span style="">Author</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#a6e22e">getAuthor</span><span style=""></span><span style="color:#f92672">()</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">    </span><span style="color:#66d9ef">return</span><span style=""> </span><span style="">Optional</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span><span style="">author</span><span style="color:#f92672">);</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">}</span><span style="">
-</span><span style="">  </span><span style="color:#75715e">// ...
-</span><span style="color:#75715e"></span><span style="color:#f92672">}</span><span style="">
-</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">interface</span><span style=""> </span><span style="color:#a6e22e">Library</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">public</span><span style=""> </span><span style="">Optional</span><span style="color:#f92672">&lt;</span><span style="">Book</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="color:#a6e22e">findBook</span><span style=""></span><span style="color:#f92672">(</span><span style="">String</span><span style=""> </span><span style="">title</span><span style="color:#f92672">);</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Author</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">private</span> String name<span style="color:#f92672">;</span>
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Book</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">private</span> String title<span style="color:#f92672">;</span>
+  <span style="color:#66d9ef">private</span> Author author<span style="color:#f92672">;</span>
+
+  <span style="color:#66d9ef">public</span> Optional<span style="color:#f92672">&lt;</span>Author<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> Optional<span style="color:#f92672">.</span><span style="color:#a6e22e">ofNullable</span><span style="color:#f92672">(</span>author<span style="color:#f92672">);</span>
+  <span style="color:#f92672">}</span>
+  <span style="color:#75715e">// ...
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Library</span> <span style="color:#f92672">{</span>
+  <span style="color:#66d9ef">public</span> Optional<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span>String title<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>Now that we have our model defined let&rsquo;s think about finding author by book&rsquo;s title. Normally we
 would have to find book by title, and then check if it&rsquo;s not null and then get the author and get
 check if that is not null. Finally we could do what we want with the author object. So without
 optionals it would look like this:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="">Book</span><span style=""> </span><span style="">book</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">library</span><span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">);</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#f92672">(</span><span style="">book</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="">Author</span><span style=""> </span><span style="">author</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">book</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">();</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#f92672">(</span><span style="">author</span><span style=""> </span><span style="color:#f92672">!=</span><span style=""> </span><span style="color:#66d9ef">null</span><span style="color:#f92672">)</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">    </span><span style="">doStuff</span><span style="color:#f92672">(</span><span style="">author</span><span style="color:#f92672">);</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">}</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Book book <span style="color:#f92672">=</span> library<span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>book <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+  Author author <span style="color:#f92672">=</span> book<span style="color:#f92672">.</span><span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">();</span>
+  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>author <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    doStuff<span style="color:#f92672">(</span>author<span style="color:#f92672">);</span>
+  <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>With optionals we can&rsquo;t get the <code>null</code> so that&rsquo;s already a gain. Well - we could but one should
 really have no idea about programming to achieve this in real life. But the code isn&rsquo;t that great at
 all. I&rsquo;d say that it looks even worse:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="">Optional</span><span style="color:#f92672">&lt;</span><span style="">Book</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">book</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">library</span><span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">);</span><span style="">
-</span><span style=""></span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#f92672">(</span><span style="">book</span><span style="color:#f92672">.</span><span style="color:#a6e22e">isPresent</span><span style="color:#f92672">())</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">  </span><span style="">Optional</span><span style="color:#f92672">&lt;</span><span style="">Author</span><span style="color:#f92672">&gt;</span><span style=""> </span><span style="">author</span><span style=""> </span><span style="color:#f92672">=</span><span style=""> </span><span style="">book</span><span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">();</span><span style="">
-</span><span style="">  </span><span style="color:#66d9ef">if</span><span style=""> </span><span style="color:#f92672">(</span><span style="">author</span><span style="color:#f92672">.</span><span style="color:#a6e22e">isPresent</span><span style="color:#f92672">())</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">    </span><span style="">doStuff</span><span style="color:#f92672">(</span><span style="">author</span><span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">());</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">}</span><span style="">
-</span><span style=""></span><span style="color:#f92672">}</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">Optional<span style="color:#f92672">&lt;</span>Book<span style="color:#f92672">&gt;</span> book <span style="color:#f92672">=</span> library<span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">);</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>book<span style="color:#f92672">.</span><span style="color:#a6e22e">isPresent</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+  Optional<span style="color:#f92672">&lt;</span>Author<span style="color:#f92672">&gt;</span> author <span style="color:#f92672">=</span> book<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">();</span>
+  <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>author<span style="color:#f92672">.</span><span style="color:#a6e22e">isPresent</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+    doStuff<span style="color:#f92672">(</span>author<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">());</span>
+  <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span></code></pre></div>
 
 <p>Still needs some improvement. There is a method in <code>Optional</code> called <code>ifPresent()</code> that takes a
 function and invokes it on the inner object if the object is, well, present. Using this method we
 could make it a bit better:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="">library</span><span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">.</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span><span style="">book</span><span style=""> </span><span style="color:#f92672">-&gt;</span><span style=""> </span><span style="color:#f92672">{</span><span style="">
-</span><span style="">    </span><span style="">book</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">().</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">::</span><span style="">doStuff</span><span style="color:#f92672">);</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">});</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">library<span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">)</span>
+  <span style="color:#f92672">.</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span>book <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>
+    book<span style="color:#f92672">.</span><span style="color:#a6e22e">getAuthor</span><span style="color:#f92672">().</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">::</span>doStuff<span style="color:#f92672">);</span>
+  <span style="color:#f92672">});</span></code></pre></div>
 
 <p>But as Hugues states - this is still not entirely readable. What he didn&rsquo;t mention is the fact that
 <code>Optional</code> has also another method that give it it&rsquo;s awesomeness. Meet the <code>flatMap</code>:</p>
 
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="">library</span><span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span><span style="">Book:</span><span style="color:#f92672">:</span><span style="">getAuthor</span><span style="color:#f92672">)</span><span style="">
-</span><span style="">  </span><span style="color:#f92672">.</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">::</span><span style="">doStuff</span><span style="color:#f92672">);</span></code></pre>
-</div>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java">library<span style="color:#f92672">.</span><span style="color:#a6e22e">findBook</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Some Title&#34;</span><span style="color:#f92672">)</span>
+  <span style="color:#f92672">.</span><span style="color:#a6e22e">flatMap</span><span style="color:#f92672">(</span>Book:<span style="color:#f92672">:</span>getAuthor<span style="color:#f92672">)</span>
+  <span style="color:#f92672">.</span><span style="color:#a6e22e">ifPresent</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">::</span>doStuff<span style="color:#f92672">);</span></code></pre></div>
 
 <p>What does the <code>flatMap</code> do? If the value of <code>Optional</code> is present then it invokes the function
 passed as parameter on that value. If value is not present - <code>flatMap</code> returns empty <code>Optional</code>. The
