@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Editing on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/categories/editing/</link>
+    <link>https://blog.radoszewski.pl/categories/editing/</link>
     <description>Recent content in Editing on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 06 Apr 2015 09:59:31 +0000</lastBuildDate>
     
-	<atom:link href="http://blog.radoszewski.pl/categories/editing/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blog.radoszewski.pl/categories/editing/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Don&#39;t Use Vim if you like your job!</title>
-      <link>http://blog.radoszewski.pl/post/dont-use-vim/</link>
+      <link>https://blog.radoszewski.pl/post/dont-use-vim/</link>
       <pubDate>Mon, 06 Apr 2015 09:59:31 +0000</pubDate>
       
-      <guid>http://blog.radoszewski.pl/post/dont-use-vim/</guid>
+      <guid>https://blog.radoszewski.pl/post/dont-use-vim/</guid>
       <description>If you&amp;rsquo;re like me you probably like to make your life easier wherever and whenever it is possible. I also like to pick up the gauntlet and try something new and challenging. This is why I started to use Vim.
 I&amp;rsquo;m a professional programmer. I&amp;rsquo;m paid to edit code. No wonder why I wanted my editing to be quicker and easier. I knew that Vim has it&amp;rsquo;s worshipers even though it&amp;rsquo;s very old so I thought there must be something great about it.</description>
     </item>

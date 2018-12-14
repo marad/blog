@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Vim Jekyll Editing on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/vim-jekyll-editing/</link>
+    <link>https://blog.radoszewski.pl/tags/vim-jekyll-editing/</link>
     <description>Recent content in Vim Jekyll Editing on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 09 Apr 2015 17:47:55 +0000</lastBuildDate>
     
-	<atom:link href="http://blog.radoszewski.pl/tags/vim-jekyll-editing/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blog.radoszewski.pl/tags/vim-jekyll-editing/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Why I abandoned my old blog?</title>
-      <link>http://blog.radoszewski.pl/post/previous-blog/</link>
+      <link>https://blog.radoszewski.pl/post/previous-blog/</link>
       <pubDate>Thu, 09 Apr 2015 17:47:55 +0000</pubDate>
       
-      <guid>http://blog.radoszewski.pl/post/previous-blog/</guid>
+      <guid>https://blog.radoszewski.pl/post/previous-blog/</guid>
       <description>This blog has very little content, but I&amp;rsquo;m not new to blogging at all. In fact I&amp;rsquo;ve been publishing my thoughts and ideas online for a few years now. The only problem is that I&amp;rsquo;ve got tired of it. I don&amp;rsquo;t mean blogging. I mean writing posts.
 I can hear you ask &amp;ldquo;What is the difference?&amp;rdquo;. Well&amp;hellip; I was using Wordpress. This software is great for blogging, but sometimes I wanted more.</description>
     </item>

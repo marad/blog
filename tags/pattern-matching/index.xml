@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Pattern Matching on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/pattern-matching/</link>
+    <link>https://blog.radoszewski.pl/tags/pattern-matching/</link>
     <description>Recent content in Pattern Matching on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 05 Apr 2015 21:54:00 +0000</lastBuildDate>
     
-	<atom:link href="http://blog.radoszewski.pl/tags/pattern-matching/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blog.radoszewski.pl/tags/pattern-matching/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Pattern Matching in Scala</title>
-      <link>http://blog.radoszewski.pl/post/scala-pattern-matching/</link>
+      <link>https://blog.radoszewski.pl/post/scala-pattern-matching/</link>
       <pubDate>Sun, 05 Apr 2015 21:54:00 +0000</pubDate>
       
-      <guid>http://blog.radoszewski.pl/post/scala-pattern-matching/</guid>
+      <guid>https://blog.radoszewski.pl/post/scala-pattern-matching/</guid>
       <description>Not so long ago I gave a presentation about Scala and ScalaTest to my co-workers. This was just basics as I wanted to give them a good and solid base for future researching this language. As it turned out - I probably learned a lot more than they did from this :)
 Whenever there is Scala mentioned there also is the phrase pattern matching. Of course Scala does support pattern matching but I didn&amp;rsquo;t know how much fun one can have with this.</description>
     </item>

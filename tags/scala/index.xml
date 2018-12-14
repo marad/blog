@@ -2,31 +2,31 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Scala on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/scala/</link>
+    <link>https://blog.radoszewski.pl/tags/scala/</link>
     <description>Recent content in Scala on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 05 Apr 2015 21:54:00 +0000</lastBuildDate>
     
-	<atom:link href="http://blog.radoszewski.pl/tags/scala/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blog.radoszewski.pl/tags/scala/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Pattern Matching in Scala</title>
-      <link>http://blog.radoszewski.pl/post/scala-pattern-matching/</link>
+      <link>https://blog.radoszewski.pl/post/scala-pattern-matching/</link>
       <pubDate>Sun, 05 Apr 2015 21:54:00 +0000</pubDate>
       
-      <guid>http://blog.radoszewski.pl/post/scala-pattern-matching/</guid>
+      <guid>https://blog.radoszewski.pl/post/scala-pattern-matching/</guid>
       <description>Not so long ago I gave a presentation about Scala and ScalaTest to my co-workers. This was just basics as I wanted to give them a good and solid base for future researching this language. As it turned out - I probably learned a lot more than they did from this :)
 Whenever there is Scala mentioned there also is the phrase pattern matching. Of course Scala does support pattern matching but I didn&amp;rsquo;t know how much fun one can have with this.</description>
     </item>
     
     <item>
       <title>Scalartemis</title>
-      <link>http://blog.radoszewski.pl/post/scalartemis/</link>
+      <link>https://blog.radoszewski.pl/post/scalartemis/</link>
       <pubDate>Sat, 04 Apr 2015 22:06:00 +0200</pubDate>
       
-      <guid>http://blog.radoszewski.pl/post/scalartemis/</guid>
+      <guid>https://blog.radoszewski.pl/post/scalartemis/</guid>
       <description>Recently I&amp;rsquo;ve been creating entity component framework which I named Scalartemis. Name is direct descendant of two words. First (surprisingly) is Scala - the language it&amp;rsquo;s written in. Second is Artemis.
 Artemis is entity component framework that I wanted to port to Scala. During the process of porting I started to change things a bit to achieve better performance/api/usability. At some point I decided that this is pointless and I should start from scratch using the knowledge I&amp;rsquo;ve gained.</description>
     </item>

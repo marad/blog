@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dependencies on Marad Blog</title>
-    <link>http://blog.radoszewski.pl/tags/dependencies/</link>
+    <link>https://blog.radoszewski.pl/tags/dependencies/</link>
     <description>Recent content in Dependencies on Marad Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Tue, 10 Nov 2015 12:17:17 +0000</lastBuildDate>
     
-	<atom:link href="http://blog.radoszewski.pl/tags/dependencies/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="https://blog.radoszewski.pl/tags/dependencies/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>The Cake Pattern</title>
-      <link>http://blog.radoszewski.pl/post/cake-pattern/</link>
+      <link>https://blog.radoszewski.pl/post/cake-pattern/</link>
       <pubDate>Tue, 10 Nov 2015 12:17:17 +0000</pubDate>
       
-      <guid>http://blog.radoszewski.pl/post/cake-pattern/</guid>
+      <guid>https://blog.radoszewski.pl/post/cake-pattern/</guid>
       <description>Let&amp;rsquo;s think a bit about how you should structure your program. If your codebase has less than 500 lines of code it is not really that hard to manage. You can simply manually create the objects and their dependencies to construct your application. The problem emerges when your codebase grows. Managing hundreds of dependencies manually is a tedious task. We need some kind of mechanism to do that for us.</description>
     </item>
     
